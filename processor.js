@@ -20,20 +20,16 @@ var Processor = function(options) {
 
 	// public members
 	this.threads = [];
-	this.stats = { waitingForDispatch: 0, processing: 0, numThreads: 0};
+	this.stats = { waitingForDispatch: 0, processing: 0, numThreads: 0, numberProcessed: 0};
 	this.logs = {};
-	this.pings = { };
+	this.pings = {};
 	this.messageBuffer = [];
-	this.messageThreadIds = {};
+	this.messageThreads = {};
 	this.callbacks = {};
 	this._lastThreadId = 0;
-
-	console.log(this.options.numThreads);
-
-	// boot up the threads
-	for (var x = 0; x < this.options.numThreads; x += 1) {
-		this.threads.push(this.startThread());
-	}
+	this.timeOutFunctions = {};
+	this.fileVersion = '';
+	this.processing = {};
 
 	// message processing from threads
 	this.messageProcessor = new MessageProcessor(this);
@@ -42,18 +38,26 @@ var Processor = function(options) {
 
 	// 1. to respond to requests for messages from threads
 	this.messageProcessor.register(messageCodes.REQUEST_FOR_MESSAGE, function (message) {
+		
 		log('Processor #' + this.id + '> Received request for message from thread #' + message.threadId + ', ' + this.messageBuffer.length + ' messages in queue', 'debug');
 		if (this.messageBuffer.length === 0) return;
 		var thread = this.threads.filter(function (thread) {
 			return thread._threadId == message.threadId;
 		})[0];
+		
+		if (this.messageThreads[message.threadId] || !thread.connected) {
+			return;
+		}
+
 		var messageToSend = this.messageBuffer.pop();
 
 		this.stats.processing += 1;
 		this.stats.waitingForDispatch = this.stats.waitingForDispatch - 1;
 		
-		this.messageThreadIds[message.threadId] = messageToSend.id;
+		this.messageThreads[message.threadId] = messageToSend;
 		
+		this.processing[messageToSend.id] =  message.threadId;
+
 		//send message to thread for execution
 		thread.send(messageToSend);
 
@@ -69,27 +73,62 @@ var Processor = function(options) {
 		try { 
 			clearTimeout(this.pings[message.threadId]);
 			delete this.pings[message.threadId];
-			delete this.messageThreadIds[message.threadId]; 
+			delete this.messageThreads[message.threadId]; 
 		} catch(e) {}
 		
 		this.executeCallbacks(message.messageId, message.response);
-		
-		if (this.messageBuffer.length === 0) return;
-		var messageToSend = this.messageBuffer.shift();
-		var thread = this.threads.filter(function (thread) {
-			return thread._threadId == message.threadId;
-		})[0];
-		thread.send(messageToSend);
+		this.flush();
+	});
+
+	//3 to respond to termination requests from threads
+	this.messageProcessor.register(messageCodes.TERMINATE_THREAD, function(message){
+		console.log("Processor> Child process termination request");
+		this.terminateThread(message.threadId);
 	});
 };
 
 Processor.prototype.options = defaultOptions;
 
 Processor.prototype.process = function(message, callback) {
+	//Check for change in file versions and reset timeout functions
+	if (this.fileVersion != message.cf.v) {
+		this.fileVersion = message.cf.v;
+		this.timeOutFunctions = { };
+		this.timeOutFunctions[message.cf.fn] = { count: 0 } ;
+	} else {
+		//If the function name exists in timeoutFunctions object and its count is greater than or equal to 10
+		if (this.timeOutFunctions[message.cf.fn]) {
+			if (this.timeOutFunctions[message.cf.fn].count >= this.options.timeoutCounts) {
+				setTimeout(function() {
+					callback({ 
+							data: { 
+							status : {
+								code: "508",
+								message: "Malicious code block detected, causing timeouts. Please verify your code and redeploy",
+								referenceid: message.id
+							},
+							body : null
+						},
+						log: new Date().toISOString() + " => " + "Malicious code block detected, causing timeouts. Please verify your code and redeploy"
+					});
+				}, 0);
+				return;
+			}
+		} else {
+			this.timeOutFunctions[message.cf.fn] = { count: 0 };
+		}
+	}
+
 	this.stats.waitingForDispatch += 1;
 	log('Processor #' + this.id + '> New work available.', 'debug');
 	this.enqueue(message);
 	this.registerCallback(message.id, callback);
+	
+	//create a thread if numThreads is less than total threads
+	if (this.stats.numThreads == 0 || ((this.stats.numThreads < this.options.numThreads) && this.stats.waitingForDispatch > 1)) {
+		this.threads.push(this.startThread());
+	}
+
 	this.flush();
 };
 
@@ -100,6 +139,7 @@ Processor.prototype.executeCallbacks = function(messageId, response) {
 	var that = this;
 	setTimeout(function() {
 		that.stats.processing = that.stats.processing - 1;
+		delete that.processing[messageId];
 		var callback = that.callbacks[messageId];
 		if (!callback) return;
 		callback(response);
@@ -132,35 +172,40 @@ Processor.prototype.registerCallback = function(messageId, callback) {
 	this.callbacks[messageId] = callback;
 };
 
+Processor.prototype.terminateThread = function(threadId) {
+	var filterDelegate = function (thread) {
+		return thread._threadId == threadId;
+	};
+	var removeDelegate = function (thread) {
+		return thread._threadId != cp._threadId;
+	};
+	// disconnect and kill the process
+	var cp = this.threads.filter(filterDelegate);
+	if (cp.length == 1) {
+		cp = cp[0];
+		clearTimeout(this.pings[threadId]);
+		delete this.pings[threadId];
+		this.threads = this.threads.filter(removeDelegate);
+		if (cp.connected == true ) {
+			cp.disconnect();
+			cp.kill("SIGQUIT");
+			log('\n\nProcessor> Detected lockup in thread #' + threadId + '.\n\n', 'warn');
+		}
+	} else {
+		//log('\n\nCould not find locked up thread #' + threadId +'\n\n', 'warn');
+	}
+};
+
 Processor.prototype.setupPinging = function(thread, threadId, timeoutInterval) {
 	var that = this;
 	if (!timeoutInterval) timeoutInterval = 15000;
 	try { clearTimeout(this.pings[threadId]); } catch(e) {}
 	
-	console.log(this.stats);
+	//console.log(this.stats);
 
 	// set up pinging
 	this.pings[threadId] = setTimeout(function() {
-		var filterDelegate = function (thread) {
-			return thread._threadId == threadId;
-		};
-		var removeDelegate = function (thread) {
-			return thread._threadId != cp._threadId;
-		};
-		// disconnect and kill the process
-		var cp = that.threads.filter(filterDelegate);
-		if (cp.length == 1) {
-			cp = cp[0];
-			delete that.pings[threadId];
-			that.threads = that.threads.filter(removeDelegate);
-			if (cp.connected == true ) {
-				cp.disconnect();
-				cp.kill();
-				log('\n\nProcessor> Detected lockup in thread #' + threadId + '.\n\n', 'warn');
-			}
-		} else {
-			log('\n\nCould not find locked up thread #' + threadId +'\n\n', 'warn');
-		}
+		that.terminateThread(threadId);
 	}, timeoutInterval);
 };
 
@@ -169,35 +214,47 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 	var that = this;
 	thread.on('exit', function (code, signal) {
 
-		log('Processor> Child process terminated due to receipt of signal ' + signal + ', respawning...', 'warn');
+		log('Processor> Child process terminated due to receipt of code ' + code + ' and signal ' + signal + '', 'warn');
 
 		//if any message was being processed by thread then execute its callback
-		var messageId = that.messageThreadIds[threadId];
-
-		if (messageId) {
+		var message = that.messageThreads[threadId];
+		
+		if (message) {
 			var timeOut = 0;
+			var statusMessage = 'Server Error';
+			var	statusCode = '500';
+			
 			//If the thread was aborted due to POSIX resource limitation then let the response wait for 12 seconds and then return;
-			if (signal == 'SIGXCPU') timeOut = 12000;
-
+			if (signal == 'SIGXCPU') timeOut = that.options.sendTimeoutInterval;
+			
+			//If the thread was aborted due to timeout
+			if ((signal == 'SIGQUIT' || signal == 'SIGXCPU') && code == null) {
+				statusMessage = 'Execution timed out';
+				statusCode = '508';
+				that.timeOutFunctions[message.cf.fn]['count']++;
+				console.log(that.timeOutFunctions[message.cf.fn]);
+			}
 			setTimeout(function() {
-				console.log("=========sending time out response for " + messageId + "=========");
-				that.executeCallbacks(messageId, { 
+				console.log("=========sending time out response for " + message.id + "=========");
+				that.executeCallbacks(message.id, { 
 					data: { 
 						status : {
-							code: '508',
-							message: 'Execution timed out',
-							referenceid: messageId
+							code: statusCode,
+							message: statusMessage,
+							referenceid: message.id
 						},
-						payload : null
+						body : null
 					},
-					log: new Date().toISOString() + " => Execution timed out"
+					log: new Date().toISOString() + " => " + message
 				});
 			}, timeOut);
-			try { delete that.messageThreadIds[threadId] } catch(e) {}
+			that.terminateThread(threadId);
+			try { delete that.messageThreads[threadId] } catch(e) {}
 		}
 
 		// Clean up timers
 		// 1. ping 
+		clearTimeout(that.pings[threadId]);
 		delete that.pings[threadId];
 
 		// 2. decrement numthreads count
@@ -244,6 +301,14 @@ Processor.prototype.getStats = function() {
 
 Processor.prototype.getLogs = function() {
 	return this.logs;
-}
+};
+
+Processor.prototype.getMessages = function() {
+	var messages = [];
+	for (var mt in this.messageThreads) {
+		messages.push({ id: this.messageThreads[mt].id, cf: this.messageThreads[mt].cf });
+	};
+	return messages;
+};
 
 module.exports = Processor;

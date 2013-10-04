@@ -460,3 +460,367 @@
 {"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T10:36:54.966Z"}
 {"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T10:37:03.164Z"}
 {"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T10:37:04.922Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-26T14:03:22.469Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-26T14:03:22.527Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-26T14:03:22.673Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:03:29.010Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:04:54.939Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:04:54.959Z"}
+{"level":"warn","message":"\n\nProcessor> Detected lockup in thread #38176461129122088-1.\n\n","timestamp":"2013-09-26T14:04:54.981Z"}
+{"level":"warn","message":"\n\nProcessor> Detected lockup in thread #38005375432261971-1.\n\n","timestamp":"2013-09-26T14:04:54.982Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:05:18.193Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:05:22.346Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:05:23.212Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:05:24.460Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:05:26.249Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:05:52.902Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:06:03.041Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:06:03.048Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:06:06.525Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:06:07.937Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:06:19.587Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:06:20.474Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:06:21.594Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:06:23.614Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:06:24.949Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-26T14:11:21.088Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-26T14:11:21.133Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-26T14:11:21.165Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:11:25.022Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:11:26.718Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:11:26.868Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:11:28.250Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:11:41.078Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:11:42.369Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:11:44.047Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:11:57.198Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:11:59.309Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:00.744Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:12.902Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:14.853Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:16.569Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:28.223Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:30.676Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:32.015Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:44.186Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:46.490Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:48.116Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:12:59.601Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:13:02.283Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:13:03.811Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:13:17.376Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:13:21.284Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:13:22.475Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:13:23.876Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:13:26.254Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:13:32.762Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-26T14:15:27.493Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-26T14:15:27.578Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-26T14:15:27.672Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:15:31.870Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:15:32.551Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:15:33.045Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:15:35.304Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:15:37.110Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-26T14:23:52.145Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-26T14:23:52.253Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-26T14:23:52.331Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:23:57.344Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:23:57.363Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:23:57.533Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-26T14:25:21.147Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-26T14:25:21.183Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-26T14:25:21.258Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:27.989Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:28.815Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:28.838Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:29.202Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:29.971Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:34.677Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:35.540Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:35.946Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:36.573Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:39.259Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:41.181Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:42.261Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:43.181Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:45.609Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:45.968Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:48.200Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:48.371Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:51.482Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:51.626Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:53.872Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:55.062Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:58.081Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:25:58.642Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:26:00.089Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:26:00.832Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:26:02.644Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:26:02.779Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-26T14:27:58.453Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-26T14:27:58.489Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-26T14:27:58.550Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:05.176Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:05.476Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:05.499Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:08.561Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:21.645Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:22.371Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:25.652Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:28.664Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:32.981Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:33.551Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:33.769Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:34.717Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:37.308Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:39.414Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:39.808Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:43.511Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:46.384Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:46.629Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:46.900Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:49.357Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:50.570Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:53.401Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:28:56.107Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:29:00.019Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:29:00.377Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-26T14:32:16.750Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-26T14:32:16.778Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-26T14:32:16.863Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:32:23.534Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:32:23.738Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:32:23.887Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:34:11.023Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:34:11.171Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:34:11.470Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:34:12.068Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:34:12.091Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:34:15.641Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:35:15.639Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:35:16.217Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:35:16.447Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:35:16.532Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:35:20.604Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:35:21.988Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:35:22.845Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:35:26.333Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:35:59.397Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:36:00.721Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:36:00.747Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:36:01.152Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:36:07.281Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:36:08.840Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:36:09.003Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:36:09.050Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:36:12.238Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:37:55.537Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:37:56.307Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:37:56.816Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:37:56.903Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:37:57.984Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:03.809Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:04.612Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:07.585Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:11.412Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:14.902Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:18.758Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:22.156Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:26.629Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:29.850Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:37.654Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:38.927Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:46.429Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:48.616Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:55.509Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:38:57.419Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:39:03.580Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-26T14:39:09.851Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-26T14:39:09.905Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-26T14:39:10.567Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:39:16.205Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:39:16.318Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:39:16.555Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:39:16.928Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:39:18.990Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:08.712Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:08.806Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:09.447Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:09.642Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:09.800Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:10.094Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:17.152Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:17.926Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:18.243Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:18.391Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:19.213Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:19.656Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:26.565Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:27.237Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:28.049Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:28.414Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:28.550Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:35.996Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:36.125Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:36.887Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:37.474Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:37.948Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:45.681Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:45.812Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:46.386Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:46.648Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:47.743Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:52.079Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:53.510Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:40:53.865Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:00.675Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:01.034Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:01.845Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:07.463Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:07.669Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:08.393Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:15.506Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:17.663Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:19.498Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:19.502Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:20.126Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:24.372Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:26.682Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:28.621Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:28.912Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:29.159Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:32.713Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:34.660Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:36.605Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:36.818Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:37.049Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:42.682Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:42.707Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:45.332Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:45.362Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:45.406Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:49.976Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:50.193Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:51.589Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:54.701Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:55.050Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:41:58.662Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:05.448Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:07.221Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:07.238Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:07.595Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:08.403Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:14.786Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:16.648Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:16.880Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:17.067Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:17.191Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:23.408Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:24.446Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:25.679Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:29.896Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:30.987Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:32.037Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:37.534Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:39.701Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:40.539Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:40.568Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:40.891Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:46.890Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:49.757Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:50.180Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:50.391Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:51.048Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:56.215Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:58.275Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:58.743Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:59.086Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:42:59.427Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:03.795Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:05.626Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:06.299Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:07.124Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:10.551Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:12.144Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:13.539Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:17.111Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:19.541Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:19.797Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:22.697Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:26.090Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:29.950Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-26T14:43:34.334Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-26T14:43:34.486Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-26T14:43:34.924Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:39.446Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:39.575Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-26T14:43:39.785Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-27T06:01:54.117Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-28T07:25:53.728Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal null, respawning...","timestamp":"2013-09-28T07:25:54.396Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-28T07:26:57.044Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal null, respawning...","timestamp":"2013-09-28T07:26:57.642Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-28T07:27:25.972Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-28T07:29:44.351Z"}
+{"level":"info","message":"Processor> Starting processor #36819379131908426","timestamp":"2013-09-28T07:32:33.857Z"}
+{"level":"info","message":"Processor> Starting processor #38176461129122088","timestamp":"2013-09-28T07:32:33.954Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-28T07:32:37.489Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-28T07:32:38.558Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-28T07:32:40.864Z"}
+{"level":"info","message":"Processor> Starting processor #undefined","timestamp":"2013-09-29T06:58:06.030Z"}
+{"level":"info","message":"Processor> Starting processor #undefined","timestamp":"2013-09-29T07:00:16.447Z"}
+{"level":"info","message":"Processor> Starting processor #undefined","timestamp":"2013-09-29T07:03:23.092Z"}
+{"level":"info","message":"Processor> Starting processor #undefined","timestamp":"2013-09-29T07:07:47.849Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-29T07:10:00.118Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-29T07:10:00.318Z"}
+{"level":"info","message":"Processor> Starting processor #undefined","timestamp":"2013-09-29T07:11:51.853Z"}
+{"level":"info","message":"Processor> Starting processor #38005375432261971","timestamp":"2013-09-29T07:12:27.839Z"}
+{"level":"info","message":"Processor> Starting processor #undefined","timestamp":"2013-09-29T07:13:01.010Z"}
+{"level":"info","message":"Processor> Starting processor #undefined","timestamp":"2013-09-29T07:14:03.821Z"}
+{"level":"info","message":"Processor> Starting processor #38181076872594125","timestamp":"2013-09-29T07:14:48.464Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:15:04.195Z"}
+{"level":"info","message":"Processor> Starting processor #38181076872594125","timestamp":"2013-09-29T07:17:11.398Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:19:22.127Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:19:22.332Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:19:22.591Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:26:28.018Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGXCPU, respawning...","timestamp":"2013-09-29T07:27:57.712Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of signal SIGSEGV, respawning...","timestamp":"2013-09-29T07:27:59.296Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:41:24.921Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:41:25.272Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:41:25.581Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of code 0 and signal null, respawning...","timestamp":"2013-09-29T07:43:03.870Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:43:37.214Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:43:37.326Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:43:37.636Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:45:07.370Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:45:07.535Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:45:07.837Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:46:31.343Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:46:31.573Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:46:31.919Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of code 0 and signal null, respawning...","timestamp":"2013-09-29T07:47:23.590Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of code 0 and signal null, respawning...","timestamp":"2013-09-29T07:47:23.817Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:50:19.262Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:50:19.697Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:50:19.940Z"}
+{"level":"warn","message":"Processor> Child process terminated due to receipt of code 0 and signal null, respawning...","timestamp":"2013-09-29T07:51:41.308Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:55:37.291Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:55:37.475Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:55:37.737Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:56:28.149Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:56:28.325Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:56:28.605Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:57:02.236Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:57:02.461Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:57:02.850Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T07:57:33.650Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T07:57:33.877Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T07:57:34.221Z"}
+{"level":"info","message":"Processor> Starting processor #38181076872594125","timestamp":"2013-09-29T07:59:04.902Z"}
+{"level":"info","message":"Processor> Starting processor #38181076872594125","timestamp":"2013-09-29T07:59:22.843Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T08:09:47.563Z"}
+{"level":"info","message":"Processor> Starting processor #38177001963651717","timestamp":"2013-09-29T08:09:47.729Z"}
+{"level":"info","message":"Processor> Starting processor #38177050825196170","timestamp":"2013-09-29T08:09:48.032Z"}
+{"level":"info","message":"Processor> Starting processor #38176956369469923","timestamp":"2013-09-29T08:11:28.323Z"}

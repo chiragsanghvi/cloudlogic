@@ -1,10 +1,13 @@
 var vm = require('vm');
+var contextify = require('contextify');
 var MessageProcessor = require('./messageProcessor.js');
 var messageCodes = require('./ipcMessageCodes.js');
 var debugLog = require('./logger.js').log;
 var config = require('./config/contextConfig.js');
 var logStorage = "";
 var thread = {};
+var memwatch = require('memwatch');
+
 var logLevels = {
 	DEBUG: 0,
 	LOG: 1,
@@ -18,7 +21,7 @@ var logMessage = function(lvl, msg) {
 	switch (lvl) {
 		case logLevels.LOG:
 			logStorage +=  msg + '\n';
-			console.log(msg);
+			//console.log(msg);
 			break;
 		default: console.log(msg);
 	}
@@ -32,7 +35,6 @@ var log = function() {
 	}
 };
 
-
 var init = function () {
 	var path = './sdk/sdkv1.js';
 	delete require.cache[require.resolve(path)];
@@ -44,8 +46,17 @@ var init = function () {
 };
 
 var Thread = function(options) {
-	var that = this;
-	that.id = options.threadId;
+	this.id = options.threadId;
+	this.numberOfTaksExecuted = 0;
+
+    var that = this;
+
+	memwatch.on('leak', function(info) { 
+		console.log("======" + options.threadId + "======");
+		console.dir(info);
+		console.log("============");
+		that.terminate = true;
+	 });
 };
 
 var sendErrorResponse = function(error, messageId) {
@@ -80,37 +91,50 @@ var sendSuccesResponse = function(response, messageId) {
 
 var timerMap = {};
 Thread.prototype.execute = function(message) {
+
 	logStorage = '';
 	timerMap[message.id] = new Date().getTime();
 	this.currentlyExecuting = true;
 	//debugLog('Thread #' + this.id + '> Executing client code...');
 
-	console.log('Thread #' + this.id + '> Executing client code...');
+	//console.log('Thread #' + this.id + '> Executing client code...');
 
-	console.log("Executing " + message.id);
-
-	var ctx = this.setContext(message);
+	this.setContext(message);
 
 	try { vm.createScript(message.file, './' + message.cf.fn + '.vm'); } catch(e) { sendErrorResponse({code: '400', message: e.message }, message.id); return; }
 	
 	var serverDomain = require('domain').create();
-	
+	var that = this;
 	serverDomain.on('error', function(e) {
-	  sendErrorResponse({code: 400, message: e.message }, message.id);
-	  serverDomain.dispose();
+	    sendErrorResponse({code: 400, message: e.message }, message.id);
+	    serverDomain.dispose();
 	});
 
 	var script = message.file + '\n\n';
 	script = script + 'Appacitive.Cloud.execute("' + message.cf.fn + '", { request: request, response: response });'
 
 	serverDomain.run(function() {
-		posix.setrlimit('cpu', { soft: 2 });
-		try { vm.runInNewContext(script, ctx, './' + message.cf.fn + '.vm'); } catch(e) { sendErrorResponse({code: '400', message: e.message }, message.id); }
+		posix.setrlimit('cpu', { soft: 3 });
+		try { 
+			vm.runInNewContext(script, that.ctx, './' + message.cf.fn + '.vm'); 
+		} catch(e) { 
+			sendErrorResponse({code: '400', message: e.message }, message.id); 
+		}
+		
+		/*try { 
+			that.ctx.run(script, './' + message.cf.fn + '.vm'); 
+		} catch(e) { 
+			if (that.ctx) { 
+				that.ctx.dispose();
+				that.ctx = null;
+			}
+			sendErrorResponse({code: '400', message: e.message }, message.id); 
+		}*/
 	});
 };
 
 Thread.prototype.setContext = function(message) {
-	var ctx = new vm.createContext({
+	var ctx = vm.createContext({
 		console: { log: log, dir: console.dir },
 		Appacitive : init()
 	});
@@ -123,13 +147,16 @@ Thread.prototype.setContext = function(message) {
 
 	ctx.request = {}; ctx.response = {};
 	
+    var that = this;
+
     ctx.response.error = function(msg) { 
       	msg = msg || "Error";
       	try { 
       		if (typeof msg == 'object') {
       	 		msg = JSON.stringify(msg); 
   	 		}
-      	} catch(e){}
+      	} catch(e) {}
+
       	sendErrorResponse({ code: 9200, message: msg }, message.id);
       	return;
     };
@@ -162,10 +189,11 @@ Thread.prototype.setApiContext = function(message, ctx) {
 };
 
 Thread.prototype.onHandlerCompleted = function(messageId, response) {
+	if (this.ctx) this.ctx = null;
 	posix.setrlimit('cpu', { soft: null });
 	
 	//console.log('Thread #' + this.id + '> Done executing');
-	response.timeTaken = timerMap[messageId];
+	response.data["timeTaken"] = new Date().getTime() - timerMap[messageId];
 	delete timerMap[messageId];
 	process.send({
 		type: messageCodes.EXECUTION_COMPLETED,
@@ -186,6 +214,17 @@ thread.messageProcessor = new MessageProcessor(thread);
 thread.messageProcessor.register(messageCodes.NEW_MESSAGE_IN_QUEUE, function(message) {
 	//console.log('Thread #' + this.id + '> Got notification of new work item.');
 	if (this.currentlyExecuting) return;
+
+	if (this.terminate) {
+		if (!this.terminateSend) {
+			process.send({
+				type: messageCodes.TERMINATE_THREAD,
+				threadId: this.id
+			});
+			this.terminateSend = true;
+		}
+		return;
+	}
 	//console.log('Thread #' + this.id + '> Requesting work from processor.');
 	process.send({
 		type: messageCodes.REQUEST_FOR_MESSAGE,

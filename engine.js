@@ -44,4 +44,27 @@ Engine.prototype.getLogs = function() {
 	});
 };
 
+Engine.prototype.getMessages = function() {
+	return processorList.map(function (processor) {
+		return {
+			deploymentId: processor.deploymentId,
+			stats: processor.processor.getMessages(),
+			buffered: processor.processor.messageBuffer,
+			processing: processor.processor.processing,
+			lastThreadId: processor.processor.threads.map(function(thread) {
+				return thread._threadId;
+			})
+		};
+	});
+};
+
+Engine.prototype.flush = function() {
+	return processorList.map(function (processor) {
+		processor.processor.flush();
+		return {
+			deploymentId: processor.deploymentId
+		};
+	});
+};
+
 module.exports = Engine;

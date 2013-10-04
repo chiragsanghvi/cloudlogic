@@ -10,6 +10,8 @@ var successful = 0;
 var aks = ["7/EGQ0lZjfI3UhT/rgaNoZQIbEWB85DPmmeE1LMM0U8=", "zF5qR4Jic6q8A7p+RyiqPAtZwmGoZ5sTHunGn2tqps8=", "VveJOI9mWAFMquRbahagTvV4PnNP984EziPFCbcqNxs="];
 var pId = ["38176956369469923", "38177050825196170", "38177001963651717"];
 
+http.globalAgent.maxSockets = 30;
+
 var makeRequest = function(v, name, reqNo) {
   var req = {
     "m": "POST",
@@ -18,15 +20,18 @@ var makeRequest = function(v, name, reqNo) {
   };
 
   var options = {
-    hostname: 'localhost',
+    //hostname: 'cloudlogic.cloudapp.net',
+      hostname: 'localhost',
+      port:8082,
     path: '/apis/' + name,
     method: 'POST',
-    port: 8082,
     headers : {
       'Content-Type' : 'application/json',
       'accept': '*/*'
     }
   };
+
+
 
   req.b.id = pId.shift();
   pId.push(req.b.id);
@@ -34,7 +39,9 @@ var makeRequest = function(v, name, reqNo) {
   req.ak = aks.shift();
   aks.push(req.ak);
 
-  console.log("name: " + name + " id: " + reqNo);
+  req.transactionid = new Date().getTime()  + "" + reqNo;
+
+  console.log("name: " + name + " id: " + reqNo );
 
   options.data = JSON.stringify(req);
 
@@ -47,6 +54,7 @@ var makeRequest = function(v, name, reqNo) {
     });
 
     res.on('end', function() {
+
       noOfrequests++;
       var t = new Date().getTime() - startTime;
       if (noOfrequests == 1000 || noOfrequests > 990)
@@ -83,7 +91,7 @@ process.on('exit', function() {
 });
 
 var reqNo = 1;
-var names = ["code","get","error","while","code","invalid","while"];
+var names = ["code","invalid","while","error","get"];
 for (var i = 1 ; i <= 1 ; i = i + 1) {
   var version = i;
   for (var j = 1 ; j <= 10 ; j = j + 1) {

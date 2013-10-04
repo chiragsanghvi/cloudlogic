@@ -1,17 +1,43 @@
-var config = require('./config/contextConfig.js');
+var config = require('./config/contextConfig.js'); var Agent = require('agentkeepalive'); var url = require('url'); var http = require('http');
 
-var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+var keepaliveAgent = new Agent({
+  maxSockets: 30,
+  maxKeepAliveRequests: 0, // max requests per keepalive socket, default is 0, no limit.
+  maxKeepAliveTime: 10000 // keepalive for 10 seconds
+});
 
 var send = function(request) {
-    var xhr = new XMLHttpRequest();
+    var reqUrl = url.parse(request.url);
 
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4) {
-            if ((this.status >= 200 && this.status < 300) || this.status == 304) {
-                var response = this.responseText;
+    var options = {
+       hostname: reqUrl.host,
+       path: reqUrl.path,
+       method: 'GET',
+       headers : {
+         'accept': '*/*'
+       },
+       agent: keepaliveAgent
+    };
+
+    for(var x in request.headers)
+        options.headers[x] = request.headers[x];
+
+    var req = http.request(options, function(res) {
+
+        res.setEncoding('utf8');
+
+        var receivedData = '';
+
+        res.on('data', function(d) {
+           receivedData += d;
+        });
+
+        res.on('end', function() {
+           if ((res.statusCode >= 200 && res.statusCode < 300) || res.statusCode == 304) {
+                var response = receivedData;
                 try {
-                    var contentType = this.getResponseHeader('content-type') || this.getResponseHeader('Content-Type');
-                    if (contentType.toLowerCase() == 'application/json' ||  contentType.toLowerCase() == 'application/javascript' || contentType.toLowerCase() == 'application/json; charset=utf-8' || contentType.toLowerCase() == 'application/json; charset=utf-8;') { 
+                    var contentType = res.headers['Content-Type'] || res.headers['content-type'];
+                    if (contentType.toLowerCase() == 'application/json' ||  contentType.toLowerCase() == 'application/javascript' || contentType.toLowerCase() == 'application/json; charset=utf-8;') {
                         var jData = response;
                         if (jData[0] != "{") {
                             jData = jData.substr(1, jData.length - 1);
@@ -19,22 +45,21 @@ var send = function(request) {
                         response = JSON.parse(jData);
                     }
                     request.onSuccess(response, this);
-                } catch(e) {}
-                
+                } catch(e) {
+                  request.onSuccess(receivedData, this);
+                }
             } else {
-                request.onError({code: this.status , message: this.statusText }, this);
+                request.onError({code: res.statusCode , message: this.statusText }, this);
             }
-        }
-    };
-    xhr.open(request.method, request.url, true);
+        });
 
-    for(var x in request.headers) 
-        xhr.setRequestHeader(x, request.headers[x]);
+    });
 
-    xhr.setRequestHeader('User-Agent', 'Appacitive-CloudCode'); 
+    req.end();
 
-    xhr.send();
-    return xhr;
+    req.on('error', function(err) {
+      request.onError({ code: err.code, message: err.message }, req);
+    });
 
 };
 
@@ -63,10 +88,10 @@ exports.getContext = function(req, res, onSuccess, next) {
     var cb = function(response) {
         if (response && response.status && response.status.code >= '200' && response.status.code < '300') {
             response.id = response.status.referenceid;
-            
+
             if (req.body['ak']) response['ak'] = req.body['ak'];
             else response['as'] = req.body['as'];
-            
+
             response['e'] = req.body['e'];
             response['ut'] = req.body['ut'];
             response.cf.fn = req.params.name;
@@ -79,8 +104,7 @@ exports.getContext = function(req, res, onSuccess, next) {
         }
     };
 
-    /*
-    cb({
+    /*cb({
         status: {
             code: '200',
             referenceid: req.body["transactionid"]
@@ -88,10 +112,10 @@ exports.getContext = function(req, res, onSuccess, next) {
         acid:'36802269955621123',
         apid: '36802348064047365',
         //dpid: '36802353201021280',
-        dpid: req.body["dpid"],
+        dpid: req.body["b"]["id"],
         cf: {
             n: 'apis',
-            v: 'JPgFm0kBpJdCFAAdM0Li7KVJLZ_HhzOT',
+            v: 'WK_mMEjesryxIFY5HIB27tW2T9hgkcoE',
             fn: req.params.name
         },
         u: null
@@ -116,6 +140,7 @@ exports.getContext = function(req, res, onSuccess, next) {
         }
     };
     if (req.body['ut']) ctxReq.headers['appacitive-user-auth'] = req.body['ut'];
-    
+
     send(ctxReq);
 };
+

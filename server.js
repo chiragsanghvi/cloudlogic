@@ -43,7 +43,8 @@ var getHandler = require('./getHandler.js').getHandler;
 var Engine = require('./engine.js');
 
 server.pre(function(req, res, next) {
-	if (req.headers["content-type"] == 'text/plain') req.headers["content-type"] = 'application/json';
+	//if (req.headers["content-type"] == 'text/plain') req.headers["content-type"] = 'application/json';
+	req.headers["content-type"] = 'application/json'
 	next();
 });
 
@@ -79,28 +80,60 @@ util.inherits(InvalidHandlerError, restify.RestError);
 }));*/
 
 var engine = new Engine();
+var noOfPendingRequests = 0;;
+
+/*server.get("/loaderio-02c74db7ffc3daa187c9d2ec9ef620d8/", function(req, res, next) {
+   res.send("loaderio-02c74db7ffc3daa187c9d2ec9ef620d8");
+});*/
+
+
+//server.get(/\/?.*/, restify.serveStatic({
+  //directory: './loader'
+//}));
+
+server.get('/stats/', function (req, res, next) {
+	res.send(engine.getStats());
+});
+
+
+server.get('/messages/', function (req, res, next) {
+	res.send(engine.getMessages());
+});
+
+server.get('/flush/', function (req, res, next) {
+	engine.flush();	
+	res.send({});
+});
+
 
 server.post(config.path + 'apis/:name', function (req, res, next) {
+	console.log(++noOfPendingRequests);
+
+	var startTime = new Date().getTime();
+
 	req.type = 'apis';
 	
 	// get context
 	context.getContext(req, res, function(ctx) {
-		
+
 		ctx.timeoutInterval = 15000;
 		
-		var startTime = new Date().getTime();
+		var contextTime = new Date().getTime();
 
 		//get handler
 		getHandler(ctx, function() {
+			var handlerTime = new Date().getTime();
 
 			ctx.b = req.body['b'];
 			ctx.h = req.headers;
 			ctx.q = req.query;
 
 			engine.process(ctx, function(resp) {
-				
-				resp.data.status.totalTime = new Date().getTime() - startTime;
 
+				resp.data.status.totalTime = new Date().getTime() - startTime;
+				resp.data.status.contextTime = contextTime - startTime;
+				resp.data.status.handlerTime = handlerTime - contextTime;
+				resp.data.status.executionTime = new Date().getTime() - handlerTime;
 				res.send(resp.data);
 				
 				/* process.send({ 
@@ -112,6 +145,9 @@ server.post(config.path + 'apis/:name', function (req, res, next) {
 				}); */
 
 				ctx = null;
+				resp = null;
+				console.log(--noOfPendingRequests);
+				//console.log(server.server.connections + " no of connections");
 			});
 			
 		}, function(message) {

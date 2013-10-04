@@ -9,5 +9,6 @@ module.exports = {
 	// messages raised by the threads
 	PROCESSED_MESSAGE_SUCCESSFULLY: 'PMS',
 	REQUEST_FOR_MESSAGE: 'RFM',
-	EXECUTION_COMPLETED: 'ECS'
+	EXECUTION_COMPLETED: 'ECS',
+	TERMINATE_THREAD: 'TER'
 };

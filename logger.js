@@ -12,10 +12,10 @@ exports.log = function(message, level) {
 	if (!level) level = 'info';
 	switch (level) {
 		case 'info': logger.log('info', message); 
-					 console.log(message);
+					 //console.log(message);
 					 break;
 	    case 'debug': logger.log('debug', message); 
-	    			 console.log(message);
+	    			 //console.log(message);
 					 break;
 		case 'warn': logger.log('warn', message);
 		             console.log(message);
