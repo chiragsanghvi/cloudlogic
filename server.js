@@ -91,16 +91,16 @@ var noOfPendingRequests = 0;;
   //directory: './loader'
 //}));
 
-server.get('/stats/', function (req, res, next) {
+server.get(config.path + 'stats/', function (req, res, next) {
 	res.send(engine.getStats());
 });
 
 
-server.get('/messages/', function (req, res, next) {
+server.get(config.path + 'messages/', function (req, res, next) {
 	res.send(engine.getMessages());
 });
 
-server.get('/flush/', function (req, res, next) {
+server.get(config.path + 'flush/', function (req, res, next) {
 	engine.flush();	
 	res.send({});
 });
