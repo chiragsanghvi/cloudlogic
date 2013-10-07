@@ -91,10 +91,10 @@ process.on('exit', function() {
 });
 
 var reqNo = 1;
-var names = ["code","get","error"];
+var names = ["while"];
 for (var i = 1 ; i <= 1 ; i = i + 1) {
   var version = i;
-  for (var j = 1 ; j <= 10 ; j = j + 1) {
+  for (var j = 1 ; j <= 1 ; j = j + 1) {
     setTimeout(function() {
       console.log("========Executing sequence " + (reqNo/10) + "======")
       for (var k = 1 ; k <= 10; k = k + 1) {

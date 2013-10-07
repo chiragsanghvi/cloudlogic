@@ -31,43 +31,14 @@ var Processor = function(options) {
 	this.fileVersion = '';
 	this.processing = {};
 
+	this.idleThreads = [];
+
 	// message processing from threads
 	this.messageProcessor = new MessageProcessor(this);
 
 	// Message handlers :
 
-	// 1. to respond to requests for messages from threads
-	this.messageProcessor.register(messageCodes.REQUEST_FOR_MESSAGE, function (message) {
-		
-		log('Processor #' + this.id + '> Received request for message from thread #' + message.threadId + ', ' + this.messageBuffer.length + ' messages in queue', 'debug');
-		if (this.messageBuffer.length === 0) return;
-		var thread = this.threads.filter(function (thread) {
-			return thread._threadId == message.threadId;
-		})[0];
-		
-		if (this.messageThreads[message.threadId] || !thread.connected) {
-			return;
-		}
-
-		var messageToSend = this.messageBuffer.pop();
-
-		this.stats.processing += 1;
-		this.stats.waitingForDispatch = this.stats.waitingForDispatch - 1;
-		
-		this.messageThreads[message.threadId] = messageToSend;
-		
-		this.processing[messageToSend.id] =  message.threadId;
-
-		//send message to thread for execution
-		thread.send(messageToSend);
-
-		//Setup timeout handling
-		this.setupPinging(thread, message.threadId, messageToSend.timeoutInterval);
-
-        log('Processor> Served request for message, ' + this.messageBuffer.length + ' messages in queue', 'debug');
-	});
-
-	// 2. to respond to messages from threads signifying completion of execution
+	// 1. to respond to messages from threads signifying completion of execution
 	this.messageProcessor.register(messageCodes.EXECUTION_COMPLETED, function (message) {
 		log('Processor> Some thread got done with execution, there are ' + this.messageBuffer.length + ' messages in queue.', 'debug');
 		try { 
@@ -76,11 +47,18 @@ var Processor = function(options) {
 			delete this.messageThreads[message.threadId]; 
 		} catch(e) {}
 		
+
+		var filterDelegate = function (thread) {
+			return thread._threadId == message.threadId;
+		};
+
+		var cp = this.threads.filter(filterDelegate);
+		if (cp.length > 0) this.idleThreads.push(cp[0]);
 		this.executeCallbacks(message.messageId, message.response);
 		this.flush();
 	});
 
-	//3 to respond to termination requests from threads
+	//2. to respond to termination requests from threads
 	this.messageProcessor.register(messageCodes.TERMINATE_THREAD, function(message){
 		console.log("Processor> Child process termination request");
 		this.terminateThread(message.threadId);
@@ -123,12 +101,6 @@ Processor.prototype.process = function(message, callback) {
 	log('Processor #' + this.id + '> New work available.', 'debug');
 	this.enqueue(message);
 	this.registerCallback(message.id, callback);
-	
-	//create a thread if numThreads is less than total threads
-	if (this.stats.numThreads == 0 || ((this.stats.numThreads < this.options.numThreads) && this.stats.waitingForDispatch > 1)) {
-		this.threads.push(this.startThread());
-	}
-
 	this.flush();
 };
 
@@ -150,16 +122,45 @@ Processor.prototype.executeCallbacks = function(messageId, response) {
 // broadcast to all the threads
 // there there are new messages to pick up
 Processor.prototype.flush = function() {
-	this.broadcast({
-		type: messageCodes.NEW_MESSAGE_IN_QUEUE
-	});
-};
 
-Processor.prototype.broadcast = function(message) {
-	this.threads.forEach(function (thread) {
-		if (thread.connected == true)
-		   thread.send(message);
-	});
+	if (this.messageBuffer.length === 0) return;
+	var thread = this.idleThreads.pop();
+	
+	//If no thread found 
+	if (!thread) {
+		//create a thread if numThreads is less than total threads
+		if (this.stats.numThreads < this.options.numThreads && this.stats.waitingForDispatch > 0) {
+			thread = this.startThread();
+			this.threads.push(thread);
+			this.idleThreads.push(thread);
+			this.flush();
+		}
+		return;
+	}
+
+	if (this.messageThreads[thread._threadId] || !thread.connected) {
+		this.flush();
+		return;
+	}
+
+	var messageToSend = this.messageBuffer.pop();
+
+	if (!messageToSend) return;
+
+	this.stats.processing += 1;
+	this.stats.waitingForDispatch = this.stats.waitingForDispatch - 1;
+	
+	this.messageThreads[thread._threadId] = messageToSend;
+	
+	this.processing[messageToSend.id] =  thread._threadId;
+
+	//Setup timeout handling
+	this.setupPinging(thread, thread._threadId, messageToSend.timeoutInterval);
+
+	//send message to thread for execution
+	thread.send(messageToSend);
+
+    log('Processor> Served request for message, ' + this.messageBuffer.length + ' messages in queue', 'debug');
 };
 
 Processor.prototype.enqueue = function(message) {
@@ -186,6 +187,7 @@ Processor.prototype.terminateThread = function(threadId) {
 		clearTimeout(this.pings[threadId]);
 		delete this.pings[threadId];
 		this.threads = this.threads.filter(removeDelegate);
+		this.idleThreads = this.idleThreads.filter(removeDelegate);
 		if (cp.connected == true ) {
 			cp.disconnect();
 			cp.kill("SIGQUIT");
@@ -214,7 +216,11 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 	var that = this;
 
 	thread.on('SIGXCPU', function() {
-		console.log("Got SIGXCPU SIGNAL for " + threadId);
+		console.log("In SIGXCPU");
+		var removeDelegate = function (thread) {
+			return thread._threadId != cp._threadId;
+		};
+		this.idleThreads = this.idleThreads.filter(removeDelegate);
 	});
 
 	thread.on('exit', function (code, signal) {
@@ -266,7 +272,9 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 		that.stats.numThreads -= 1;
 
 		// 3. respawn thread
-		that.threads.push(that.startThread());
+		/*var thread = that.startThread();
+		that.threads.push(thread);
+		that.idleThreads.push(thread);*/
 
 		// 4. flush the queue if requests have piled up
 		that.flush();
