@@ -5248,8 +5248,9 @@ Depends on  NOTHING
 
 	var _nodeFacebook = function() {
 
-		var Facebook = require('facebook-node-sdk');
-
+		//var Facebook = require('facebook-node-sdk');
+		var Facebook = null;
+		
 		var _accessToken = null;
 
 		this.FB = null;

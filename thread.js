@@ -1,5 +1,5 @@
 var vm = require('vm');
-var contextify = require('contextify');
+//var contextify = require('contextify');
 var MessageProcessor = require('./messageProcessor.js');
 var messageCodes = require('./ipcMessageCodes.js');
 var debugLog = require('./logger.js').log;
@@ -36,6 +36,7 @@ var log = function() {
 };
 
 var init = function () {
+
 	var path = './sdk/sdkv1.js';
 	delete require.cache[require.resolve(path)];
 

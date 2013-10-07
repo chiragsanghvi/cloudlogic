@@ -82,29 +82,27 @@ util.inherits(InvalidHandlerError, restify.RestError);
 var engine = new Engine();
 var noOfPendingRequests = 0;;
 
-/*server.get("/loaderio-02c74db7ffc3daa187c9d2ec9ef620d8/", function(req, res, next) {
+server.get("/loaderio-02c74db7ffc3daa187c9d2ec9ef620d8.txt", function(req, res, next) {
+
+   res.setHeader('content-Length', 'loaderio-02c74db7ffc3daa187c9d2ec9ef620d8');
+   res.setHeader('content-type', 'text/plain');
+
+   console.log("In loader");
    res.send("loaderio-02c74db7ffc3daa187c9d2ec9ef620d8");
-});*/
+});
 
-
-//server.get(/\/?.*/, restify.serveStatic({
-  //directory: './loader'
-//}));
-
-server.get(config.path + 'stats/', function (req, res, next) {
+server.get(config.path + 'stats', function (req, res, next) {
 	res.send(engine.getStats());
 });
 
-
-server.get(config.path + 'messages/', function (req, res, next) {
+server.get(config.path + 'messages', function (req, res, next) {
 	res.send(engine.getMessages());
 });
 
-server.get(config.path + 'flush/', function (req, res, next) {
+server.get(config.path + 'flush', function (req, res, next) {
 	engine.flush();	
 	res.send({});
 });
-
 
 server.post(config.path + 'apis/:name', function (req, res, next) {
 	console.log(++noOfPendingRequests);

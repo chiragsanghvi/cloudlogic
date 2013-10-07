@@ -212,6 +212,11 @@ Processor.prototype.setupPinging = function(thread, threadId, timeoutInterval) {
 
 Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 	var that = this;
+
+	thread.on('SIGXCPU', function() {
+		console.log("Got SIGXCPU SIGNAL for " + threadId);
+	});
+
 	thread.on('exit', function (code, signal) {
 
 		log('Processor> Child process terminated due to receipt of code ' + code + ' and signal ' + signal + '', 'warn');

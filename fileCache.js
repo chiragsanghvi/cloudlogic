@@ -97,8 +97,6 @@ var _readFile = function(filename, encoding, callback) {
 		encoding = 'UTF-8';
 	}
 
-	filename = filename.toLowerCase();
-
 	// 1.
 	// console.log(cacheData);
 	var cachedData = getData(filename);
@@ -113,7 +111,7 @@ var _readFile = function(filename, encoding, callback) {
 
 		funcs.push(function() {
 			working = true;
-			
+
             fs.exists(_basePath + filename + '.js', function (exists) {
 				if (exists) {
                     fs.readFile(_basePath + filename + '.js', encoding, function(err, data) {
@@ -165,7 +163,6 @@ var _removeFileFromDisk = function(filename) {
 };
 
 var _replaceFile = function(filename, data, version) {
-	filename = filename.toLowerCase();
 	//_removeFileFromCache(filename + 'v'  + (version - 1));
 
 	var totalFileName =  filename + '-v-' + version;
@@ -177,7 +174,6 @@ var _replaceFile = function(filename, data, version) {
 };
 
 var _writeFile = function(filename, data, version) {
-	filename = filename.toLowerCase();
 	var totalFileName =  filename + '-v-' + version;
 	try {
 		fs.exists(_basePath + totalFileName, function(exists) {
