@@ -63,6 +63,19 @@ var Processor = function(options) {
 		console.log("Processor> Child process termination request");
 		this.terminateThread(message.threadId);
 	});
+
+	this.clearUnusedThreads = function(all) {
+		if (this.idleThreads.length > 0 && (all || this.stats.waitingForDispatch == 0)) {
+			this.idleThreads.forEach(function(thread) {
+				that.terminateThread(thread._threadId);
+			});
+			this.idleThreads = [];
+		}
+	};
+
+	setInterval(function() {
+		that.clearUnusedThreads();
+	}, 120000);
 };
 
 Processor.prototype.options = defaultOptions;
@@ -173,7 +186,7 @@ Processor.prototype.registerCallback = function(messageId, callback) {
 	this.callbacks[messageId] = callback;
 };
 
-Processor.prototype.terminateThread = function(threadId) {
+Processor.prototype.terminateThread = function(threadId, isTimeout) {
 	var filterDelegate = function (thread) {
 		return thread._threadId == threadId;
 	};
@@ -190,8 +203,12 @@ Processor.prototype.terminateThread = function(threadId) {
 		this.idleThreads = this.idleThreads.filter(removeDelegate);
 		if (cp.connected == true ) {
 			cp.disconnect();
-			cp.kill("SIGQUIT");
-			log('\n\nProcessor> Detected lockup in thread #' + threadId + '.\n\n', 'warn');
+			if (isTimeout) {
+				cp.kill("SIGXCPU");
+				log('\n\nProcessor> Detected lockup in thread #' + threadId + '.\n\n', 'warn');
+			} else {
+				cp.kill("SIGQUIT");
+			}
 		}
 	} else {
 		//log('\n\nCould not find locked up thread #' + threadId +'\n\n', 'warn');
@@ -207,7 +224,7 @@ Processor.prototype.setupPinging = function(thread, threadId, timeoutInterval) {
 
 	// set up pinging
 	this.pings[threadId] = setTimeout(function() {
-		that.terminateThread(threadId);
+		that.terminateThread(threadId, true);
 	}, timeoutInterval);
 };
 
@@ -217,21 +234,21 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 
 	thread.on('exit', function (code, signal) {
 
-		log('Processor> Child process terminated due to receipt of code ' + code + ' and signal ' + signal + '', 'warn');
-
 		//if any message was being processed by thread then execute its callback
 		var message = that.messageThreads[threadId];
 		
 		if (message) {
+
+			log('Processor> Child process terminated due to receipt of code ' + code + ' and signal ' + signal + '', 'warn');
+
 			var timeOut = 0;
 			var statusMessage = 'Server Error';
 			var	statusCode = '500';
 			
 			//If the thread was aborted due to POSIX resource limitation then let the response wait for 12 seconds and then return;
-			if (signal == 'SIGXCPU') timeOut = that.options.sendTimeoutInterval;
-			
 			//If the thread was aborted due to timeout
-			if ((signal == 'SIGQUIT' || signal == 'SIGXCPU') && code == null) {
+			if (signal == 'SIGXCPU') {
+				timeOut = that.options.sendTimeoutInterval;
 				statusMessage = 'Execution timed out';
 				statusCode = '508';
 				that.timeOutFunctions[message.cf.fn]['count']++;

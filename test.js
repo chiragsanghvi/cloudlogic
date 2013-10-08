@@ -91,7 +91,7 @@ process.on('exit', function() {
 });
 
 var reqNo = 1;
-var names = ["while"];
+var names = ["while","code","get","error","invalid"];
 for (var i = 1 ; i <= 1 ; i = i + 1) {
   var version = i;
   for (var j = 1 ; j <= 10 ; j = j + 1) {
