@@ -10,7 +10,7 @@ var successful = 0;
 var aks = ["7/EGQ0lZjfI3UhT/rgaNoZQIbEWB85DPmmeE1LMM0U8=", "zF5qR4Jic6q8A7p+RyiqPAtZwmGoZ5sTHunGn2tqps8=", "VveJOI9mWAFMquRbahagTvV4PnNP984EziPFCbcqNxs="];
 var pId = ["38176956369469923", "38177050825196170", "38177001963651717"];
 
-http.globalAgent.maxSockets = 30;
+http.globalAgent.maxSockets = 100;
 
 var makeRequest = function(v, name, reqNo) {
   var req = {
@@ -94,7 +94,7 @@ var reqNo = 1;
 var names = ["while"];
 for (var i = 1 ; i <= 1 ; i = i + 1) {
   var version = i;
-  for (var j = 1 ; j <= 1 ; j = j + 1) {
+  for (var j = 1 ; j <= 10 ; j = j + 1) {
     setTimeout(function() {
       console.log("========Executing sequence " + (reqNo/10) + "======")
       for (var k = 1 ; k <= 10; k = k + 1) {
