@@ -66,16 +66,18 @@ var Processor = function(options) {
 
 	this.clearUnusedThreads = function(all) {
 		if (this.idleThreads.length > 0 && (all || this.stats.waitingForDispatch == 0)) {
+			var count = all ? this.idleThreads.length : this.idleThreads.length - 1;
 			this.idleThreads.forEach(function(thread) {
-				that.terminateThread(thread._threadId);
+				if (--count >= 0) {
+					that.terminateThread(thread._threadId);
+				}
 			});
-			this.idleThreads = [];
 		}
 	};
 
 	setInterval(function() {
 		that.clearUnusedThreads();
-	}, 120000);
+	}, 3000);
 };
 
 Processor.prototype.options = defaultOptions;
@@ -207,6 +209,7 @@ Processor.prototype.terminateThread = function(threadId, isTimeout) {
 				cp.kill("SIGXCPU");
 				log('\n\nProcessor> Detected lockup in thread #' + threadId + '.\n\n', 'warn');
 			} else {
+				log('\n\nProcessor> Cleaning idle thread #' + threadId, 'warn');
 				cp.kill("SIGQUIT");
 			}
 		}
