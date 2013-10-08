@@ -1,0 +1,22 @@
+{
+  "name": "cloudcode",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "server.js",
+  "engines": [
+    "node >= 0.8.16"
+  ],
+  "dependencies": {
+    "xmlhttprequest": "1.x",
+    "facebook-node-sdk": "0.2",
+    "posix": "1.0.x",
+    "aws-sdk": "1.7.x",
+    "restify": "2.x",
+    "winston": "0.7.x",
+    "memwatch": "0.2.x",
+    "agentkeepalive": "0.1.x"
+  }
+}
