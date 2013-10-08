@@ -27,12 +27,21 @@ Engine.prototype.process = function(message, callback) {
 };
 
 Engine.prototype.getStats = function() {
-	return processorList.map(function (processor) {
-		return {
+
+	var stats = { processing: 0, waitingForDispatch: 0 , numThreads: 0, numConnections: 0 };
+	stats.list = processorList.map(function (processor) {
+		
+		var stat  = {
 			deploymentId: processor.deploymentId,
 			stats: processor.processor.getStats()
 		};
+		stats.processing += stat.stats.processing;
+		stats.waitingForDispatch += stat.stats.waitingForDispatch;
+		stats.numThreads += stat.stats.numThreads;
+
+		return stat;
 	});
+	return stats;
 };
 
 Engine.prototype.getLogs = function() {

@@ -10,7 +10,7 @@ var successful = 0;
 var aks = ["7/EGQ0lZjfI3UhT/rgaNoZQIbEWB85DPmmeE1LMM0U8=", "zF5qR4Jic6q8A7p+RyiqPAtZwmGoZ5sTHunGn2tqps8=", "VveJOI9mWAFMquRbahagTvV4PnNP984EziPFCbcqNxs="];
 var pId = ["38176956369469923", "38177050825196170", "38177001963651717"];
 
-http.globalAgent.maxSockets = 100;
+http.globalAgent.maxSockets = 20;
 
 var makeRequest = function(v, name, reqNo) {
   var req = {

@@ -1,15 +1,13 @@
 var config = require('./config/contextConfig.js'); 
-//var Agent = require('agentkeepalive'); 
+var Agent = require('agentkeepalive'); 
 var url = require('url'); 
 var http = require('http');
 
-/*var keepaliveAgent = new Agent({
-  maxSockets: 200,
+var keepaliveAgent = new Agent({
+  maxSockets: 30,
   maxKeepAliveRequests: 0, // max requests per keepalive socket, default is 0, no limit.
   maxKeepAliveTime: 10000 // keepalive for 10 seconds
-});*/
-
-http.globalAgent.maxSockets = 100;
+});
 
 var send = function(request) {
     var reqUrl = url.parse(request.url);
@@ -20,13 +18,12 @@ var send = function(request) {
        method: 'GET',
        headers : {
          'accept': '*/*'
-       }    
+       },
+       agent: keepaliveAgent    
    };
 
     for(var x in request.headers)
         options.headers[x] = request.headers[x];
-
-    var start = new Date().getTime();
 
     var req = http.request(options, function(res) {
 
@@ -54,7 +51,6 @@ var send = function(request) {
                 } catch(e) {
                   request.onSuccess(receivedData, this);
                 }
-                console.log("Got context in " + (new Date().getTime() - start));
             } else {
                 request.onError({code: res.statusCode , message: this.statusText }, this);
             }
