@@ -60,32 +60,22 @@ var Thread = function(options) {
 	 });
 };
 
-var sendErrorResponse = function(error, messageId) {
+var sendErrorResponse = function(error, messageId, headers) {
 	var resp = {
-		data: { 
-			status : {
-				code: error.code, 
-				message: error.message,
-				referenceid: messageId
-			},
-			body : null
-		},
-		log: logStorage
+		data: error.body || '',
+		code: error.statusCode, 
+		log: logStorage,
+		headers: error.headers
 	};
 	thread.onHandlerCompleted(messageId, resp);
 };
 
 var sendSuccesResponse = function(response, messageId) {
 	var resp = {
-		data: { 
-			status : {
-				code: '200', 
-				message: 'successful',
-				referenceid: messageId
-			},
-			body : response
-		},
-		log: logStorage
+		data: response.body || '',
+		code: response.statusCode, 
+		log: logStorage,
+		headers: response.headers
 	};
 	thread.onHandlerCompleted(messageId, resp);
 };
@@ -102,12 +92,12 @@ Thread.prototype.execute = function(message) {
 
 	this.setContext(message);
 
-	try { vm.createScript(message.file, './' + message.cf.fn + '.vm'); } catch(e) { sendErrorResponse({code: '400', message: e.message }, message.id); return; }
+	try { vm.createScript(message.file, './' + message.cf.fn + '.vm'); } catch(e) { sendErrorResponse({ statusCode: '500', body: e.message, headers: {}}, message.id); return; }
 	
 	var serverDomain = require('domain').create();
 	var that = this;
 	serverDomain.on('error', function(e) {
-	    sendErrorResponse({code: 400, message: e.message }, message.id);
+	    sendErrorResponse({statusCode: '500', body: e.message, headers: {}}, message.id);
 	    serverDomain.dispose();
 	});
 
@@ -119,18 +109,8 @@ Thread.prototype.execute = function(message) {
 		try { 
 			vm.runInNewContext(script, that.ctx, './' + message.cf.fn + '.vm'); 
 		} catch(e) { 
-			sendErrorResponse({code: '400', message: e.message }, message.id); 
+			sendErrorResponse({ statusCode: '500', body: e.message, headers: {}}, message.id); 
 		}
-		
-		/*try { 
-			that.ctx.run(script, './' + message.cf.fn + '.vm'); 
-		} catch(e) { 
-			if (that.ctx) { 
-				that.ctx.dispose();
-				that.ctx = null;
-			}
-			sendErrorResponse({code: '400', message: e.message }, message.id); 
-		}*/
 	});
 };
 
@@ -152,13 +132,14 @@ Thread.prototype.setContext = function(message) {
 
     ctx.response.error = function(msg) { 
       	msg = msg || "Error";
-      	try { 
-      		if (typeof msg == 'object') {
-      	 		msg = JSON.stringify(msg); 
-  	 		}
-      	} catch(e) {}
 
-      	sendErrorResponse({ code: 9200, message: msg }, message.id);
+      	var err = {
+      		statusCode: ctx.response.statusCode || 500,
+        	body: msg || '',
+        	headers: ctx.response.headers || {}
+        };
+
+      	sendErrorResponse(err, message.id);
       	return;
     };
 	
@@ -168,19 +149,24 @@ Thread.prototype.setContext = function(message) {
 };
 
 Thread.prototype.setApiContext = function(message, ctx) {
-    ctx.response.success = function (response) {
+	ctx.response.headers = {};
+	ctx.response.success = function (response) {
     	response = response || '';
     	var resp = {};
-    	try {
+    	/*try {
         	JSON.stringify(response);
         	resp = response;
         } catch (e) { 
         	debugLog("Error encountered while stringifying result for transcationid " + message.id + " : ", e.message);
         	ctx.response.error("Error encountered while stringifying result : " + e.message);
         	return;
-        }
-        resp.body = response.body;
-        resp.headers = response.headers || [];
+        }*/
+        var resp = {
+        	statusCode: ctx.response.statusCode || 200,
+        	body: response || '',
+       		headers: ctx.response.headers || {}
+       	};
+
         sendSuccesResponse(resp, message.id);
         return;
     };
@@ -194,7 +180,7 @@ Thread.prototype.onHandlerCompleted = function(messageId, response) {
 	posix.setrlimit('cpu', { soft: null });
 	
 	//console.log('Thread #' + this.id + '> Done executing');
-	response.data["timeTaken"] = new Date().getTime() - timerMap[messageId];
+	response["timeTaken"] = new Date().getTime() - timerMap[messageId];
 	delete timerMap[messageId];
 	process.send({
 		type: messageCodes.EXECUTION_COMPLETED,

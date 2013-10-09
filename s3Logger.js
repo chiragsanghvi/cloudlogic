@@ -43,7 +43,6 @@ this.messageProcessor.register(messageCodes.NEW_MESSAGE_FOR_LOG, function(messag
 	
 	// upload message to s3 as log  
 	try {
-		console.log(getKey(message));
 		var params = { Bucket: AWSConfig.baseBucket, Key: getKey(message), Body: getBody(message) };
 		s3.putObject(params, function(err, data) {
 			if (err) {

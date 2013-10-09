@@ -5,7 +5,7 @@ var messageCodes = require('./ipcMessageCodes.js');
 /* custom error message for get handler */
 function InvalidHandlerError(code, status) {
   restify.RestError.call(this, {
-    restCode: 200,
+    restCode: code,
     statusCode: code,
     constructorOpt: InvalidHandlerError,
     body: {
@@ -18,6 +18,17 @@ function InvalidHandlerError(code, status) {
 };
 
 util.inherits(InvalidHandlerError, restify.RestError);
+
+var getResponseCode = function(code) {
+	switch(code) {
+		case '200': return 200;
+		case '400': return 400;
+		case '404': return 404;
+		case '500': return 500;
+		case '508': return 503;
+	};
+	return code;
+};
 
 module.exports = function(port, engine) {
 
@@ -48,11 +59,8 @@ module.exports = function(port, engine) {
 	                		if (body.body.code.toLowerCase() == 'InternalError') body.body.message = 'Server Error';
 
 		                    body = {
-		                        body: null,
-		                        status: {
-		                        	code: body.body.code,
-		                        	msg: body.body.message
-		                    	}
+	                        	code: body.body.code,
+	                        	msg: body.body.message
 		                    };
 		                }
 	                } 
@@ -128,10 +136,23 @@ module.exports = function(port, engine) {
 
 				engine.process(ctx, function(resp) {
 
-					resp.data.status.totalTime = new Date().getTime() - startTime;
-					resp.data.status.contextTime = contextTime - startTime;
-					resp.data.status.handlerTime = handlerTime - contextTime;
-					resp.data.status.executionTime = new Date().getTime() - handlerTime;
+					/*resp.data.totalTime = new Date().getTime() - startTime;
+					resp.data.contextTime = contextTime - startTime;
+					resp.data.handlerTime = handlerTime - contextTime;
+					resp.data.executionTime = new Date().getTime() - handlerTime;*/
+
+					try {
+						if (resp.headers) {
+							if (typeof resp.headers == 'object') {
+								for (var key in resp.headers) {
+									res.setHeader(key, resp.headers[key]);
+								}
+							}
+						}
+					} catch(e) {}
+
+					res.statusCode = getResponseCode(resp.code);
+
 					res.send(resp.data);
 					
 					delete ctx.file ;
@@ -139,7 +160,7 @@ module.exports = function(port, engine) {
 					try {
 	       				s3Logger.send({ 
 							type: messageCodes.NEW_MESSAGE_FOR_LOG,
-							info: (resp.data.status.code == '200') ? 'S' : 'E',
+							info: ((resp.code >= 200 && resp.code < 300) || resp.code == 304) ? 'S' : 'E',
 							log: resp.log, 
 							resp: resp.data,
 							ctx: ctx,
@@ -155,7 +176,7 @@ module.exports = function(port, engine) {
 				
 			}, function(message) {
 				// call next with an error saying cannot find handler
-				return next(new InvalidHandlerError('200', { referenceid: ctx.id, code: '404', message: message }));
+				return next(new InvalidHandlerError('404', { referenceid: ctx.id, code: '404', message: message }));
 			});
 			
 		}, next);

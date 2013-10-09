@@ -72,7 +72,7 @@ var util = require('util');
 
 function InvalidCredentialsError(code, status) {
   restify.RestError.call(this, {
-    restCode: 200,
+    restCode: code,
     statusCode: code,
     constructorOpt: InvalidCredentialsError,
     body: {
@@ -102,8 +102,8 @@ exports.getContext = function(req, res, onSuccess, next) {
             delete response.status;
             onSuccess(response, this);
         } else {
-            response = response || { status: { code: '400', message: 'server not found' } };
-            next(new InvalidCredentialsError('200', response.status));
+            response = response || { status: { code: '404', message: 'Server not found' } };
+            next(new InvalidCredentialsError(response.status.code, response.status));
         }
     };
 

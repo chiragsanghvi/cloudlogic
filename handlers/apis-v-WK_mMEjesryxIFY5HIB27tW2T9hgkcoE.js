@@ -29,6 +29,8 @@ Appacitive.Cloud.declare("while", function(req,res) {
 
 Appacitive.Cloud.declare("error", function(req,res) {
 	console.log("In cloud error");
+	response.statusCode = 405;
+	response.headers["custom"] = "custom header";
 	response.error("I am an error");
 });
 

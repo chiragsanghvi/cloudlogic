@@ -3,7 +3,7 @@ var util = require('util');
 
 function InvalidRequestError(message, code) {
   restify.RestError.call(this, {
-    restCode: 200,
+    restCode: code,
     statusCode: code,
     constructorOpt: InvalidRequestError,
     body: {

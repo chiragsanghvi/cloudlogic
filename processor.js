@@ -93,15 +93,10 @@ Processor.prototype.process = function(message, callback) {
 		if (this.timeOutFunctions[message.cf.fn]) {
 			if (this.timeOutFunctions[message.cf.fn].count >= this.options.timeoutCounts) {
 				setTimeout(function() {
-					callback({ 
-							data: { 
-							status : {
-								code: "508",
-								message: "Malicious code block detected, causing timeouts. Please verify your code and redeploy",
-								referenceid: message.id
-							},
-							body : null
-						},
+					callback({
+						headers: {},
+						data: "Malicious code block detected, causing timeouts. Please verify your code and redeploy",
+						code: "508",
 						log: new Date().toISOString() + " => " + "Malicious code block detected, causing timeouts. Please verify your code and redeploy"
 					});
 				}, 0);
@@ -260,14 +255,9 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 			setTimeout(function() {
 				console.log("=========sending time out response for " + message.id + "=========");
 				that.executeCallbacks(message.id, { 
-					data: { 
-						status : {
-							code: statusCode,
-							message: statusMessage,
-							referenceid: message.id
-						},
-						body : null
-					},
+					headers: {},
+					data: statusMessage,
+					code: statusCode,
 					log: new Date().toISOString() + " => " + message
 				});
 			}, timeOut);
