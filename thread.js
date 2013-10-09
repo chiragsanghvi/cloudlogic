@@ -180,7 +180,6 @@ Thread.prototype.onHandlerCompleted = function(messageId, response) {
 	posix.setrlimit('cpu', { soft: null });
 	
 	//console.log('Thread #' + this.id + '> Done executing');
-	response["timeTaken"] = new Date().getTime() - timerMap[messageId];
 	delete timerMap[messageId];
 	process.send({
 		type: messageCodes.EXECUTION_COMPLETED,
