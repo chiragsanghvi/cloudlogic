@@ -72,6 +72,12 @@ module.exports = function(port, engine) {
 	            res.setHeader( 'Content-Length', Buffer.byteLength( data ) );
 
 	            return data;
+	        },
+	        'text/html': function(req, res, body) {
+	            return body;
+	        },
+	        'text/plain': function(req, res, body) {
+	            return body;
 	        }
 	    }
 	});

@@ -5,15 +5,15 @@ Appacitive.Cloud.declare("code", function(req,res) {
 	var start = new Date().getTime();
 
 	var profile = new Appacitive.Article('profile');
-	profile.addTag(request.body.tag);
-	profile.set('name', request.body.name);
+	profile.addTag(req.body.tag);
+	profile.set('name', req.body.name);
 
 	
 	profile.save(function () {
 		profile.set('totaltime', new Date().getTime() - start);
-	    response.success(profile.toJSON());
+	    res.success(profile.toJSON());
 	}, function(status) {
-		response.error(status);
+		res.error(status);
 	});
 });
 
@@ -29,9 +29,9 @@ Appacitive.Cloud.declare("while", function(req,res) {
 
 Appacitive.Cloud.declare("error", function(req,res) {
 	console.log("In cloud error");
-	response.statusCode = 405;
-	response.headers["custom"] = "custom header";
-	response.error("I am an error");
+	res.statusCode = 405;
+	res.headers["custom"] = "custom header";
+	res.error("I am an error");
 });
 
 Appacitive.Cloud.declare("get", function(req,res) {
@@ -43,15 +43,17 @@ Appacitive.Cloud.declare("get", function(req,res) {
 	var profile = new Appacitive.Article('profile');
 	profile.id(req.body.id).fetch(function() {
 		profile.set('totaltime', new Date().getTime() - start);
-	    response.success(profile.toJSON());
+	    res.success(profile.toJSON());
 	}, function(status) {
-		response.error(status);
+		res.error(status);
 	});
 });
 
-
-
-
+Appacitive.Cloud.declare("invalidbody", function(req,res) {
+	console.log("In invalidbody");
+	res.headers["content-type"] = 'text/plain';
+	res.success(JSON.stringify(req.body));
+});
 
 Appacitive.Cloud.declare("invalid", function(req,res) {
 
@@ -62,8 +64,8 @@ Appacitive.Cloud.declare("invalid", function(req,res) {
 	var profile = new Appacitive.Article('profile');
 	profile.id(req.body.id).fetch(function() {
 		profile.set('totaltime', new Date().getTime() - start);
-	    response.success(profile.toJSON());
+	    res.success(profile.toJSON());
 	}, function(status) {
-		response.error(status);
+		res.error(status);
 	});
 });
