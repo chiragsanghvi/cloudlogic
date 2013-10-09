@@ -1,5 +1,6 @@
 var restify = require('restify');
 var util = require('util');
+var messageCodes = require('./ipcMessageCodes.js');
 
 /* custom error message for get handler */
 function InvalidHandlerError(code, status) {
@@ -19,6 +20,16 @@ function InvalidHandlerError(code, status) {
 util.inherits(InvalidHandlerError, restify.RestError);
 
 module.exports = function(port, engine) {
+
+
+	//create an s3Logger child process to log output of handler to s3
+	var s3Logger = require('child_process').fork('./s3Logger.js',[],{});
+
+	//put an handler
+	s3Logger.on('exit',function () {
+		log('S3 Logger ' + s3Logger.pid + ' died', 'error');
+	    s3Logger = require('child_process').fork('./s3Logger.js',[],{});
+	});
 
 	var server = restify.createServer({
 		formatters: {
@@ -123,13 +134,20 @@ module.exports = function(port, engine) {
 					resp.data.status.executionTime = new Date().getTime() - handlerTime;
 					res.send(resp.data);
 					
-					/* process.send({ 
-						type: messageCodes.NEW_MESSAGE_FOR_LOG,
-						info: (resp.data.status.code == '200') ? 'S' : 'E',
-						id: parsedRequest.id, 
-						body: resp.log, 
-						metadata: parsedRequest.metadata
-					}); */
+					delete ctx.file ;
+
+					try {
+	       				s3Logger.send({ 
+							type: messageCodes.NEW_MESSAGE_FOR_LOG,
+							info: (resp.data.status.code == '200') ? 'S' : 'E',
+							log: resp.log, 
+							resp: resp.data,
+							ctx: ctx,
+							url: req.url
+						});
+					} catch(e) {
+						console.dir(e);
+					}
 
 					ctx = null;
 					resp = null;
@@ -154,7 +172,7 @@ module.exports = function(port, engine) {
 	server.listen(port, function () {
 	    console.log('Cloud code server listening at %s', server.url);
 	});
-
+    
 	return server;
 
 };

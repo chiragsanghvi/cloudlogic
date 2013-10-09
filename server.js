@@ -11,7 +11,6 @@ var server = new CloudCodeServer(8082, engine);
 /*
  * A watch server which will be used for housekeeping, stats polling and flushing message queue and for shuttung down the server gracefully
  */
-
 var watchServer = restify.createServer();
 watchServer.use(restify.acceptParser(server.acceptable));
 watchServer.use(restify.queryParser({ mapParams: false }));

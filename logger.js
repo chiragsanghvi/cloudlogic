@@ -8,6 +8,7 @@ var logger = new (winston.Logger)({
 	],
 	exitOnError: false
 });
+
 exports.log = function(message, level) {
 	if (!level) level = 'info';
 	switch (level) {

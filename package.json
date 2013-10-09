@@ -17,6 +17,7 @@
     "restify": "2.x",
     "winston": "0.7.x",
     "memwatch": "0.2.x",
-    "agentkeepalive": "0.1.x"
+    "agentkeepalive": "0.1.x",
+    "winston-s3": "0.x.x"
   }
 }
