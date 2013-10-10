@@ -151,20 +151,22 @@ module.exports = function(port, engine) {
 						}
 					} catch(e) {}
 
+					res.setHeader('TransactionId', ctx.id);
 					res.statusCode = getResponseCode(resp.code);
 
 					res.send(resp.data);
 					
 					delete ctx.file ;
-
+					
 					try {
 	       				s3Logger.send({ 
 							type: messageCodes.NEW_MESSAGE_FOR_LOG,
 							info: ((resp.code >= 200 && resp.code < 300) || resp.code == 304) ? 'S' : 'E',
 							log: resp.log, 
-							resp: resp.data,
 							ctx: ctx,
-							url: req.url
+							url: req.url,
+							code: resp.code,
+							timeTaken: new Date().getTime() - startTime
 						});
 					} catch(e) {
 						console.dir(e);

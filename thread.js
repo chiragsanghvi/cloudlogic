@@ -4,7 +4,7 @@ var MessageProcessor = require('./messageProcessor.js');
 var messageCodes = require('./ipcMessageCodes.js');
 var debugLog = require('./logger.js').log;
 var config = require('./config/contextConfig.js');
-var logStorage = "";
+var logStorage = [];
 var thread = {};
 var memwatch = require('memwatch');
 
@@ -17,10 +17,12 @@ var logLevels = {
 var posix = require('posix');
 
 var logMessage = function(lvl, msg) {
-	msg = new Date().toISOString() + " => " + msg;
+	if (typeof msg == 'object') {
+		try { msg = JSON.stringify(msg, undefined, 3); } catch(e){}
+	}
 	switch (lvl) {
 		case logLevels.LOG:
-			logStorage +=  msg + '\n';
+			logStorage.push({ time: new Date().toISOString(), msg:  ('' + msg) });
 			//console.log(msg);
 			break;
 		default: console.log(msg);
@@ -83,7 +85,7 @@ var sendSuccesResponse = function(response, messageId) {
 var timerMap = {};
 Thread.prototype.execute = function(message) {
 
-	logStorage = '';
+	logStorage.length = [];
 	timerMap[message.id] = new Date().getTime();
 	this.currentlyExecuting = true;
 	//debugLog('Thread #' + this.id + '> Executing client code...');

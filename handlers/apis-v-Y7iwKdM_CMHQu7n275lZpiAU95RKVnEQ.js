@@ -43,6 +43,7 @@ Appacitive.Cloud.declare("get", function(req,res) {
 	var profile = new Appacitive.Article('profile');
 	profile.id(req.body.id).fetch(function() {
 		profile.set('totaltime', new Date().getTime() - start);
+		console.log(profile.toJSON());
 	    res.success(profile.toJSON());
 	}, function(status) {
 		res.error(status);

@@ -4,7 +4,8 @@ var CloudCodeServer = require('./cloudCodeServer');
 var graceful = require('./graceful.js');
 var engine = new Engine();
 var config = require('./config/contextConfig.js');
-	
+var sDBClient = require('./simpleDBClient.js');
+
 //create an instance of server making it listen on port 8002
 var server = new CloudCodeServer(8082, engine);
 
@@ -37,6 +38,37 @@ watchServer.get(config.path + 'shutdown', function (req, res, next) {
 	console.log("\n\n\n=======Received close signal, shutting down gracefully.=======\n\n\n");
   	graceful.stop(server, 8082);
   	res.send("Closing server");
+});
+
+
+watchServer.get(config.path + 'domains', function (req, res, next) {
+	sDBClient.getDomains(function(data) {
+		res.send(data);
+	});
+});
+
+watchServer.get(config.path + 'domains/create', function (req, res, next) {
+	sDBClient.createDomain(function(data) {
+		res.send(data);
+	});
+});
+
+watchServer.get(config.path + 'domains/delete/:name', function (req, res, next) {
+	sDBClient.deleteDomain(req.params.name ,function(data) {
+		res.send(data);
+	});
+});
+
+watchServer.get(config.path + 'log/:logId', function (req, res, next) {
+	sDBClient.getLog(req.params.logId, function(data) {
+		res.send(data);
+	});
+});
+
+watchServer.get(config.path + 'logs/:dpId', function (req, res, next) {
+	sDBClient.listLogs(req.params.dpId, function(data) {
+		res.send(data);
+	});
 });
 
 watchServer.listen(8084, function () {
