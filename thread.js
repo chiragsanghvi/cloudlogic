@@ -2,7 +2,7 @@ var vm = require('vm');
 //var contextify = require('contextify');
 var MessageProcessor = require('./messageProcessor.js');
 var messageCodes = require('./ipcMessageCodes.js');
-var debugLog = require('./logger.js').log;
+//var debugLog = require('./logger.js').log;
 var config = require('./config/contextConfig.js');
 var logStorage = [];
 var thread = {};
@@ -14,6 +14,7 @@ var logLevels = {
 	WARN: 2,
 	ERROR: 3
 };
+var loadTime = 0;
 var posix = require('posix');
 
 var logMessage = function(lvl, msg) {
@@ -39,11 +40,15 @@ var log = function() {
 
 var init = function () {
 
+	loadTime = new Date().getTime();
+
 	var path = './sdk/sdkv1.js';
 	delete require.cache[require.resolve(path)];
 
 	var Appacitive = require(path);
 	delete require.cache[require.resolve(path)];
+
+	loadTime = new Date().getTime() - loadTime;
 
 	return Appacitive;
 };
@@ -181,6 +186,8 @@ Thread.prototype.onHandlerCompleted = function(messageId, response) {
 	if (this.ctx) this.ctx = null;
 	posix.setrlimit('cpu', { soft: null });
 	
+	response.headers["sdkloadtime"] = loadTime;
+
 	//console.log('Thread #' + this.id + '> Done executing');
 	delete timerMap[messageId];
 	process.send({

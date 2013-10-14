@@ -136,10 +136,12 @@ module.exports = function(port, engine) {
 
 				engine.process(ctx, function(resp) {
 
-					/*resp.data.totalTime = new Date().getTime() - startTime;
-					resp.data.contextTime = contextTime - startTime;
-					resp.data.handlerTime = handlerTime - contextTime;
-					resp.data.executionTime = new Date().getTime() - handlerTime;*/
+					if (resp.data) {
+						resp.headers["totalTime"] = new Date().getTime() - startTime;
+						resp.headers["contextTime"] = contextTime - startTime;
+						resp.headers["handlerTime"] = handlerTime - contextTime;
+						resp.headers["executionTime"] = new Date().getTime() - handlerTime;
+					}
 
 					try {
 						if (resp.headers) {

@@ -28,13 +28,19 @@ var Processor = function(options) {
 	this.callbacks = {};
 	this._lastThreadId = 0;
 	this.timeOutFunctions = {};
-	this.fileVersion = '';
+	this.fileVersion = {};
 	this.processing = {};
 
 	this.idleThreads = [];
 
 	// message processing from threads
 	this.messageProcessor = new MessageProcessor(this);
+
+	for (var i = 0; i < this.options.numThreads; i = i+1) {
+		var thrd = that.startThread();
+		that.threads.push(thrd);
+		that.idleThreads.push(thrd);
+	}
 
 	// Message handlers :
 
@@ -66,12 +72,14 @@ var Processor = function(options) {
 
 	this.clearUnusedThreads = function(all) {
 		if (this.idleThreads.length > 0 && (all || this.stats.waitingForDispatch == 0)) {
-			var count = all ? this.idleThreads.length : this.idleThreads.length - 1;
-			this.idleThreads.forEach(function(thread) {
-				if (--count >= 0) {
-					that.terminateThread(thread._threadId);
-				}
-			});
+			var count = all ? this.idleThreads.length : (this.idleThreads.length - this.options.numThreads);
+			if (count > 0) {
+				this.idleThreads.forEach(function(thread) {
+					if (--count >= 0) {
+						that.terminateThread(thread._threadId);
+					}
+				});
+			}
 		}
 	};
 
@@ -84,14 +92,14 @@ Processor.prototype.options = defaultOptions;
 
 Processor.prototype.process = function(message, callback) {
 	//Check for change in file versions and reset timeout functions
-	if (this.fileVersion != message.cf.v) {
-		this.fileVersion = message.cf.v;
-		this.timeOutFunctions = { };
-		this.timeOutFunctions[message.cf.fn] = { count: 0 } ;
+	if (this.fileVersion[message.dpid] != message.cf.v) {
+		this.fileVersion[message.dpid] = message.cf.v;
+		this.timeOutFunctions[message.dpid] = { };
+		this.timeOutFunctions[message.dpid][message.cf.fn] = { count: 0 } ;
 	} else {
 		//If the function name exists in timeoutFunctions object and its count is greater than or equal to 10
-		if (this.timeOutFunctions[message.cf.fn]) {
-			if (this.timeOutFunctions[message.cf.fn].count >= this.options.timeoutCounts) {
+		if (this.timeOutFunctions[message.dpid] && this.timeOutFunctions[message.dpid][message.cf.fn]) {
+			if (this.timeOutFunctions[message.dpid][message.cf.fn].count >= this.options.timeoutCounts) {
 				setTimeout(function() {
 					callback({
 						headers: {},
@@ -103,7 +111,8 @@ Processor.prototype.process = function(message, callback) {
 				return;
 			}
 		} else {
-			this.timeOutFunctions[message.cf.fn] = { count: 0 };
+			if (!this.timeOutFunctions[message.dpid]) this.timeOutFunctions[message.dpid] = {};
+			this.timeOutFunctions[message.dpid][message.cf.fn] = { count: 0 };
 		}
 	}
 
@@ -183,7 +192,7 @@ Processor.prototype.registerCallback = function(messageId, callback) {
 	this.callbacks[messageId] = callback;
 };
 
-Processor.prototype.terminateThread = function(threadId, isTimeout) {
+Processor.prototype.terminateThread = function(threadId, isExit) {
 	var filterDelegate = function (thread) {
 		return thread._threadId == threadId;
 	};
@@ -200,16 +209,14 @@ Processor.prototype.terminateThread = function(threadId, isTimeout) {
 		this.idleThreads = this.idleThreads.filter(removeDelegate);
 		if (cp.connected == true ) {
 			cp.disconnect();
-			if (isTimeout) {
-				cp.kill("SIGXCPU");
-				log('\n\nProcessor> Detected lockup in thread #' + threadId + '.\n\n', 'warn');
+			if (isExit) {
+				//cp.kill("SIGXCPU");
+				log('\n\nProcessor> Detected lockup or memory overflow in thread #' + threadId + '.\n\n', 'warn');
 			} else {
 				log('\n\nProcessor> Cleaning idle thread #' + threadId, 'warn');
 				cp.kill("SIGQUIT");
 			}
 		}
-	} else {
-		//log('\n\nCould not find locked up thread #' + threadId +'\n\n', 'warn');
 	}
 };
 
@@ -222,7 +229,7 @@ Processor.prototype.setupPinging = function(thread, threadId, timeoutInterval) {
 
 	// set up pinging
 	this.pings[threadId] = setTimeout(function() {
-		that.terminateThread(threadId, true);
+		that.terminateThread(threadId);
 	}, timeoutInterval);
 };
 
@@ -261,7 +268,7 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 					log: new Date().toISOString() + " => " + message
 				});
 			}, timeOut);
-			that.terminateThread(threadId);
+			that.terminateThread(threadId, true);
 			try { delete that.messageThreads[threadId] } catch(e) {}
 		}
 
@@ -274,9 +281,9 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 		that.stats.numThreads -= 1;
 
 		// 3. respawn thread
-		/*var thread = that.startThread();
+		var thread = that.startThread();
 		that.threads.push(thread);
-		that.idleThreads.push(thread);*/
+		that.idleThreads.push(thread);
 
 		// 4. flush the queue if requests have piled up
 		that.flush();
