@@ -37,9 +37,7 @@ var Processor = function(options) {
 	this.messageProcessor = new MessageProcessor(this);
 
 	for (var i = 0; i < this.options.numThreads; i = i+1) {
-		var thrd = that.startThread();
-		that.threads.push(thrd);
-		that.idleThreads.push(thrd);
+		this.startThread();
 	}
 
 	// Message handlers :
@@ -85,7 +83,7 @@ var Processor = function(options) {
 
 	setInterval(function() {
 		that.clearUnusedThreads();
-	}, 3000);
+	}, this.options.clearThreadInterval);
 };
 
 Processor.prototype.options = defaultOptions;
@@ -147,8 +145,8 @@ Processor.prototype.flush = function() {
 	
 	//If no thread found 
 	if (!thread) {
-		//create a thread if numThreads is less than total threads
-		if (this.stats.numThreads < this.options.numThreads && this.stats.waitingForDispatch > 0) {
+		//create a thread if numThreads is less than max threads
+		if (this.stats.numThreads < this.options.maxThreads && this.stats.waitingForDispatch > 0) {
 			thread = this.startThread();
 			this.threads.push(thread);
 			this.idleThreads.push(thread);
@@ -281,9 +279,7 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 		that.stats.numThreads -= 1;
 
 		// 3. respawn thread
-		var thread = that.startThread();
-		that.threads.push(thread);
-		that.idleThreads.push(thread);
+		that.startThread();
 
 		// 4. flush the queue if requests have piled up
 		that.flush();
@@ -313,6 +309,10 @@ Processor.prototype.startThread = function() {
 
 	// set up respawn
 	this.setupThreadRespawn(childProcess, options.threadId);
+
+	this.threads.push(thread);
+	this.idleThreads.push(thread);
+
 
 	return childProcess;
 };
