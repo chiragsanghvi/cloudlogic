@@ -104,13 +104,13 @@ module.exports = function(port, engine) {
 	  username: true
 	}));*/
 
-	server.get("/loaderio-02c74db7ffc3daa187c9d2ec9ef620d8.txt", function(req, res, next) {
+	server.get("/" + config.loaderIO + ".txt", function(req, res, next) {
 
-	   res.setHeader('content-Length', 'loaderio-02c74db7ffc3daa187c9d2ec9ef620d8');
+	   res.setHeader('content-Length', config.loaderIO);
 	   res.setHeader('content-type', 'text/plain');
 
 	   console.log("In loader");
-	   res.send("loaderio-02c74db7ffc3daa187c9d2ec9ef620d8");
+	   res.send(config.loaderIO);
 	});
 
 	server.post(config.path + 'apis/:name', function (req, res, next) {
@@ -174,8 +174,10 @@ module.exports = function(port, engine) {
 						console.dir(e);
 					}
 
-					ctx = null;
 					resp = null;
+					ctx = null;
+
+					return next();
 				});
 				
 			}, function(message) {

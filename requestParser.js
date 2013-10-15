@@ -25,6 +25,8 @@ module.exports = function(options) {
 	if (typeof options != "object") options = {};
 	
 	return function(req, res, next) {
+
+		if (req.method.toLowerCase() == 'get') return next();
         
 		if (req.contentType() !== 'application/json' || !req.body) {
 			next(new InvalidRequestError("Content needs to be in application/json format", '400'));

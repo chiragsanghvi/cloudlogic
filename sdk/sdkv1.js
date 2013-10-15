@@ -4,7 +4,7 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Thu Oct 10 14:20:02 IST 2013
+ * Build time 	: Tue Oct 15 13:17:47 IST 2013
  */
 
 // Add ECMA262-5 method binding if not supported natively
@@ -2359,7 +2359,7 @@ Depends on  NOTHING
 		this.prev = options.prev;
 		
 		this.returnEdge = true;
-		if (options.returnEdge != undefined || options.returnEdge != null && !options.returnEdge && !this.prev) this.returnEdge = false;
+		if ((options.returnEdge != undefined || options.returnEdge != null) && !options.returnEdge && !this.prev) this.returnEdge = false;
 		
 		this.label = '';
 		var that = this;
@@ -4918,7 +4918,7 @@ Depends on  NOTHING
 			if (ignoreFBLogin) {
 				_callback();
 			} else { 
-				Appacitive.Facebook.requestLogin(function(authResponse) {
+				global.Appacitive.Facebook.requestLogin(function(authResponse) {
 					_callback();
 				}, onError);
 			}
@@ -5260,10 +5260,10 @@ Depends on  NOTHING
 		this.logout = function(onSuccess, onError) {
 			onSuccess = onSuccess || function() {};
 			onError = onError || function(){};
-			Appacitive.Facebook.accessToken = "";
+			global.Appacitive.Facebook.accessToken = "";
 			try {
 				FB.logout(function(response) {
-					Appacitive.Users.logout();
+					global.Appacitive.Users.logout();
 					if (typeof onSuccess == 'function') onSuccess();
 				});
 			} catch(e) {
@@ -5274,8 +5274,6 @@ Depends on  NOTHING
 
 	var _nodeFacebook = function() {
 
-		var Facebook = require('facebook-node-sdk');
-
 		var _accessToken = null;
 
 		this.FB = null;
@@ -5284,7 +5282,7 @@ Depends on  NOTHING
 
 		var _app_secret = null;
 
-		var _initialized = true;
+		var _initialized = false;
 
 		this.initialize = function (options) { 
 			if (!Facebook) throw new Error("node-facebook SDK needs be loaded before calling initialize.");
@@ -5293,24 +5291,19 @@ Depends on  NOTHING
 
 			_app_id = options.appId;
 			_app_secret = options.appSecret;
-		    this.FB = new Facebook({ appId: _appId, secret: _app_secret });
+		    this.FB = new (require('facebook-node-sdk'))({ appId: _appId, secret: _app_secret });
 		    _initialized = true;
-		}
+		};
 
 		this.requestLogin = function(onSuccess, onError, accessToken) {
-			if (!_initialized) {
-			  if (typeof onError == 'function') onError("Intialize facebook with your appid and appsecret");
-			  return;
-			}
-			_accessToken = accesstoken;
-			FB.setAccessToken(accessToken);
-			Appacitive.Users.loginWithFacebook(onSuccess, onError, true);
+			if (accessToken) _accessToken = accessToken;
+			global.Appacitive.Users.loginWithFacebook(onSuccess, onError, true);
 		};
 
 		this.getCurrentUserInfo = function(onSuccess, onError) {
 			if (!_initialized) throw new Error("Either facebook sdk has not yet been initialized, or not yet loaded.");
 
-			if(this.FB && _accessToken){
+			if (this.FB && _accessToken){
 				onSuccess = onSuccess || function(){};
 				onError = onError || function(){};
 				this.FB.api('/me', function(err, response) {
@@ -5340,7 +5333,7 @@ Depends on  NOTHING
 		this.logout = function(onSuccess, onError) {
 			onSuccess = onSuccess || function() {};
 			onError = onError || function(){};
-			Appacitive.Facebook.accessToken = "";
+			global.Appacitive.Facebook.accessToken = "";
 			if (typeof onSuccess == 'function') onSuccess();
 		}
 	}

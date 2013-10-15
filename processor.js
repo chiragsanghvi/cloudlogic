@@ -57,7 +57,18 @@ var Processor = function(options) {
 		};
 
 		var cp = this.threads.filter(filterDelegate);
-		if (cp.length > 0) this.idleThreads.push(cp[0]);
+		
+		if (cp.length > 0) {
+			cp[0].count++;
+			if (message.terminate || cp[0].recycle) {
+				cp[0].recycle = true;
+				setTimeout(function() {
+					that.recycleThreads();
+				}, 20);
+			} else {
+				this.idleThreads.push(cp[0]);
+			}
+		}
 		this.executeCallbacks(message.messageId, message.response);
 		this.flush();
 	});
@@ -65,7 +76,15 @@ var Processor = function(options) {
 	//2. to respond to termination requests from threads
 	this.messageProcessor.register(messageCodes.TERMINATE_THREAD, function(message){
 		console.log("Processor> Child process termination request");
-		this.terminateThread(message.threadId);
+
+		var filterDelegate = function (thread) {
+			return thread._threadId == message.threadId;
+		};
+
+		var cp = this.threads.filter(filterDelegate);
+		if (cp.length > 0) cp[0].recycle = true;
+		
+		this.recycleThreads();
 	});
 
 	this.clearUnusedThreads = function(all) {
@@ -73,12 +92,20 @@ var Processor = function(options) {
 			var count = all ? this.idleThreads.length : (this.idleThreads.length - this.options.numThreads);
 			if (count > 0) {
 				this.idleThreads.forEach(function(thread) {
-					if (--count >= 0) {
-						that.terminateThread(thread._threadId);
+					if (--count >= 0 && !that.messageThreads[thread._threadId]) {
+						that.terminateThread({ threadId: thread._threadId });
 					}
 				});
 			}
 		}
+	};
+
+	this.recycleThreads = function() {
+		this.threads.forEach(function(thread) {
+			if (thread.recycle && !that.messageThreads[thread._threadId]) {
+				that.terminateThread({ threadId: thread._threadId, kill: true });
+			}
+		});
 	};
 
 	setInterval(function() {
@@ -103,7 +130,7 @@ Processor.prototype.process = function(message, callback) {
 						headers: {},
 						data: "Malicious code block detected, causing timeouts. Please verify your code and redeploy",
 						code: "508",
-						log: new Date().toISOString() + " => " + "Malicious code block detected, causing timeouts. Please verify your code and redeploy"
+						log: [{ time: new Date().toISOString(), msg : "Malicious code block detected, causing timeouts. Please verify your code and redeploy" }]
 					});
 				}, 0);
 				return;
@@ -131,6 +158,12 @@ Processor.prototype.executeCallbacks = function(messageId, response) {
 		delete that.processing[messageId];
 		var callback = that.callbacks[messageId];
 		if (!callback) return;
+
+		if (callback.executed) {
+			delete that.callbacks[messageId];
+			return;
+		}
+		callback.executed = true;
 		callback(response);
 		delete that.callbacks[messageId];
 	}, 0);
@@ -147,15 +180,15 @@ Processor.prototype.flush = function() {
 	if (!thread) {
 		//create a thread if numThreads is less than max threads
 		if (this.stats.numThreads < this.options.maxThreads && this.stats.waitingForDispatch > 0) {
-			thread = this.startThread();
-			this.threads.push(thread);
-			this.idleThreads.push(thread);
+			this.startThread();
 			this.flush();
 		}
 		return;
 	}
 
-	if (this.messageThreads[thread._threadId] || !thread.connected) {
+	if (this.messageThreads[thread._threadId] || !thread.connected || thread.recycle || thread.count >= this.options.maxThreadExecutionCount) {
+		if (thread.count >= this.options.maxThreadExecutionCount) thread.recycle = true;
+		if (thread.recycle) this.recycleThreads();
 		this.flush();
 		return;
 	}
@@ -167,8 +200,10 @@ Processor.prototype.flush = function() {
 	this.stats.processing += 1;
 	this.stats.waitingForDispatch = this.stats.waitingForDispatch - 1;
 	
+	// add mapping for threadId and message
 	this.messageThreads[thread._threadId] = messageToSend;
 	
+	// add mapping for message and threadid
 	this.processing[messageToSend.id] =  thread._threadId;
 
 	//Setup timeout handling
@@ -190,7 +225,9 @@ Processor.prototype.registerCallback = function(messageId, callback) {
 	this.callbacks[messageId] = callback;
 };
 
-Processor.prototype.terminateThread = function(threadId, isExit) {
+Processor.prototype.terminateThread = function(options) {
+	threadId = options.threadId;
+
 	var filterDelegate = function (thread) {
 		return thread._threadId == threadId;
 	};
@@ -207,12 +244,15 @@ Processor.prototype.terminateThread = function(threadId, isExit) {
 		this.idleThreads = this.idleThreads.filter(removeDelegate);
 		if (cp.connected == true ) {
 			cp.disconnect();
-			if (isExit) {
-				//cp.kill("SIGXCPU");
+			if (options.isTimeout) {
+				if (options.kill) cp.kill("SIGXCPU");
 				log('\n\nProcessor> Detected lockup or memory overflow in thread #' + threadId + '.\n\n', 'warn');
-			} else {
+			} else if(options.kill) {
 				log('\n\nProcessor> Cleaning idle thread #' + threadId, 'warn');
 				cp.kill("SIGQUIT");
+			} else {	
+				log('\n\nProcessor> Cleaning idle thread #' + threadId, 'warn');
+				cp.kill();
 			}
 		}
 	}
@@ -227,7 +267,7 @@ Processor.prototype.setupPinging = function(thread, threadId, timeoutInterval) {
 
 	// set up pinging
 	this.pings[threadId] = setTimeout(function() {
-		that.terminateThread(threadId);
+		that.terminateThread({ threadId: threadId, isTimeout: true, kill: true });
 	}, timeoutInterval);
 };
 
@@ -254,8 +294,9 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 				timeOut = that.options.sendTimeoutInterval;
 				statusMessage = 'Execution timed out';
 				statusCode = '508';
-				that.timeOutFunctions[message.cf.fn]['count']++;
-				console.log(that.timeOutFunctions[message.cf.fn]);
+				if (!that.timeOutFunctions[message.dpid]) that.timeOutFunctions[message.dpid] = {};
+				if (!that.timeOutFunctions[message.dpid][message.cf.fn]) that.timeOutFunctions[message.dpid][message.cf.fn] = { count: 0 };
+				that.timeOutFunctions[message.dpid][message.cf.fn]['count']++;
 			}
 			setTimeout(function() {
 				console.log("=========sending time out response for " + message.id + "=========");
@@ -263,10 +304,10 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 					headers: {},
 					data: statusMessage,
 					code: statusCode,
-					log: new Date().toISOString() + " => " + message
+					log: [{ time: new Date().toISOString(), msg : statusMessage }]
 				});
 			}, timeOut);
-			that.terminateThread(threadId, true);
+			that.terminateThread({ threadId: threadId, isTimeout: (signal == 'SIGXCPU') ? true : false });
 			try { delete that.messageThreads[threadId] } catch(e) {}
 		}
 
@@ -279,8 +320,8 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 		that.stats.numThreads -= 1;
 
 		// 3. respawn thread
-		that.startThread();
-
+		if (signal == 'SIGQUIT' || signal == 'SIGXCPU') that.startThread();
+		
 		// 4. flush the queue if requests have piled up
 		that.flush();
 	});
@@ -289,7 +330,8 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 Processor.prototype.startThread = function() {
 	var options = { }, that = this;
 	options.threadId = this.id + '-' + this._lastThreadId++;
-	
+	options.posixTime = this.options.posixTime;
+
 	log('Processor> Starting thread ', 'debug');
 
 	var childProcess = require('child_process').fork('./thread.js', [], {
@@ -298,7 +340,8 @@ Processor.prototype.startThread = function() {
 		}
 	});
 	childProcess._threadId = options.threadId;
-	this.pings[options.threadId] = new Date().getTime();
+	childProcess.count = 0;
+	this.pings[options.threadId] = null;
 
 	this.stats.numThreads += 1;
 
@@ -310,8 +353,8 @@ Processor.prototype.startThread = function() {
 	// set up respawn
 	this.setupThreadRespawn(childProcess, options.threadId);
 
-	this.threads.push(thread);
-	this.idleThreads.push(thread);
+	this.threads.push(childProcess);
+	this.idleThreads.push(childProcess);
 
 
 	return childProcess;

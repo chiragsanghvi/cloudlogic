@@ -1,5 +1,4 @@
 var vm = require('vm');
-//var contextify = require('contextify');
 var MessageProcessor = require('./messageProcessor.js');
 var messageCodes = require('./ipcMessageCodes.js');
 //var debugLog = require('./logger.js').log;
@@ -18,7 +17,7 @@ var loadTime = 0;
 var posix = require('posix');
 
 var logMessage = function(lvl, msg) {
-	if (typeof msg == 'object') {
+	if (typeof msg === 'object') {
 		try { msg = JSON.stringify(msg, undefined, 3); } catch(e){}
 	}
 	switch (lvl) {
@@ -55,15 +54,19 @@ var init = function () {
 
 var Thread = function(options) {
 	this.id = options.threadId;
-	this.numberOfTaksExecuted = 0;
+	this.options = { posixTime: options.posixTime };
 
     var that = this;
 
 	memwatch.on('leak', function(info) { 
-		console.log("======" + options.threadId + "======");
+		console.log("\n======" + options.threadId + "======");
 		console.dir(info);
-		console.log("============");
-		that.terminate = true;
+		console.log("============\n");
+
+		process.send({
+			type: messageCodes.TERMINATE_THREAD,
+			threadId: that.id
+		});
 	 });
 };
 
@@ -112,7 +115,7 @@ Thread.prototype.execute = function(message) {
 	script = script + 'Appacitive.Cloud.execute("' + message.cf.fn + '", { request: request, response: response });'
 
 	serverDomain.run(function() {
-		posix.setrlimit('cpu', { soft: 3 });
+		posix.setrlimit('cpu', { soft: that.options.posixTime });
 		try { 
 			vm.runInNewContext(script, that.ctx, './' + message.cf.fn + '.vm'); 
 		} catch(e) { 
@@ -159,16 +162,7 @@ Thread.prototype.setApiContext = function(message, ctx) {
 	ctx.response.headers = {};
 	ctx.response.success = function (response) {
     	response = response || '';
-    	var resp = {};
-    	/*try {
-        	JSON.stringify(response);
-        	resp = response;
-        } catch (e) { 
-        	debugLog("Error encountered while stringifying result for transcationid " + message.id + " : ", e.message);
-        	ctx.response.error("Error encountered while stringifying result : " + e.message);
-        	return;
-        }*/
-        var resp = {
+    	var resp = {
         	statusCode: ctx.response.statusCode || 200,
         	body: response || '',
        		headers: ctx.response.headers || {}
@@ -194,7 +188,8 @@ Thread.prototype.onHandlerCompleted = function(messageId, response) {
 		type: messageCodes.EXECUTION_COMPLETED,
 		threadId: this.id,
 		messageId: messageId,
-		response: response
+		response: response,
+		terminate: this.terminate
 	});
 	this.currentlyExecuting = false;
 };
@@ -203,29 +198,6 @@ var options = JSON.parse(process.env.options);
 thread = new Thread(options);
 
 thread.messageProcessor = new MessageProcessor(thread);
-
-// when notified that there is a new message 
-// in the queue, ask the processor for a message
-thread.messageProcessor.register(messageCodes.NEW_MESSAGE_IN_QUEUE, function(message) {
-	//console.log('Thread #' + this.id + '> Got notification of new work item.');
-	if (this.currentlyExecuting) return;
-
-	if (this.terminate) {
-		if (!this.terminateSend) {
-			process.send({
-				type: messageCodes.TERMINATE_THREAD,
-				threadId: this.id
-			});
-			this.terminateSend = true;
-		}
-		return;
-	}
-	//console.log('Thread #' + this.id + '> Requesting work from processor.');
-	process.send({
-		type: messageCodes.REQUEST_FOR_MESSAGE,
-		threadId: this.id
-	});
-});
 
 //listen for new message when ready to execute
 thread.messageProcessor.register(messageCodes.NEW_MESSAGE_FOR_THREAD, function(message) {
