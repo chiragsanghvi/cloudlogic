@@ -3,21 +3,21 @@ var util = require('util');
 var messageCodes = require('./ipcMessageCodes.js');
 
 /* custom error message for get handler */
-function InvalidHandlerError(code, status) {
+function InvalidError(code, status) {
   restify.RestError.call(this, {
     restCode: code,
     statusCode: code,
-    constructorOpt: InvalidHandlerError,
+    constructorOpt: InvalidError,
     body: {
         status : status,
         body: null
     }
   });
 
-  this.name = 'InvalidHandlerError';
+  this.name = 'InvalidError';
 };
 
-util.inherits(InvalidHandlerError, restify.RestError);
+util.inherits(InvalidError, restify.RestError);
 
 var getResponseCode = function(code) {
 	switch(code) {
@@ -28,6 +28,26 @@ var getResponseCode = function(code) {
 		case '508': return 503;
 	};
 	return code;
+};
+
+
+
+var CODES = {
+        BadDigest: 400,
+        BadMethod: 405,
+        Internal: 500, // Don't have InternalErrorError
+        InvalidArgument: 409,
+        InvalidContent: 400,
+        InvalidCredentials: 401,
+        InvalidHeader: 400,
+        InvalidVersion: 400,
+        MissingParameter: 409,
+        NotAuthorized: 403,
+        PreconditionFailed: 412,
+        RequestExpired: 400,
+        RequestThrottled: 429,
+        ResourceNotFound: 404,
+        WrongAccept: 406
 };
 
 module.exports = function(port, engine) {
@@ -122,6 +142,8 @@ module.exports = function(port, engine) {
 		// get context
 		context.getContext(req, res, function(ctx) {
 
+			req.id = ctx.id;
+
 			ctx.timeoutInterval = 15000;
 			
 			var contextTime = new Date().getTime();
@@ -154,9 +176,9 @@ module.exports = function(port, engine) {
 					} catch(e) {}
 
 					res.setHeader('TransactionId', ctx.id);
-					res.statusCode = getResponseCode(resp.code);
+					var statusCode = getResponseCode(resp.code);
 
-					res.send(resp.data);
+					res.send(statusCode, resp.data);
 					
 					delete ctx.file ;
 					
@@ -181,8 +203,9 @@ module.exports = function(port, engine) {
 				});
 				
 			}, function(message) {
+				res.setHeader('TransactionId', ctx.id);
 				// call next with an error saying cannot find handler
-				return next(new InvalidHandlerError('404', { referenceid: ctx.id, code: '404', message: message }));
+				return next(new InvalidError('404', {  transactionid: ctx.id, code: '404', message: message }));
 			});
 			
 		}, next);
@@ -200,6 +223,11 @@ module.exports = function(port, engine) {
 	    console.log('Cloud code server listening at %s', server.url);
 	});
     
+	server.on('uncaughtException', function (req, res, route, err) {
+	   res.setHeader('TransactionId', req.id);
+	   return next(new InvalidError('400', { transactionid: req.id, code: '500', message: err.message }));
+	});
+
 	return server;
 
 };

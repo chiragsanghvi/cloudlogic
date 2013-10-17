@@ -16,7 +16,7 @@ var makeRequest = function(v, name, reqNo) {
   var req = {
     "m": "POST",
     "e": "sandbox",
-    "b": {"name": "chirag", "tag":"cloudcode"}
+    "b": {"name": "chirag", "tag":"cloudcode", "time": 1299999999 }
   };
 
   var options = {
@@ -69,9 +69,12 @@ var makeRequest = function(v, name, reqNo) {
         console.log("Completed 50 requests in " + t + "ms");
       
       if (name != 'code' && name != 'get') {
-        console.log(t + "ms, " + name + " => \n\n" + receivedData + "\n");
+        //console.log(t + "ms, " + name + " => \n\n" + receivedData + "\n");
+        console.log(t + "ms" + name + " => " + res.statusCode + " : " + receivedData + " :" + res.headers['executiontime']);
       } else {
-        console.log(t + "ms, " + name + " => \n\n" + receivedData + "\n");
+        //console.log(t + "ms, " + name + " => \n\n" + receivedData + "\n");
+        console.log(t + "ms" + name + " => " + res.statusCode + " : " + receivedData + " :" + res.headers['executiontime']);
+        console.log(res);
         ++successful
       }
     });
@@ -91,10 +94,11 @@ process.on('exit', function() {
 });
 
 var reqNo = 1;
-var names = ["err","code","get","error","invalid","invalidbody"];
+var names = ["timed","for"]
+//var names = ["err","code","get","error","invalid","invalidbody"];
 for (var i = 1 ; i <= 1 ; i = i + 1) {
   var version = i;
-  for (var j = 1 ; j <= 10 ; j = j + 1) {
+  for (var j = 1 ; j <= 1 ; j = j + 1) {
     setTimeout(function() {
       console.log("========Executing sequence " + (reqNo/10) + "======")
       for (var k = 1 ; k <= 10; k = k + 1) {

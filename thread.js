@@ -23,7 +23,7 @@ var logMessage = function(lvl, msg) {
 	switch (lvl) {
 		case logLevels.LOG:
 			logStorage.push({ time: new Date().toISOString(), msg:  ('' + msg) });
-			//console.log(msg);
+			console.log(msg);
 			break;
 		default: console.log(msg);
 	}
@@ -115,7 +115,7 @@ Thread.prototype.execute = function(message) {
 	script = script + 'Appacitive.Cloud.execute("' + message.cf.fn + '", { request: request, response: response });'
 
 	serverDomain.run(function() {
-		posix.setrlimit('cpu', { soft: that.options.posixTime });
+		//posix.setrlimit('cpu', { soft: that.options.posixTime });
 		try { 
 			vm.runInNewContext(script, that.ctx, './' + message.cf.fn + '.vm'); 
 		} catch(e) { 
@@ -127,7 +127,8 @@ Thread.prototype.execute = function(message) {
 Thread.prototype.setContext = function(message) {
 	var ctx = vm.createContext({
 		console: { log: log, dir: console.dir },
-		Appacitive : init()
+		Appacitive : init(),
+		setTimeout: setTimeout
 	});
 
 	this.ctx = ctx;

@@ -93,7 +93,7 @@ var Processor = function(options) {
 			if (count > 0) {
 				this.idleThreads.forEach(function(thread) {
 					if (--count >= 0 && !that.messageThreads[thread._threadId]) {
-						that.terminateThread({ threadId: thread._threadId });
+						that.terminateThread({ threadId: thread._threadId , clear: true });
 					}
 				});
 			}
@@ -101,6 +101,7 @@ var Processor = function(options) {
 	};
 
 	this.recycleThreads = function() {
+		console.log("Recycling threads");
 		this.threads.forEach(function(thread) {
 			if (thread.recycle && !that.messageThreads[thread._threadId]) {
 				that.terminateThread({ threadId: thread._threadId, kill: true });
@@ -245,14 +246,13 @@ Processor.prototype.terminateThread = function(options) {
 		if (cp.connected == true ) {
 			cp.disconnect();
 			if (options.isTimeout) {
-				if (options.kill) cp.kill("SIGXCPU");
-				log('\n\nProcessor> Detected lockup or memory overflow in thread #' + threadId + '.\n\n', 'warn');
+				log('\n\nProcessor> Detected timeout and cpu resource time overflow in thread #' + threadId + '.\n\n', 'warn');
 			} else if(options.kill) {
-				log('\n\nProcessor> Cleaning idle thread #' + threadId, 'warn');
+				log('\n\nProcessor> Detected lockup or memory overflow in thread #' + threadId + '.\n\n', 'warn');
 				cp.kill("SIGQUIT");
 			} else {	
 				log('\n\nProcessor> Cleaning idle thread #' + threadId, 'warn');
-				cp.kill();
+				cp.kill("SIGTRAP");
 			}
 		}
 	}
@@ -267,7 +267,7 @@ Processor.prototype.setupPinging = function(thread, threadId, timeoutInterval) {
 
 	// set up pinging
 	this.pings[threadId] = setTimeout(function() {
-		that.terminateThread({ threadId: threadId, isTimeout: true, kill: true });
+		that.terminateThread({ threadId: threadId, kill: true });
 	}, timeoutInterval);
 };
 
@@ -290,13 +290,15 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 			
 			//If the thread was aborted due to POSIX resource limitation then let the response wait for 12 seconds and then return;
 			//If the thread was aborted due to timeout
-			if (signal == 'SIGXCPU') {
-				timeOut = that.options.sendTimeoutInterval;
+			if (signal == 'SIGXCPU' || signal == 'SIGQUIT') {
+				if (signal == 'SIGXCPU') {
+					timeOut = that.options.sendTimeoutInterval;
+					if (!that.timeOutFunctions[message.dpid]) that.timeOutFunctions[message.dpid] = {};
+					if (!that.timeOutFunctions[message.dpid][message.cf.fn]) that.timeOutFunctions[message.dpid][message.cf.fn] = { count: 0 };
+					that.timeOutFunctions[message.dpid][message.cf.fn]['count']++;
+				}
 				statusMessage = 'Execution timed out';
 				statusCode = '508';
-				if (!that.timeOutFunctions[message.dpid]) that.timeOutFunctions[message.dpid] = {};
-				if (!that.timeOutFunctions[message.dpid][message.cf.fn]) that.timeOutFunctions[message.dpid][message.cf.fn] = { count: 0 };
-				that.timeOutFunctions[message.dpid][message.cf.fn]['count']++;
 			}
 			setTimeout(function() {
 				console.log("=========sending time out response for " + message.id + "=========");
@@ -307,7 +309,7 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 					log: [{ time: new Date().toISOString(), msg : statusMessage }]
 				});
 			}, timeOut);
-			that.terminateThread({ threadId: threadId, isTimeout: (signal == 'SIGXCPU') ? true : false });
+			if (signal == 'SIGXCPU') that.terminateThread({ threadId: threadId, isTimeout: true });
 			try { delete that.messageThreads[threadId] } catch(e) {}
 		}
 
@@ -320,7 +322,7 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 		that.stats.numThreads -= 1;
 
 		// 3. respawn thread
-		if (signal == 'SIGQUIT' || signal == 'SIGXCPU') that.startThread();
+		if (signal !== 'SIGTRAP') that.startThread();
 		
 		// 4. flush the queue if requests have piled up
 		that.flush();
@@ -352,7 +354,7 @@ Processor.prototype.startThread = function() {
 
 	// set up respawn
 	this.setupThreadRespawn(childProcess, options.threadId);
-
+	
 	this.threads.push(childProcess);
 	this.idleThreads.push(childProcess);
 

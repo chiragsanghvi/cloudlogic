@@ -27,6 +27,24 @@ Appacitive.Cloud.declare("while", function(req,res) {
 });
 
 
+Appacitive.Cloud.declare("timed", function(req,res) {
+        console.log("In cloud timed");
+        setTimeout(function() {
+                res.success("Successful");
+        }, 13000);
+});
+
+Appacitive.Cloud.declare("for", function(req,res) {
+        console.log("In cloud for");
+        var time = new Date().getTime();
+        console.log(req.body.time);
+        for(var i=0; i< req.body.time;i=i+1) {
+        }
+        console.log("Sending response");
+        res.success(new Date().getTime() - time);
+});
+
+
 Appacitive.Cloud.declare("error", function(req,res) {
 	console.log("In cloud error");
 	res.statusCode = 405;
