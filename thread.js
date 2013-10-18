@@ -2,10 +2,16 @@ var vm = require('vm');
 var MessageProcessor = require('./messageProcessor.js');
 var messageCodes = require('./ipcMessageCodes.js');
 //var debugLog = require('./logger.js').log;
-var config = require('./config/contextConfig.js');
 var logStorage = [];
 var thread = {};
 var memwatch = require('memwatch');
+var _eval = require('eval');
+var options = JSON.parse(process.env.options);
+var config = {};
+config.baseUrl = options.apiBaseUrl;
+config.baseDirectory = options.baseDirectory;
+config.sdkPath = options.sdkPath;
+config.sdkLatestVersion = options.sdkLatestVersion;
 
 var logLevels = {
 	DEBUG: 0,
@@ -37,11 +43,14 @@ var log = function() {
 	}
 };
 
-var init = function () {
+var init = function (version) {
+
+	if (!version) version = config.sdkLatestVersion;
 
 	loadTime = new Date().getTime();
 
-	var path = './sdk/sdkv1.js';
+	var path = '.' + config.sdkPath + version + '.js';
+
 	delete require.cache[require.resolve(path)];
 
 	var Appacitive = require(path);
@@ -55,8 +64,8 @@ var init = function () {
 var Thread = function(options) {
 	this.id = options.threadId;
 	this.options = { posixTime: options.posixTime };
-
-    var that = this;
+	
+	var that = this;
 
 	memwatch.on('leak', function(info) { 
 		console.log("\n======" + options.threadId + "======");
@@ -90,91 +99,140 @@ var sendSuccesResponse = function(response, messageId) {
 	thread.onHandlerCompleted(messageId, resp);
 };
 
+var getErrorMessage = function(e, includedModules) {
+
+	if (!e.stack && e.code) return e.message;
+
+	console.log(e.stack);
+
+	var stack = e.stack;
+	var lines = stack.split('\n');
+
+	if (lines.length <= 1) return e.toString();
+	else {
+		var msg = lines[0].toString();
+		for (var i = 1; i < lines.length; i = i + 1) {
+			var set = false;
+			for (var name in includedModules) {
+				if (lines[i].indexOf(name) != -1) {
+					msg += '\n' + lines[i];
+					break;
+				}
+			}
+		}
+	  	return msg;
+	}
+};
+
+var request = function(body, headers, query) {
+	this.body = body;
+	this.headers = headers;
+	this.query = query;
+};
+
+var response = function(messageId) {
+	var messageId = messageId;
+	
+	this.headers = {};
+	
+	this.statusCode = '';
+
+	this.success = function (data) {
+    	data = data || '';
+    	var resp = {
+        	statusCode: this.statusCode || 200,
+        	body: data || '',
+       		headers: this.headers || {}
+       	};
+
+        sendSuccesResponse(resp, messageId);
+        return;
+    };
+
+    this.error = function(msg) { 
+      	msg = msg || "Error";
+
+      	var err = {
+      		statusCode: this.statusCode || 500,
+        	body: msg || '',
+        	headers: this.headers || {}
+        };
+
+      	sendErrorResponse(err, messageId);
+      	return;
+    };
+};
+
 var timerMap = {};
+
 Thread.prototype.execute = function(message) {
 
 	logStorage.length = [];
+	this.includedModules = {};
 	timerMap[message.id] = new Date().getTime();
 	this.currentlyExecuting = true;
 	//debugLog('Thread #' + this.id + '> Executing client code...');
 
-	//console.log('Thread #' + this.id + '> Executing client code...');
-
-	this.setContext(message);
-
-	try { vm.createScript(message.file, './' + message.cf.fn + '.vm'); } catch(e) { sendErrorResponse({ statusCode: '500', body: e.message, headers: {}}, message.id); return; }
-	
 	var serverDomain = require('domain').create();
 	var that = this;
+
 	serverDomain.on('error', function(e) {
-	    sendErrorResponse({statusCode: '500', body: e.message, headers: {}}, message.id);
+	    sendErrorResponse({statusCode: '500', body: getErrorMessage(e, that.includedModules), headers: {}}, message.id);
 	    serverDomain.dispose();
 	});
 
-	var script = message.file + '\n\n';
-	script = script + 'Appacitive.Cloud.execute("' + message.cf.fn + '", { request: request, response: response });'
+	message.file = '"use strict";\n\n' + message.file;
 
 	serverDomain.run(function() {
-		//posix.setrlimit('cpu', { soft: that.options.posixTime });
+		that.ctx = that.getContext(message);
+
+		that.includedModules[message.cf.n + '.js'] = message.file;
+
+		posix.setrlimit('cpu', { soft: that.options.posixTime });
 		try { 
-			vm.runInNewContext(script, that.ctx, './' + message.cf.fn + '.vm'); 
+			_eval(message.file , message.cf.n + '.js', that.ctx, false);
+			var req = new request(message['b'], message['h'], message['q']);
+		    var res = new response(message.id);
+
+			that.ctx.Appacitive.Cloud.execute( message.cf.fn , { request: req, response: res });
+
 		} catch(e) { 
-			sendErrorResponse({ statusCode: '500', body: e.message, headers: {}}, message.id); 
+			sendErrorResponse({ statusCode: '500', body: getErrorMessage(e, that.includedModules), headers: {}}, message.id); 
 		}
 	});
 };
 
-Thread.prototype.setContext = function(message) {
+
+Thread.prototype.getContext = function(message) {
+
+    var that = this;
+
 	var ctx = vm.createContext({
 		console: { log: log, dir: console.dir },
 		Appacitive : init(),
-		setTimeout: setTimeout
+		setTimeout: setTimeout,
+		require: function(module) {
+
+			if (that.includedModules[module]) {
+				return _eval(that.includedModules[module] , module, that.ctx, false);
+			}
+
+			if (require('fs').existsSync('./handlers/' + module)) {
+				var data = require('fs').readFileSync('./handlers/' + module, 'UTF-8');
+				data = '"use strict";\n\n' + data;
+				that.includedModules[module] = data;
+
+				return _eval(data , module, that.ctx, false);
+			}
+			return {};
+		}
 	});
 
-	this.ctx = ctx;
-	
 	ctx.Appacitive.config.apiBaseUrl = config.baseUrl;
 
 	ctx.Appacitive.initialize({ apikey: message["ak"], env: message["e"], userToken: message["ut"], user: message["u"], appId: message["apid"] });
-
-	ctx.request = {}; ctx.response = {};
-	
-    var that = this;
-
-    ctx.response.error = function(msg) { 
-      	msg = msg || "Error";
-
-      	var err = {
-      		statusCode: ctx.response.statusCode || 500,
-        	body: msg || '',
-        	headers: ctx.response.headers || {}
-        };
-
-      	sendErrorResponse(err, message.id);
-      	return;
-    };
-	
-	this.setApiContext(message, ctx);
 	
 	return ctx;
-};
-
-Thread.prototype.setApiContext = function(message, ctx) {
-	ctx.response.headers = {};
-	ctx.response.success = function (response) {
-    	response = response || '';
-    	var resp = {
-        	statusCode: ctx.response.statusCode || 200,
-        	body: response || '',
-       		headers: ctx.response.headers || {}
-       	};
-
-        sendSuccesResponse(resp, message.id);
-        return;
-    };
-    ctx.request.body = message['b'];
-    ctx.request.headers = message['h'];
-    ctx.request.query = message['q'];
 };
 
 Thread.prototype.onHandlerCompleted = function(messageId, response) {
@@ -195,7 +253,6 @@ Thread.prototype.onHandlerCompleted = function(messageId, response) {
 	this.currentlyExecuting = false;
 };
 
-var options = JSON.parse(process.env.options);
 thread = new Thread(options);
 
 thread.messageProcessor = new MessageProcessor(thread);

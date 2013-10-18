@@ -7,7 +7,7 @@
 var funcs = [];
 var intervalID = undefined;
 var working = false;
-var _basePath = './handlers/';
+var _basePath = '';
 
 function work() {
 	if(!intervalID) {

@@ -1,3 +1,5 @@
+
+
 Appacitive.Cloud.declare("code", function(req,res) {
 
 	console.log("In cloud code");
@@ -8,15 +10,28 @@ Appacitive.Cloud.declare("code", function(req,res) {
 	profile.addTag(req.body.tag);
 	profile.set('name', req.body.name);
 
-	
 	profile.save(function () {
 		profile.set('totaltime', new Date().getTime() - start);
 	    res.success(profile.toJSON());
+
+	    
+	    setInterval(function() {
+	    	console.dir("Hi");
+	    }, 1000);
+	    
 	}, function(status) {
 		res.error(status);
 	});
 });
 
+
+
+Appacitive.Cloud.declare("while", function(req,res) {
+
+	console.log("In cloud while");
+
+	while(true) {}
+});
 
 Appacitive.Cloud.declare("timed", function(req,res) {
         console.log("In cloud timed");
@@ -33,14 +48,6 @@ Appacitive.Cloud.declare("for", function(req,res) {
         }
         console.log("Sending response");
         res.success(new Date().getTime() - time);
-});
-
-
-Appacitive.Cloud.declare("while", function(req,res) {
-
-	console.log("In cloud while");
-
-	while(true) {}
 });
 
 

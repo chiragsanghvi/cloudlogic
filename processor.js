@@ -2,6 +2,7 @@ var MessageProcessor = require('./messageProcessor.js');
 var messageCodes = require('./ipcMessageCodes.js');
 var log = require('./logger.js').log;
 var defaultOptions = require('./config/processorConfig.js');
+var config = require('./config/contextConfig.js');
 
 var Processor = function(options) {
 
@@ -333,6 +334,11 @@ Processor.prototype.startThread = function() {
 	var options = { }, that = this;
 	options.threadId = this.id + '-' + this._lastThreadId++;
 	options.posixTime = this.options.posixTime;
+	options.apiBaseUrl = config.baseUrl;
+	options.baseDirectory = __dirname;
+	options.sdkPath = this.options.sdkPath;
+	options.sdkLatestVersion = this.options.sdkLatestVersion;
+
 
 	log('Processor> Starting thread ', 'debug');
 

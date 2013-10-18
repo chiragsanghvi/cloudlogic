@@ -1,11 +1,10 @@
 console.log("I've loaded");
 
 var mail = function() {
-	this.send = function(body) {
+	this.send = function(body, emailId, response) {
 
-		console.log(Appacitive);
 		var emailOptions = {
-			to: [Appacitive.Users.currentUser().get('email')],
+			to: [emailId],
 			subject: 'testing',
 			body: body,
 			from: 'support@appacitive.com',
@@ -13,7 +12,7 @@ var mail = function() {
 		};
 
 		Appacitive.Email.sendRawEmail(emailOptions, function () {
-		    response.success();
+		    response.success("Mail Sent");
 		}, function(status) {
 			response.error(JSON.stringify(status));
 		});

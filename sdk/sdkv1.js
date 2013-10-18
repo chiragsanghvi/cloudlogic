@@ -4,8 +4,9 @@
  * MIT license  : http://www.apache.org/licenses/LICENSE-2.0.html
  * Project      : https://github.com/chiragsanghvi/JavascriptSDK
  * Contact      : support@appacitive.com | csanghvi@appacitive.com
- * Build time 	: Tue Oct 15 13:17:47 IST 2013
+ * Build time 	: Fri Oct 18 19:09:36 IST 2013
  */
+"use strict";
 
 // Add ECMA262-5 method binding if not supported natively
 //
@@ -150,7 +151,7 @@ var global = {};
 
 	// create the global object
 
-	if (typeof window == 'undefined') {
+	if (typeof window === 'undefined') {
 		global = process;
 	} else {
 		global = window;
@@ -264,11 +265,11 @@ var global = {};
 			request.headers.push({ key:'Content-Type', value: 'text/plain' });
 			request.method = 'POST';
 
-			if (request.data) body.b = request.data
+			if (request.data) body.b = request.data;
 			delete request.data;
 			
 			if (global.Appacitive.config.debug) {
-				if (request.url.indexOf('?') == -1) request.url = request.url + '?debug=true';
+				if (request.url.indexOf('?') === -1) request.url = request.url + '?debug=true';
 				else request.url = request.url + '&debug=true';
 			}
 
@@ -326,10 +327,10 @@ var global = {};
 	var _HttpTransport = function () {
 		var _notImplemented = function () {
 			throw new Error('Not Implemented Exception');
-		}
+		};
 		var _notProvided = function () {
 			throw new Error('Delegate not provided');
-		}
+		};
 
 		// implements this
 		this.send = _notImplemented;
@@ -337,10 +338,10 @@ var global = {};
 
 		// needs these callbacks to be set
 		this.onResponse = function (response, request) {
-			_notImplemented()
+			_notImplemented();
 		};
 		this.onError = function (request) {
-			_notImplemented()
+			_notImplemented();
 		};
 	};
 
@@ -375,7 +376,7 @@ var global = {};
 	       request.onError({code: "400" , message: "Server Error" }, xdr);
 	    };
 	    xdr.onprogress = function() {};
-	    if (request.url.indexOf('?') == -1)
+	    if (request.url.indexOf('?') === -1)
             request.url = request.url + '?ua=ie';
         else
             request.url = request.url + '&ua=ie';
@@ -467,8 +468,8 @@ var global = {};
 		this.data = o.data || {};
 		this.headers = o.headers || [];
 		this.method = o.method || 'GET';
-		this.onSuccess = o.onSuccess || function(){}
-		this.onError = o.onError || function(){}
+		this.onSuccess = o.onSuccess || function(){};
+		this.onError = o.onError || function(){};
 
 		this.send = function(doNotStringify) {
 			return new _XMLHttp(this, doNotStringify);
@@ -527,7 +528,7 @@ var global = {};
 		};
 
 		_super.upload = function (request, callbacks, states) {
-			if (typeof request.beforeSend == 'function') {
+			if (typeof request.beforeSend === 'function') {
 				request.beforeSend(request);
 			}
 			_trigger(request, callbacks, states, true);
@@ -555,10 +556,11 @@ var global = {};
 		// allow pausing/unpausing
 		this.pause = function () {
 			_paused = true;
-		}
+		};
+
 		this.unpause = function () {
 			_paused = false;
-		}
+		};
 
 		// allow adding processors to the buffer
 		this.addProcessor = function (processor) {
@@ -567,7 +569,7 @@ var global = {};
 			if (!processor.pre && !processor.post) throw _processorError;
 
 			_buffer.addProcessor(processor);
-		}
+		};
 
 		// the method used to send the requests
 		this.send = function (request) {
@@ -575,10 +577,10 @@ var global = {};
 
 			// notify the queue if the actual transport 
 			// is ready to send the requests
-			if (_inner.isOnline() && _paused == false) {
+			if (_inner.isOnline() && _paused === false) {
 				_buffer.notify();
 			}
-		}
+		};
 
 		// method used to clear the queue
 		this.flush = function (force) {
@@ -589,7 +591,7 @@ var global = {};
 			} else {
 				_buffer.notify();
 			}
-		}
+		};
 
 		// the error handler
 		this.onError = function (request, err) {
@@ -600,7 +602,7 @@ var global = {};
 					request.onError(err);
 				}
 			}
-		}
+		};
 		_inner.onError = this.onError;
 
 		// the success handler
@@ -612,7 +614,7 @@ var global = {};
 					request.onSuccess(response);
 				}
 			}
-		}
+		};
 		_inner.onResponse = this.onResponse;
 	};
 
@@ -638,7 +640,7 @@ var global = {};
 					var _valid = global.Appacitive.Session.isSessionValid(response);
 					if (!_valid.status) {
 						if (_valid.isSession) {
-							if (global.Appacitive.Session.get() != null) {
+							if (global.Appacitive.Session.get() !== null) {
 								global.Appacitive.Session.resetSession();
 							}
 							global.Appacitive.http.send(request);
@@ -656,7 +658,7 @@ var global = {};
 
 		global.Appacitive.http.addProcessor({
 			pre: function (req) {
-				return new Date().getTime()
+				return new Date().getTime();
 			},
 			post: function (response, state) {
 				var timeSpent = new Date().getTime() - state;
@@ -668,7 +670,11 @@ var global = {};
 
 	/* Http Utilities */
 
-})();(function (global) {
+})();
+(function (global) {
+
+    "use strict";
+
     /**
      * @param {...string} var_args
      */
@@ -696,12 +702,12 @@ var global = {};
         return returnStr;
     };
     String.toSearchString = function (text) {
-        if (typeof (text) == 'undefined')
+        if (typeof (text) === 'undefined')
             text = '';
 
         var result = '';
         for (var x = 0; x < text.length; x = x + 1) {
-            if (' .,;#'.indexOf(text[x]) == -1)
+            if (' .,;#'.indexOf(text[x]) === -1)
                 result += text[x];
         }
 
@@ -711,11 +717,11 @@ var global = {};
     };
 
     String.contains = function (s1, s2) {
-        return (s1.indexOf(s2) != -1);
-    }
+        return (s1.indexOf(s2) !== -1);
+    };
 
     String.startsWith = function (s1, s2) {
-        return (s1.indexOf(s2) == 0);
+        return (s1.indexOf(s2) === 0);
     };
 
     Array.distinct = function(orgArr) {
@@ -740,12 +746,12 @@ var global = {};
     Object.isEmpty = function (object) {
         if(!object) return true;
         var isEmpty = true;
-        for (keys in object) {
+        for (var keys in object) {
             isEmpty = false; 
             break; // exiting since we found that the object is not empty
         }
         return isEmpty;
-    }
+    };
 
     global.dateFromWcf = function (input, throwOnInvalidInput) {
         var pattern = /Date\(([^)]+)\)/;
@@ -769,7 +775,7 @@ var global = {};
         var baseUrl = (global.Appacitive.config || { apiBaseUrl: '' }).apiBaseUrl;
         
         var _getFields = function(fields) {
-            if (typeof fields == 'object' && fields.length > 0 && (typeof fields[0] == 'string' || typeof fields[0] == 'number')) fields = fields.join(',');
+            if (typeof fields === 'object' && fields.length > 0 && (typeof fields[0] === 'string' || typeof fields[0] === 'number')) fields = fields.join(',');
             if (!fields) fields = '';
             return fields;
         };
@@ -778,7 +784,7 @@ var global = {};
             emailServiceUrl: 'email',
             
             getSendEmailUrl: function() {
-                return String.format("{0}/send", this.emailServiceUrl)
+                return String.format("{0}/send", this.emailServiceUrl);
             }
         };
         this.user = {
@@ -876,7 +882,7 @@ var global = {};
                     url = url + '?psize=10';
                 if (typeof (queryParams) !== 'undefined' && queryParams.length > 0) {
                     for (var i = 0; i < queryParams.length; i = i + 1) {
-                        if (queryParams[i].trim().length == 0) continue;
+                        if (queryParams[i].trim().length === 0) continue;
                         url = url + "&" + queryParams[i];
                     }
                 }
@@ -954,7 +960,7 @@ var global = {};
                 url = String.format('{0}/{1}/{2}/find', this.connectionServiceUrl, relationName, articleId);
                 if (queryParams && queryParams.length && queryParams.length > 0) {
                     for (var x = 0; x < queryParams.length; x += 1) {
-                        if (x == 0) {
+                        if (x === 0) {
                             url += '?' + queryParams[x];
                         } else {
                             url += '&' + queryParams[x];
@@ -1021,7 +1027,7 @@ var global = {};
         this.query = {
             params: function (key) {
                 var match = [];
-                if (location.search == "" || location.search.indexOf("?") == -1) return match;
+                if (location.search === "" || location.search.indexOf("?") === -1) return match;
                 if (!key) return location.search.split("?")[1].split("=");
                 else {
                     key = key.toLowerCase();
@@ -1031,23 +1037,24 @@ var global = {};
                         var value = splitKey[1];
                         if (splitKey.length > 2) {
                             splitKey.forEach(function (ii, kk) {
-                                if (ii == 0 || ii == 1) return;
+                                if (ii === 0 || ii === 1) return;
                                 value = value + "=" + splitKey[ii];
                             });
                         }
-                        if (splitKey[0].toLowerCase() == key) match = [splitKey[0], value];
+                        if (splitKey[0].toLowerCase() === key) match = [splitKey[0], value];
                     });
                     return match;
                 }
             }
         };
 
-    }
+    };
 
     global.Appacitive.storage = global.Appacitive.storage || {};
     global.Appacitive.storage.urlFactory = new UrlFactory();
 
-})(global);/**
+})(global);
+/**
 Depends on  NOTHING
 **/
 
@@ -1169,7 +1176,7 @@ Depends on  NOTHING
 
     global.Appacitive.eventManager = new EventManager();
 
-})(global);(function(global) {
+})(global);(function (global) {
 
 	"use strict";
 
@@ -1178,10 +1185,11 @@ Depends on  NOTHING
 	};
 
 	if (typeof XDomainRequest != 'undefined') {
-		global.Appacitive.config.apiBaseUrl = window.location.protocol + '//apis.appacitive.com/'
+		global.Appacitive.config.apiBaseUrl = window.location.protocol + '//apis.appacitive.com/';
 	}
 
-}(global));(function(global) {
+}(global));
+(function (global) {
 
 	"use strict";
 
@@ -1220,7 +1228,7 @@ Depends on  NOTHING
 			// create the session
 			var _sRequest = new _sessionRequest();
 
-			_sRequest.apikey = _apikey
+			_sRequest.apikey = _apikey;
 			
 			var _request = new global.Appacitive.HttpRequest();
 			_request.url = global.Appacitive.config.apiBaseUrl + 'application.svc/session';
@@ -1274,11 +1282,8 @@ Depends on  NOTHING
 					if (!doNotSetCookie) {
 						if(!expiry) expiry = 60;
 						if (expiry == -1) expiry = null;
-						
-						if (global.Appacitive.runtime.isBrowser) {
-							global.Appacitive.Cookie.setCookie('Appacitive-UserToken', authToken, expiry);
-							global.Appacitive.Cookie.setCookie('Appacitive-UserTokenExpiry', expiry ? expiry : -1, expiry);
-						}
+						global.Appacitive.Cookie.setCookie('Appacitive-UserToken', authToken, expiry);
+						global.Appacitive.Cookie.setCookie('Appacitive-UserTokenExpiry', expiry ? expiry : -1, expiry);
 					}
 				}
 			} catch(e) {}
@@ -1308,10 +1313,8 @@ Depends on  NOTHING
 			authEnabled = false;
 			callback = callback || function() {};
 			global.Appacitive.localStorage.remove('Appacitive-User');
-			if (global.Appacitive.runtime.isBrowser) {
-			 	global.Appacitive.Cookie.eraseCookie('Appacitive-UserToken');
-			 	global.Appacitive.Cookie.eraseCookie('Appacitive-UserTokenExpiry');
-			}
+		 	global.Appacitive.Cookie.eraseCookie('Appacitive-UserToken');
+		 	global.Appacitive.Cookie.eraseCookie('Appacitive-UserTokenExpiry');
 			if (_authToken  && !avoidApiCall) {
 				try {
 					var _request = new global.Appacitive.HttpRequest();
@@ -1369,7 +1372,7 @@ Depends on  NOTHING
 				_apikey = apikey;
 				this.useApiKey = true;
 			}
-		}
+		};
 
 		// the name of the environment, simple public property
 		var _env = 'sandbox';
@@ -1395,9 +1398,9 @@ Depends on  NOTHING
 
 		if (global.Appacitive.Session.initialized) return;
 		
-		if (!options.apikey || options.apikey.length == 0) throw new Error("apikey is mandatory");
+		if (!options.apikey || options.apikey.length === 0) throw new Error("apikey is mandatory");
 		
-		if (!options.appId || options.appId.length == 0) throw new Error("appId is mandatory");
+		if (!options.appId || options.appId.length === 0) throw new Error("appId is mandatory");
 
 
 		global.Appacitive.Session.setApiKey( options.apikey) ;
@@ -1449,6 +1452,8 @@ Depends on  NOTHING
 // attaches the appacitive environment headers
 (function (global){
 
+	"use strict";
+
 	if (!global.Appacitive) return;
 	if (!global.Appacitive.http) return;
 
@@ -1458,7 +1463,10 @@ Depends on  NOTHING
 		}
 	});
 
-})(global);(function (global) {
+})(global);
+(function (global) {
+
+    "use strict";
 
     var Appacitive = global.Appacitive;
 
@@ -1509,7 +1517,7 @@ Depends on  NOTHING
                 case 'attribute' : return '@';
                 case 'aggregate' : return '$';
                 default : return '*';
-            };
+            }
         };
 
         this.toString = function() {
@@ -1530,13 +1538,13 @@ Depends on  NOTHING
         
         options = options || '';
 
-        if (!(typeof options.value == 'object') || !options.value.length) throw new Error("Specify field value as array");
+        if (!(typeof options.value === 'object') || !options.value.length) throw new Error("Specify field value as array");
         
         _fieldFilter.call(this, options);
 
         var _getValue = function(value) {
-            if (typeof value == 'string') return "'" + value + "'";
-            else if (typeof value == 'number') return value;  
+            if (typeof value === 'string') return "'" + value + "'";
+            else if (typeof value === 'number') return value;  
             else return value.toString();
         };
 
@@ -1548,9 +1556,9 @@ Depends on  NOTHING
                             this.field.toLowerCase(),
                             this.operator,
                             _getValue(this.value[i])));
-            };
+            }
             return "("  + values.join(' or ') + ")"; 
-        }
+        };
 
     };
 
@@ -1618,7 +1626,7 @@ Depends on  NOTHING
 
         options = options || '';
 
-        if (!options.geoCoords || options.geoCoords.length == 0) throw new Error("polygon filter needs array of Appacitive.GeoCoord objects as argument");
+        if (!options.geoCoords || options.geoCoords.length === 0) throw new Error("polygon filter needs array of Appacitive.GeoCoord objects as argument");
 
         if (options.geoCoords.length < 3) throw new Error("polygon filter needs atleast 3 Appacitive.GeoCoord objects as arguments");
 
@@ -1629,11 +1637,11 @@ Depends on  NOTHING
         var _getPipeSeparatedList = function(coords) {
             var value = '';
             coords.forEach(function(c) {
-                if (value.length == 0) value = c.toString();
+                if (value.length === 0) value = c.toString();
                 else value += " | " + c.toString();
             });
             return value;
-        }
+        };
 
         this.toString = function() {
              return String.format("{0}{1} {2} {3}",
@@ -1647,12 +1655,12 @@ Depends on  NOTHING
     _polygonFilter.prototype = new _fieldFilter();
     _polygonFilter.prototype.constructor = _betweenFilter;
 
-    _tagFilter = function(options) {
+    var _tagFilter = function(options) {
 
         _filter.call(this);
 
         options = options || {};
-        if (!options.tags || typeof options.tags != 'object' || options.tags.length == 0) throw new Error("Specify valid tags");
+        if (!options.tags || typeof options.tags != 'object' || options.tags.length === 0) throw new Error("Specify valid tags");
 
         this.tags = options.tags;
         this.operator = options.operator;
@@ -1665,7 +1673,7 @@ Depends on  NOTHING
     _tagFilter.prototype = new _filter();
     _tagFilter.prototype.constructor = _tagFilter;
 
-    _compoundFilter = function(operator, filters) {
+    var _compoundFilter = function(operator, filters) {
         
         if (!filters || !filters.length || filters.length < 2) throw new Error("Provide valid or atleast 2 filters");
 
@@ -1676,13 +1684,13 @@ Depends on  NOTHING
         for (var i = 0; i < filters.length ; i = i + 1) {
             if (!(filters[i] instanceof _filter)) throw new Error("Invalid filter provided");
             this.innerFilters.push(filters[i]);
-        };
+        }
 
         this.toString = function() {
             var op = this.operator;
             var value = "(";
             this.innerFilters.forEach(function(f) {
-                if (value.length == 1) value += ' ' + f.toString();
+                if (value.length === 1) value += ' ' + f.toString();
                 else value += String.format(' {0} {1} ', op, f.toString());
             });
             value += ")";
@@ -1712,7 +1720,7 @@ Depends on  NOTHING
 
     var _primitiveFieldValue = function(value, type) {
 
-        if (value == null || value == undefined || value.length == 0) throw new Error("Specify value");
+        if (value === null || value === undefined || value.length === 0) throw new Error("Specify value");
 
         this.value = value;
 
@@ -1720,9 +1728,9 @@ Depends on  NOTHING
         else this.type = typeof this.value; 
 
         this.getValue = function() {
-            if (this.type == 'string') return "'" + String.addSlashes(this.value) + "'";
-            else if (this.type == 'number' || typeof this.value == 'boolean') return this.value;  
-            else if (this.type == 'object' && this.value instanceof date) return "datetime('" + Appacitive.Date.toISOString(this.value) + "')";
+            if (this.type === 'string') return "'" + String.addSlashes(this.value) + "'";
+            else if (this.type === 'number' || typeof this.value === 'boolean') return this.value;  
+            else if (this.type === 'object' && this.value instanceof date) return "datetime('" + Appacitive.Date.toISOString(this.value) + "')";
             else return this.value.toString();
         };
     };
@@ -1731,7 +1739,7 @@ Depends on  NOTHING
         this.value = value;
         
         this.getValue = function() {
-            if (typeof this.value == 'object' && this.value instanceof Date) return "date('" + Appacitive.Date.toISODate(this.value) + "')";
+            if (typeof this.value === 'object' && this.value instanceof Date) return "date('" + Appacitive.Date.toISODate(this.value) + "')";
             else return "date('" + this.value + "')";
         };
     };
@@ -1740,7 +1748,7 @@ Depends on  NOTHING
         this.value = value;
         
         this.getValue = function() {
-            if (typeof this.value == 'object' && this.value instanceof Date) return "time('" + Appacitive.Date.toISOTime(this.value) + "')";
+            if (typeof this.value === 'object' && this.value instanceof Date) return "time('" + Appacitive.Date.toISOTime(this.value) + "')";
             else return "time('" + this.value + "')";
         };
     };
@@ -1749,7 +1757,7 @@ Depends on  NOTHING
         this.value = value;
         
         this.getValue = function() {
-            if (typeof this.value == 'object' && this.value instanceof Date) return "datetime('" + Appacitive.Date.toISOString(this.value) + "')";
+            if (typeof this.value === 'object' && this.value instanceof Date) return "datetime('" + Appacitive.Date.toISOString(this.value) + "')";
             else return "datetime('" + this.value + "')";
         };
     };
@@ -1898,9 +1906,9 @@ Depends on  NOTHING
         };
     };
 
-    _propertyExpression = function(name) {
+    var _propertyExpression = function(name) {
         
-        if (!name || name.length == 0) throw new Error("Specify field name");
+        if (!name || name.length === 0) throw new Error("Specify field name");
         
         this.field = name;
 
@@ -1909,9 +1917,9 @@ Depends on  NOTHING
         return this;
     };
 
-    _aggregateExpression = function(name) {
+    var _aggregateExpression = function(name) {
         
-        if (!name || name.length == 0) throw new Error("Specify field name");
+        if (!name || name.length === 0) throw new Error("Specify field name");
         
         this.field = name;
 
@@ -1944,8 +1952,8 @@ Depends on  NOTHING
         return this;
     };
 
-    _attributeExpression = function(name) {
-        if (!name || name.length == 0) throw new Error("Specify field name");
+    var _attributeExpression = function(name) {
+        if (!name || name.length === 0) throw new Error("Specify field name");
         
         this.field = name;
 
@@ -1999,7 +2007,8 @@ Depends on  NOTHING
         }
     };
 
-})(global);(function(global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
@@ -2050,7 +2059,7 @@ Depends on  NOTHING
 
 		//define getter/setter for orderby
 		this.orderBy =  function() { 
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				_orderBy = arguments[0] || '__UtcLastUpdatedDate';
 				return this;
 			}
@@ -2059,8 +2068,8 @@ Depends on  NOTHING
 
 		//define getter for isAscending
 		this.isAscending =  function() { 
-			if (arguments.length == 1) {
-				_isAscending = typeof arguments[0] == 'undefined' ? false : arguments[0];
+			if (arguments.length === 1) {
+				_isAscending = typeof arguments[0] === 'undefined' ? false : arguments[0];
 				return this;
 			}
 			return _isAscending; 
@@ -2107,7 +2116,7 @@ Depends on  NOTHING
 		
 		//define getter and setter for pageNumber
 		this.pageNumber =  function() { 
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				_pageQuery.pageNumber(arguments[0]);
 				return this;
 			}
@@ -2116,7 +2125,7 @@ Depends on  NOTHING
 
 		//define getter and setter for pageSize
 		this.pageSize =  function() { 
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				_pageQuery.pageSize(arguments[0]);
 				return this;
 			}
@@ -2128,7 +2137,7 @@ Depends on  NOTHING
 
 		//define getter and setter for orderby
 		this.orderBy =  function() { 
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				_sortQuery.orderBy(arguments[0]);
 				return this;
 			}
@@ -2137,7 +2146,7 @@ Depends on  NOTHING
 
 		//define getter and setter for isAscending
 		this.isAscending =  function() { 
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				_sortQuery.isAscending(arguments[0]);
 				return this;
 			}
@@ -2146,7 +2155,7 @@ Depends on  NOTHING
 
 		//define getter and setter for filter
 		this.filter =  function() { 
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				_filter = arguments[0];
 				return this;
 			}
@@ -2155,10 +2164,10 @@ Depends on  NOTHING
 		
 		//define getter and setter for freetext
 		this.freeText =  function() { 
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				var value = arguments[0];
-				if (typeof value == 'string') _freeText = arguments[0];
-				else if (typeof value == 'object' && value.length) _freeText = arguments[0].join(' ');
+				if (typeof value === 'string') _freeText = arguments[0];
+				else if (typeof value === 'object' && value.length) _freeText = arguments[0].join(' ');
 				return this;
 			}
 			return _freeText; 
@@ -2166,15 +2175,15 @@ Depends on  NOTHING
 		
 		
 		this.fields = function() {
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				var value = arguments[0];
-				if (typeof value == 'string') _fields = value;
-				else if (typeof value == 'object' && value.length) _fields = value.join(',');
+				if (typeof value === 'string') _fields = value;
+				else if (typeof value === 'object' && value.length) _fields = value.join(',');
 				return this;
 			} else {
 				return _fields;
 			}
-		}
+		};
 
 		//set filters , freetext and fields
 		this.filter(options.filter || '');
@@ -2238,7 +2247,7 @@ Depends on  NOTHING
 		var _parse = function(entities) {
 			var entityObjects = [];
 			if (!entities) entities = [];
-			var eType = (_type == 'article') ? 'Article' : 'Connection';
+			var eType = (_type === 'article') ? 'Article' : 'Connection';
 			entities.forEach(function(e) {
 				entityObjects.push(new global.Appacitive[eType](e, true));
 			});
@@ -2249,15 +2258,15 @@ Depends on  NOTHING
 			var request = this.toRequest();
 			request.onSuccess = function(d) {
 			if (d && d.status && d.status.code == '200') {
-				   if (typeof onSuccess == 'function') onSuccess(_parse(d[_type + 's']), d.paginginfo);
+				   if (typeof onSuccess === 'function') onSuccess(_parse(d[_type + 's']), d.paginginfo);
 				} else {
 					d = d || {};
-					if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+					if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 				}
 			};
 			request.onError = function(d) {
 				d = d || {};
-				if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+				if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 			};
 			global.Appacitive.http.send(request);
 			return this;
@@ -2294,18 +2303,18 @@ Depends on  NOTHING
 						count = 0;
 					} else {
 						var d = data.status || { message : 'Server error', code: 400 };
-				        if (typeof onError == 'function') onError(d, that);
+				        if (typeof onError === 'function') onError(d, that);
 						return;
 					}
 				} else {
 					count = pagingInfo.totalrecords;
 				}
-				if (typeof onSuccess == 'function') onSuccess(count);
+				if (typeof onSuccess === 'function') onSuccess(count);
 			};
 			_queryRequest.onError = function(d) {
 				_restoreOldPaging();
 				d = d || { message : 'Server error', code: 400 };
-			    if (typeof onError == 'function') onError(d, that);
+			    if (typeof onError === 'function') onError(d, that);
 			};
 			global.Appacitive.http.send(_queryRequest);
 
@@ -2359,12 +2368,12 @@ Depends on  NOTHING
 		this.prev = options.prev;
 		
 		this.returnEdge = true;
-		if ((options.returnEdge != undefined || options.returnEdge != null) && !options.returnEdge && !this.prev) this.returnEdge = false;
+		if ((options.returnEdge !== undefined || options.returnEdge !== null) && !options.returnEdge && !this.prev) this.returnEdge = false;
 		
 		this.label = '';
 		var that = this;
 
-		if (options.label && typeof options.label == 'string' && options.label.length > 0) this.label = '&label=' + options.label;
+		if (options.label && typeof options.label === 'string' && options.label.length > 0) this.label = '&label=' + options.label;
 
 		this.toRequest = function() {
 			var r = new global.Appacitive.HttpRequest();
@@ -2432,19 +2441,19 @@ Depends on  NOTHING
 			var request = this.toRequest();
 			request.onSuccess = function(d) {
 			if (d && d.status && d.status.code == '200') {
-				   if (typeof onSuccess == 'function') {
+				   if (typeof onSuccess === 'function') {
 					   var cb = parseNodes;
 					   if (that.prev) cb = prevParseNodes;
 				   	   onSuccess(cb( d.nodes ? d.nodes : [], { articleid : options.articleId, type: schema, label: d.parent }), d.paginginfo);   
 				   	}
 				} else {
 					d = d || {};
-					if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+					if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 				}
 			};
 			request.onError = function(d) {
 				d = d || {};
-				if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+				if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 			};
 			global.Appacitive.http.send(request);
 			return this;
@@ -2466,7 +2475,7 @@ Depends on  NOTHING
 
 		if (!options.relation) throw new Error('Specify relation for GetConnectionsQuery query');
 		if (!options.articleId) throw new Error('Specify articleId for GetConnectionsQuery query');
-		if (!options.label || options.label.trim().length == 0) throw new Error('Specify label for GetConnectionsQuery query');
+		if (!options.label || options.label.trim().length === 0) throw new Error('Specify label for GetConnectionsQuery query');
 		if (options.schema) delete options.schema;
 
 		options.queryType = 'GetConnectionsQuery';
@@ -2505,8 +2514,8 @@ Depends on  NOTHING
 
 		options = options || {};
 
-		if (!options.articleAId || typeof options.articleAId != 'string' || options.articleAId.length == 0) throw new Error('Specify valid articleAId for GetConnectionsBetweenArticlesQuery query');
-		if (!options.articleBId || typeof options.articleBId != 'string' || options.articleBId.length == 0) throw new Error('Specify articleBId for GetConnectionsBetweenArticlesQuery query');
+		if (!options.articleAId || typeof options.articleAId !== 'string' || options.articleAId.length === 0) throw new Error('Specify valid articleAId for GetConnectionsBetweenArticlesQuery query');
+		if (!options.articleBId || typeof options.articleBId !== 'string' || options.articleBId.length === 0) throw new Error('Specify articleBId for GetConnectionsBetweenArticlesQuery query');
 		if (options.schema) delete options.schema;
 
 		options.queryType = queryType || 'GetConnectionsBetweenArticlesQuery';
@@ -2515,8 +2524,8 @@ Depends on  NOTHING
 
 		this.articleAId = options.articleAId;
 		this.articleBId = options.articleBId;
-		this.label = (this.queryType() == 'GetConnectionsBetweenArticlesForRelationQuery' && options.label && typeof options.label == 'string' && options.label.length > 0) ? '&label=' + options.label : '';;
-		this.relation = (options.relation && typeof options.relation == 'string' && options.relation.length > 0) ? options.relation + '/' : '';
+		this.label = (this.queryType() === 'GetConnectionsBetweenArticlesForRelationQuery' && options.label && typeof options.label === 'string' && options.label.length > 0) ? '&label=' + options.label : '';
+		this.relation = (options.relation && typeof options.relation === 'string' && options.relation.length > 0) ? options.relation + '/' : '';
 		
 		this.toRequest = function() {
 			var r = new global.Appacitive.HttpRequest();
@@ -2552,15 +2561,15 @@ Depends on  NOTHING
 			var request = this.toRequest();
 			request.onSuccess = function(d) {
 			if (d && d.status && d.status.code == '200') {
-				   if (typeof onSuccess == 'function') onSuccess(d.connection ? new global.Appacitive.Connection(d.connection) :  null);
+				   if (typeof onSuccess === 'function') onSuccess(d.connection ? new global.Appacitive.Connection(d.connection) :  null);
 				} else {
 					d = d || {};
-					if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+					if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 				}
 			};
 			request.onError = function(d) {
 				d = d || {};
-				if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+				if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 			};
 			global.Appacitive.http.send(request);
 			return this;
@@ -2576,8 +2585,8 @@ Depends on  NOTHING
 
 		options = options || {};
 
-		if (!options.articleAId || typeof options.articleAId != 'string' || options.articleAId.length == 0) throw new Error('Specify valid articleAId for InterconnectsQuery query');
-		if (!options.articleBIds || typeof options.articleBIds != 'object' || !(options.articleBIds.length > 0)) throw new Error('Specify list of articleBIds for InterconnectsQuery query');
+		if (!options.articleAId || typeof options.articleAId !== 'string' || options.articleAId.length === 0) throw new Error('Specify valid articleAId for InterconnectsQuery query');
+		if (!options.articleBIds || typeof options.articleBIds !== 'object' || !(options.articleBIds.length > 0)) throw new Error('Specify list of articleBIds for InterconnectsQuery query');
 		if (options.schema) delete options.schema;
 
 		options.queryType = 'InterconnectsQuery';
@@ -2615,7 +2624,7 @@ Depends on  NOTHING
 	**/
 	global.Appacitive.Queries.GraphFilterQuery = function(name, placeholders) {
 
-		if (!name || name.length == 0) throw new Error("Specify name of filter query");
+		if (!name || name.length === 0) throw new Error("Specify name of filter query");
 		
 		this.name = name;
 		this.data = { };
@@ -2640,17 +2649,17 @@ Depends on  NOTHING
 			var request = this.toRequest();
 			request.onSuccess = function(d) {
 			if (d && d.status && d.status.code == '200') {
-				   if (typeof onSuccess == 'function') {
+				   if (typeof onSuccess === 'function') {
 				   		onSuccess(d.ids ? d.ids : []);
 					}
 				} else {
 					d = d || {};
-					if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+					if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 				}
 			};
 			request.onError = function(d) {
 				d = d || {};
-				if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+				if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 			};
 			global.Appacitive.http.send(request);
 			return this;
@@ -2663,7 +2672,7 @@ Depends on  NOTHING
 	**/
 	global.Appacitive.Queries.GraphProjectQuery = function(name, ids, placeholders) {
 
-		if (!name || name.length == 0) throw new Error("Specify name of project query");
+		if (!name || name.length === 0) throw new Error("Specify name of project query");
 		if (!ids || !ids.length) throw new Error("Specify ids to project");
 		
 		this.name = name;
@@ -2732,24 +2741,25 @@ Depends on  NOTHING
 			var request = this.toRequest();
 			request.onSuccess = function(d) {
 			if (d && d.status && d.status.code == '200') {
-				   if (typeof onSuccess == 'function') {
+				   if (typeof onSuccess === 'function') {
 				   		onSuccess(_parseResult(d));
 					}
 				} else {
 					d = d || {};
-					if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+					if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 				}
 			};
 			request.onError = function(d) {
 				d = d || {};
-				if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+				if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 			};
 			global.Appacitive.http.send(request);
 			return this;
 		};
 	};
 
-})(global);(function(global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
@@ -2849,11 +2859,11 @@ Depends on  NOTHING
 			if (arguments.length === 0) {
 				if (!article.__attributes) article.__attributes = {};
 				return article.__attributes;
-			} else if (arguments.length == 1) {
+			} else if (arguments.length === 1) {
 				if (!article.__attributes) article.__attributes = {};
 				return article.__attributes[arguments[0]];
-			} else if (arguments.length == 2) {
-				if (typeof(arguments[1]) !== 'string' && arguments[1] != null)
+			} else if (arguments.length === 2) {
+				if (typeof(arguments[1]) !== 'string' && arguments[1] !== null)
 					throw new Error('only string values can be stored in attributes.');
 				if (!article.__attributes) article.__attributes = {};
 				article.__attributes[arguments[0]] = arguments[1];
@@ -2916,7 +2926,7 @@ Depends on  NOTHING
 		    article.__tags.push(tag);
 		    article.__tags = Array.distinct(article.__tags);
 
-		    if (!_removeTags || !_removeTags.length) return this;;
+		    if (!_removeTags || !_removeTags.length) return this;
 			var index = _removeTags.indexOf(tag);
 			if (index != -1) _removeTags.splice(index, 1);
 			return this;
@@ -3041,7 +3051,7 @@ Depends on  NOTHING
 			if (arguments.length == 1 && typeof arguments[0] == 'string' && arguments[0].length) {
 				return _snapshot[arguments[0]];	
 			}
-			return null
+			return null;
 		};
 
 		this.previousAttributes = function() { return _snapshot; };
@@ -3073,7 +3083,7 @@ Depends on  NOTHING
 				}
 				return value;
 			}, "boolean": function(value) { 
-				if (value != undefined && value != null && (value.toString().toLowerCase() == 'true' || value == true || value > 0)) return true;
+				if (value !== undefined && value !== null && (value.toString().toLowerCase() === 'true' || value === true || value > 0)) return true;
 				return false;
 			}, "date": function(value) { 
 				if (value) {
@@ -3100,30 +3110,33 @@ Depends on  NOTHING
 		};
 
 		this.get = function(key, type) { 
-			var val = "";
 			if (key) { 
 				if (type && _types[type.toLowerCase()]) {
-					var res = _types[type.toLowerCase()](article[key]);
-					return res;
-				} 
-				return article[key]; 
+					if (_types[type.toLowerCase()]) {
+						var res = _types[type.toLowerCase()](article[key]);
+						return res;
+					} else {
+						throw new Error('Invalid cast-type "' + type + '"" provided for get "' + key + '"');
+					}
+				}
+				return article[key];
 			}
 		};
 
 		this.tryGet = function(key, value, type) {
 			var res = this.get(key, type);
-			if (res != undefined) return res;
+			if (res !== undefined) return res;
 			return value;
 		};
 
 		this.set = function(key, value) {
 
-			if(!key || typeof key != 'string' ||  key.length == 0 || key.trim().indexOf('$') == 0) return this; 
+			if(!key || typeof key !== 'string' ||  key.length === 0 || key.trim().indexOf('$') === 0) return this; 
 		 	
-		 	if (value == null || value == 'undefined') { article[key] = null;}
-		 	else if (typeof value == 'string') { article[key] = value; }
-		 	else if (typeof value == 'number' || typeof value == 'boolean') { article[key] = value + ''; }
-		 	else if (typeof value == 'object') {
+		 	if (value === null || value === 'undefined') { article[key] = null;}
+		 	else if (typeof value === 'string') { article[key] = value; }
+		 	else if (typeof value === 'number' || typeof value === 'boolean') { article[key] = value + ''; }
+		 	else if (typeof value === 'object') {
 		 		if (value instanceof Date) {
 		 			article[key] = global.Appacitive.Date.toISOString(value);
 		 		} else {
@@ -3136,14 +3149,14 @@ Depends on  NOTHING
 		};
 
 		this.unset = function(key) {
-			if (!key || typeof key != 'string' ||  key.length == 0 || key.indexOf('__') == 0) return this; 
+			if (!key || typeof key !== 'string' ||  key.length === 0 || key.indexOf('__') === 0) return this; 
 		 	try { delete article[key]; } catch(e) {}
 			return this;
 		};
 
 		this.has = function(key) {
-			if (!key || typeof key != 'string' ||  key.length == 0) return false; 
-			if (article[key] && typeof article[key] != 'undefined') return true;
+			if (!key || typeof key !== 'string' ||  key.length === 0) return false; 
+			if (article[key] && typeof article[key] !== 'undefined') return true;
 			return false;
 		};
 
@@ -3170,7 +3183,7 @@ Depends on  NOTHING
 		var _atomicProps = [];
 
 		var _atomic = function(key, amount, multiplier) {
-			if (!key || typeof key != 'string' ||  key.length == 0 || key.indexOf('__') == 0) return this;
+			if (!key || typeof key !== 'string' ||  key.length === 0 || key.indexOf('__') === 0) return this;
 
 			if (!amount || isNaN(parseInt(amount))) amount = multiplier;
 			else amount = parseInt(amount) * multiplier;
@@ -3256,7 +3269,7 @@ Depends on  NOTHING
 			_saveRequest.onError = function(err) {
 				err = _getOutpuStatus(err);
 				if (typeof onError == 'function') onError(err, that);
-			}
+			};
 			global.Appacitive.http.send(_saveRequest);
 			return this;
 		};
@@ -3320,12 +3333,12 @@ Depends on  NOTHING
 						} else {
 							if (typeof onError == 'function') onError(err, that);
 						}
-					}
+					};
 					global.Appacitive.http.send(_updateRequest);
 				} else {
 					if (typeof onSuccess == 'function') onSuccess(that);
 				}
-			}
+			};
 
 			if (_atomicProps.length > 0) {
 				var props = ['__revision'];
@@ -3334,8 +3347,7 @@ Depends on  NOTHING
 				});
 
 				_fetch(function(obj) {
-					var tmp = {};
-
+					
 					_atomicProps.forEach(function(p) {
 						var value = _types['integer'](obj[p.key]);
 						if (!value) value = 0
@@ -3450,7 +3462,7 @@ Depends on  NOTHING
 			_deleteRequest.onError = function(err) {
 				err = _getOutpuStatus(err);
 				if (typeof onError == 'function') onError(err, that);
-			}
+			};
 			global.Appacitive.http.send(_deleteRequest);
 		};
 	};
@@ -3461,7 +3473,8 @@ Depends on  NOTHING
 		return JSON.stringify(this.getObject());
 	};
 
-})(global);(function (global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
@@ -3532,7 +3545,8 @@ Depends on  NOTHING
 			S4() + S4() + S4()).toString();
 	};
 
-})(global);(function(global) {
+})(global);
+(function(global) {
 
 	"use strict";
 
@@ -3546,7 +3560,7 @@ Depends on  NOTHING
 		var _articles = [];
 		var _options = {};
 
-		if (typeof options == 'string') _options.schema = options;
+		if (typeof options === 'string') _options.schema = options;
 		else _options = options;
 
 		this.collectionType = 'article';
@@ -3581,7 +3595,7 @@ Depends on  NOTHING
 		};
 
         this.setFreeText = function(tokens) {
-            if(!tokens && tokens.trim().length==0)
+            if (!tokens && tokens.trim().length === 0)
                 _options.freeText = "";
             _options.freeText = tokens;
             _options.type = 'article';
@@ -3615,10 +3629,10 @@ Depends on  NOTHING
 		var _supportedQueryType = ["BasicFilterQuery"];
 
 		this.query = function() {
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				var query = arguments[0];
 				if (!query || !query.toRequest) throw new Error('Invalid  appacitive query passed to articleCollection');
-				if (_supportedQueryType.indexOf(query.queryType()) == -1) throw new Error('ArticleCollection only accepts ' + _supportedQueryType.join(', '));
+				if (_supportedQueryType.indexOf(query.queryType()) === -1) throw new Error('ArticleCollection only accepts ' + _supportedQueryType.join(', '));
 				_articles.length = 0;
 				_query = query;
 				return this;
@@ -3644,7 +3658,7 @@ Depends on  NOTHING
 				throw new Error('Null article passed or schema type mismatch');
 			var index =  null;
 			_articles.forEach(function(a, i) {
-				if (a.get('__id') == article.get('__id')) {
+				if (a.get('__id') === article.get('__id')) {
 					index = i;
 				}
 			});
@@ -3658,9 +3672,9 @@ Depends on  NOTHING
 
 		this.getArticleById = function(id) {
 			var existingArticle = _articles.filter(function (article) {
-				return article.get('__id') == id;
+				return article.get('__id') === id;
 			});
-			if (existingArticle.length == 1) return existingArticle[0];
+			if (existingArticle.length === 1) return existingArticle[0];
 			return null;
 		};
 
@@ -3676,7 +3690,7 @@ Depends on  NOTHING
 			if (!id) return false;
 			var index = null;
 			_articles.forEach(function(article, i) {
-				if (article.getArticle().__id && article.getArticle().__id == id) {
+				if (article.getArticle().__id && article.getArticle().__id === id) {
 					index = i;
 				}
 			});
@@ -3690,7 +3704,7 @@ Depends on  NOTHING
 			if (!id) return false;
 			var index = null;
 			_articles.forEach(function(article, i) {
-				if (article.cid && article.cid == id) {
+				if (article.cid && article.cid === id) {
 					index = i;
 				}
 			});
@@ -3706,7 +3720,7 @@ Depends on  NOTHING
 				_articles.push(article);
 			});
 
-			if (typeof onSuccess == 'function') onSuccess(pagingInfo, that);
+			if (typeof onSuccess === 'function') onSuccess(pagingInfo, that);
 		};
 
 		this.fetch = function(onSuccess, onError) {
@@ -3716,7 +3730,7 @@ Depends on  NOTHING
 			_query.fetch(function(articles, pagingInfo) {
 				parseArticles(articles, pagingInfo, onSuccess);
 			}, function(err) {
-				if (typeof onError == 'function') onError(err, that);
+				if (typeof onError === 'function') onError(err, that);
 			});
 
 			return this;
@@ -3782,7 +3796,8 @@ Depends on  NOTHING
 		return this.articles().length;
 	};
 
-})(global);(function(global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
@@ -3792,8 +3807,7 @@ Depends on  NOTHING
 	var _ConnectionCollection = function(options) {
 
 		var _relation = null;
-		var _schema = null;
-
+		
 		var _query = null;
 
 		var _connections = [];
@@ -3803,8 +3817,6 @@ Depends on  NOTHING
 
 		if (typeof options == 'string') _options.relation = options;
 		else _options = options;
-
-		var connectionMap = {};
 
 		this.collectionType = 'connection';
 
@@ -3840,7 +3852,7 @@ Depends on  NOTHING
 		};
 
 		this.setFreeText = function(tokens) {
-            if (!tokens && tokens.trim().length == 0) _options.freeText = "";
+            if (!tokens && tokens.trim().length === 0) _options.freeText = "";
             _options.freeText = tokens;
             _options.type = 'connection';
             if (_query) _query.freeText(tokens);
@@ -4059,7 +4071,8 @@ Depends on  NOTHING
 		return this.connections().length;
 	};
 
-})(global);(function (global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
@@ -4198,10 +4211,10 @@ Depends on  NOTHING
 
 	global.Appacitive.Article.multiDelete = function(options, onSuccess, onError) {
 		options = options || {};
+ 
+		if (!options.schema || typeof options.schema !== 'string' || options.schema.length === 0) throw new Error("Specify valid schema");
 
-		if (!options.schema || typeof options.schema!= 'string' || options.schema.length == 0) throw new Error("Specify valid schema");
-
-		if (options.schema.toLowerCase() == 'user' || options.schema.toLowerCase() == 'device') throw new Error("Cannot delete user and devices using multidelete");
+		if (options.schema.toLowerCase() === 'user' || options.schema.toLowerCase() === 'device') throw new Error("Cannot delete user and devices using multidelete");
 
 		if (options.ids && options.ids.length > 0) {
 
@@ -4214,16 +4227,16 @@ Depends on  NOTHING
 			request.data = { idlist : options.ids };
 			request.onSuccess = function(d) {
 				if (d && d.code == '200') {
-					if (typeof onSuccess == 'function') onSuccess();
+					if (typeof onSuccess === 'function') onSuccess();
 				} else {
 					d = d || {};
-					if (typeof onError == 'function') onError (d.status || { message : 'Server error', code: 400 });
+					if (typeof onError === 'function') onError (d.status || { message : 'Server error', code: 400 });
 				}
 			};
 			request.onError = function(d) {
 				d = d || {};
-				if (typeof onError == 'function') onError (d.status || { message : 'Server error', code: 400 });
-			}
+				if (typeof onError === 'function') onError (d.status || { message : 'Server error', code: 400 });
+			};
 			global.Appacitive.http.send(request);
 		} else onSuccess();
 	};
@@ -4239,26 +4252,26 @@ Depends on  NOTHING
 	//takes relationaname and array of articleids and returns an array of Appacitive article objects
 	global.Appacitive.Article.multiGet = function(options, onSuccess, onError) {
 		options = options || {};
-		if (!options.schema || typeof options.schema!= 'string' || options.schema.length == 0) throw new Error("Specify valid schema");
+		if (!options.schema || typeof options.schema !== 'string' || options.schema.length === 0) throw new Error("Specify valid schema");
 		if (options.ids && options.ids.length > 0) {
 			var request = new global.Appacitive.HttpRequest();
 			request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.article.getMultiGetUrl(options.schema, options.ids.join(','), options.fields);
 			request.method = 'get';
 			request.onSuccess = function(d) {
 				if (d && d.articles) {
-				   if (typeof onSuccess == 'function') onSuccess(_parseArticles(d.articles), d.paginginfo);
+				   if (typeof onSuccess === 'function') onSuccess(_parseArticles(d.articles), d.paginginfo);
 				} else {
 					d = d || {};
-					if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+					if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 				}
 			};
 			request.onError = function(d) {
 				d = d || { message : 'Server error', code: 400 };
-				if (typeof onError == 'function') onError(d);
-			}
+				if (typeof onError === 'function') onError(d);
+			};
 			global.Appacitive.http.send(request);
 		} else {
-			if (typeof onSuccess == 'function') onSuccess([]);
+			if (typeof onSuccess === 'function') onSuccess([]);
 		}
 	};
 
@@ -4268,7 +4281,7 @@ Depends on  NOTHING
 		if (!options.id) throw new Error("Specify id to fetch");
 
 		var obj = {};
-		if (options.schema.toLowerCase() == 'user') obj = new global.Appacitive.User({ __id: options.id });
+		if (options.schema.toLowerCase() === 'user') obj = new global.Appacitive.User({ __id: options.id });
 		else obj = new global.Appacitive.Article({ __schematype: options.schema, __id: options.id });
 		
 		obj.fetch(onSuccess, onError, options.fields);
@@ -4276,7 +4289,8 @@ Depends on  NOTHING
 		return obj;
 	};
 
-})(global);(function (global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
@@ -4284,13 +4298,13 @@ Depends on  NOTHING
 		var result = { label: endpoint.label };
 		if (endpoint.articleid)  result.articleid = endpoint.articleid;
 		if (endpoint.article) {
-			if (typeof endpoint.article.getArticle == 'function') {
+			if (typeof endpoint.article.getArticle === 'function') {
 				// provided an instance of Appacitive.ArticleCollection
 				// stick the whole article if there is no __id
 				// else just stick the __id
 				if (endpoint.article.get('__id')) result.articleid = endpoint.article.get('__id');
 				else result.article = endpoint.article.getArticle();
-			} else if (typeof endpoint.article == 'object' && endpoint.article.__schematype) {
+			} else if (typeof endpoint.article === 'object' && endpoint.article.__schematype) {
 				// provided a raw article
 				// if there is an __id, just add that
 				// else add the entire article
@@ -4308,7 +4322,7 @@ Depends on  NOTHING
 	};
 
 	var _convertEndpoint = function(endpoint, type, base) {
-		if ( endpoint.article && typeof endpoint.article == 'object') {
+		if ( endpoint.article && typeof endpoint.article === 'object') {
 			if (!base['endpoint' + type]) {
 				base["endpoint" + type] = {};
 				base['endpoint' + type].article = new global.Appacitive.Article(endpoint.article, true);
@@ -4331,7 +4345,7 @@ Depends on  NOTHING
 	global.Appacitive.Connection = function(options, doNotSetup) {
 		options = options || {};
 		
-		if (typeof options == 'string') {
+		if (typeof options === 'string') {
 			var rName = options;
 			options = { __relationtype : rName };
 		}
@@ -4343,7 +4357,7 @@ Depends on  NOTHING
 			delete options.relation;
 		}
 
-		if (options.endpoints && options.endpoints.length == 2) {
+		if (options.endpoints && options.endpoints.length === 2) {
 			options.__endpointa = options.endpoints[0];
 			options.__endpointb = options.endpoints[1];
 			delete options.endpoints;
@@ -4356,9 +4370,10 @@ Depends on  NOTHING
 		this.parseConnection = function() {
 			
 			var typeA = 'A', typeB ='B';
-			if ( options.__endpointa.label.toLowerCase() == this.get('__endpointb').label.toLowerCase() ) {
+			if ( options.__endpointa.label.toLowerCase() === this.get('__endpointb').label.toLowerCase() ) {
 				if ((options.__endpointa.label.toLowerCase() != options.__endpointb.label.toLowerCase()) && (options.__endpointa.articleid == this.get('__endpointb').articleid || !options.__endpointa.articleid)) {
-				 	typeA = 'B', typeB = 'A';
+				 	typeA = 'B';
+				 	typeB = 'A';
 				}
 			}
 
@@ -4366,6 +4381,11 @@ Depends on  NOTHING
 			_convertEndpoint(this.get('__endpointb'), typeB, this);
 
 			this.endpoints = function() {
+				if (arguments.length === 1 && typeof arguments[0] === 'string') {
+					if (this.endpointA.label.toLowerCase() === arguments[0].toLowerCase()) return this.endpointA;
+					else if (this.endpointB.label.toLowerCase() === arguments[0].toLowerCase()) return this.endpointB;
+					else throw new Error("Invalid label provided");
+				}
 				var endpoints = [];
 				endpoints.push(this.endpointA);
 				endpoints.push(this.endpointB);
@@ -4420,6 +4440,13 @@ Depends on  NOTHING
 
 		// 3
 		this.endpoints = function() {
+
+			if (arguments.length === 1 && typeof arguments[0] === 'string') {
+				if (this.endpointA.label.toLowerCase() === arguments[0].toLowerCase()) return this.endpointA;
+				else if (this.endpointB.label.toLowerCase() === arguments[0].toLowerCase()) return this.endpointB;
+				else throw new Error("Invalid label provided");
+			}
+
 			var endpoints = [];
 			endpoints.push(this.endpointA);
 			endpoints.push(this.endpointB);
@@ -4451,15 +4478,15 @@ Depends on  NOTHING
 	var _fetch = function(request, onSuccess, onError) {
 		request.onSuccess = function(d) {
 			if (d && d.status && d.status.code == '200') {
-			   if (typeof onSuccess == 'function') onSuccess(_parseConnections(d.connections), d.paginginfo);
+			   if (typeof onSuccess === 'function') onSuccess(_parseConnections(d.connections), d.paginginfo);
 			} else {
 				d = d || {};
-				if (typeof onError == 'function') onError(d.status || { message : 'Server error', code: 400 });
+				if (typeof onError === 'function') onError(d.status || { message : 'Server error', code: 400 });
 			}
 		};
 		request.onError = function(d) {
 			d = d || { message : 'Server error', code: 400 };
-			if (typeof onError == 'function') onError(d);
+			if (typeof onError === 'function') onError(d);
 		};
 		global.Appacitive.http.send(request);
 	};
@@ -4467,14 +4494,14 @@ Depends on  NOTHING
 	//takes relationname and array of connectionids and returns an array of Appacitive article objects
 	global.Appacitive.Connection.multiGet = function(options, onSuccess, onError) {
 		options = options || {};
-		if (!options.relation || typeof options.relation!= 'string' || options.relation.length == 0) throw new Error("Specify valid relation");
+		if (!options.relation || typeof options.relation !== 'string' || options.relation.length === 0) throw new Error("Specify valid relation");
 		if (options.ids && options.ids.length > 0) {
 			var request = new global.Appacitive.HttpRequest();
 			request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.connection.getMultiGetUrl(options.relation, options.ids.join(','), options.fields);
 			request.method = 'get';
 			return _fetch(request, onSuccess, onError); 
 		} else { 
-			if (typeof onSuccess == 'function') onSuccess([]);
+			if (typeof onSuccess === 'function') onSuccess([]);
 		}
 	};
 
@@ -4482,7 +4509,7 @@ Depends on  NOTHING
 	global.Appacitive.Connection.multiDelete = function(options, onSuccess, onError) {
 		options = options || {};
 		
-		if (!options.relation || typeof options.relation!= 'string' || options.relation.length == 0) throw new Error("Specify valid relation");
+		if (!options.relation || typeof options.relation !== 'string' || options.relation.length === 0) throw new Error("Specify valid relation");
 
 		if (options.ids && options.ids.length > 0) {
 			var request = new global.Appacitive.HttpRequest();
@@ -4491,18 +4518,20 @@ Depends on  NOTHING
 			request.data = { idlist : options.ids };
 			request.onSuccess = function(d) {
 				if (d && d.code == '200') {
-					if (typeof onSuccess == 'function') onSuccess();
+					if (typeof onSuccess === 'function') onSuccess();
 				} else {
 					d = d || {};
-					if (typeof onError == 'function') onError(d || { message : 'Server error', code: 400 });
+					if (typeof onError === 'function') onError(d || { message : 'Server error', code: 400 });
 				}
 			};
 			request.onError = function(d) {
 				d = d || {};
-				if (typeof onError == 'function') onError(d || { message : 'Server error', code: 400 });
-			}
+				if (typeof onError === 'function') onError(d || { message : 'Server error', code: 400 });
+			};
 			global.Appacitive.http.send(request);
-		} else onSuccess();
+		} else { 
+			if (typeof onSuccess === 'function') onSuccess();
+		}
 	};
 
 	//takes 1 articleid and multiple aricleids and returns connections between both 
@@ -4522,7 +4551,8 @@ Depends on  NOTHING
 		new global.Appacitive.Queries.GetConnectionsBetweenArticlesForRelationQuery(options).fetch(onSuccess, onError);
 	};
 
-})(global);(function (global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
@@ -4532,20 +4562,16 @@ Depends on  NOTHING
 
 		this.currentUser = function() {
 			return _authenticatedUser;
-		}
+		};
 
 		var _updatePassword = function(base, oldPassword, newPassword, onSuccess, onError) {
 			var userId = base.get('__id');
-			if (!userId || typeof userId !== 'string' || userId.length == 0) throw new Error("Please specify valid userid");
-			if (!oldPassword || typeof oldPassword !== 'string' || oldPassword.length == 0) throw new Error("Please specify valid oldPassword");
-			if (!newPassword || typeof newPassword !== 'string' || newPassword.length == 0) throw new Error("Please specify valid newPassword");
+			if (!userId || typeof userId !== 'string' || userId.length === 0) throw new Error("Please specify valid userid");
+			if (!oldPassword || typeof oldPassword !== 'string' || oldPassword.length === 0) throw new Error("Please specify valid oldPassword");
+			if (!newPassword || typeof newPassword !== 'string' || newPassword.length === 0) throw new Error("Please specify valid newPassword");
 
 			onSuccess = onSuccess || function(){};
 			onError = onError || function(){};
-
-			if (oldPassword == newPassword) {
-			 	if (typeof onSuccess == 'function') onSuccess(base); return;
-			}
 
 			var updatedPasswordOptions = { oldpassword : oldPassword, newpassword: newPassword };
 			var request = new global.Appacitive.HttpRequest();
@@ -4564,8 +4590,8 @@ Depends on  NOTHING
 
 		var _getAllLinkedAccounts = function(base, onSuccess, onError) {
 			var userId = base.get('__id');
-			if (!userId || typeof userId !== 'string' || userId.length == 0) {
-				if (typeof onSuccess == 'function') onSuccess(base.linkedAccounts(), base);
+			if (!userId || typeof userId !== 'string' || userId.length === 0) {
+				if (typeof onSuccess === 'function') onSuccess(base.linkedAccounts(), base);
 			}
 
 			onSuccess = onSuccess || function(){};
@@ -4579,7 +4605,7 @@ Depends on  NOTHING
 					var accounts = a.identities || []; 
 					if (accounts.length > 0) base.set('__link', accounts);
 					else base.set('__link', null);
-					if (typeof onSuccess == 'function') onSuccess(accounts, base);
+					if (typeof onSuccess === 'function') onSuccess(accounts, base);
 				}
 				else { onError(a.status, base); }
 			};
@@ -4589,7 +4615,7 @@ Depends on  NOTHING
 
 		var _checkin = function(coords, base, onSuccess, onError) {
 			var userId = base.get('__id');
-			if (!userId || typeof userId !== 'string' || userId.length == 0) {
+			if (!userId || typeof userId !== 'string' || userId.length === 0) {
 				if (onSuccess && typeof onSuccess == 'function') onSuccess();
 			}
 			if (!coords || !coords.lat || !coords.lng) throw new Error("Invalid coordinates provides");
@@ -4602,9 +4628,9 @@ Depends on  NOTHING
 			request.method = 'post';
 			request.onSuccess = function(a) {
 				if (a && a.code == '200') { 
-					if (typeof onSuccess == 'function') onSuccess(accounts, base);
+					if (typeof onSuccess === 'function') onSuccess(accounts, base);
 				}
-				else { if (typeof onError == 'function') onError(a, base); }
+				else { if (typeof onError === 'function') onError(a, base); }
 			};
 			request.onError = onError;
 			global.Appacitive.http.send(request);
@@ -4636,7 +4662,7 @@ Depends on  NOTHING
 			request.onSuccess = function(a) {
 				if (a && a.code == '200') {
 					base.set('__link', payload);
-					if (typeof onSuccess == 'function') onSuccess(base);
+					if (typeof onSuccess === 'function') onSuccess(base);
 				}
 				else { onError(a, base); }
 			};
@@ -4651,7 +4677,7 @@ Depends on  NOTHING
 			var userId = base.get('__id');
 
 			if (!base.get('__id')) {
-				if (typeof onSuccess == 'function') onSuccess(base);
+				if (typeof onSuccess === 'function') onSuccess(base);
 				return;
 			}
 
@@ -4661,7 +4687,7 @@ Depends on  NOTHING
 			request.onSuccess = function(a) {
 				if (a && a.code == '200') {
 					base.set('__link', null);
-					if (typeof onSuccess == 'function') onSuccess(base);
+					if (typeof onSuccess === 'function') onSuccess(base);
 				}
 				else { onError(a, base); }
 			};
@@ -4674,7 +4700,7 @@ Depends on  NOTHING
 			var userObject = user;
 			
 			if (!(userObject instanceof global.Appacitive.User)) userObject = new global.Appacitive.User(user, true); 
-			else if (!userObject.get('__id') || userObject.get('__id').length == 0) throw new Error('Specify user __id');
+			else if (!userObject.get('__id') || userObject.get('__id').length === 0) throw new Error('Specify user __id');
 			else user = userObject.toJSON(); 
 
 			global.Appacitive.localStorage.set('Appacitive-User', user);
@@ -4694,7 +4720,7 @@ Depends on  NOTHING
 				var _callback = function() {
 					_link(Appacitive.Facebook.accessToken(), _authenticatedUser, function(base) {
 						global.Appacitive.eventManager.fire('user..article.' + base.get('__id') + '.updated', base, { object: base });
-						if (typeof onSuccess == 'function') onSuccess(base);
+						if (typeof onSuccess === 'function') onSuccess(base);
 					}, onError);
 				};
 
@@ -4713,7 +4739,7 @@ Depends on  NOTHING
 
 				_unlink('facebook', this, function(base) {
 					global.Appacitive.eventManager.fire('user.article.' + base.get('__id') + '.updated', base, { object: base });
-					if (typeof onSuccess == 'function') onSuccess(base);
+					if (typeof onSuccess === 'function') onSuccess(base);
 				}, onError);
 				
 				return this;
@@ -4748,9 +4774,9 @@ Depends on  NOTHING
 			
 			var accounts = this.get('__link');
 			
-			if(!accounts) accounts = [];
-			else if(typeof accounts == 'object' && !(accounts.length >= 0)) accounts = [accounts];
-			else if(!(accounts.length >= 0)) accounts = accounts[0];
+			if (!accounts) accounts = [];
+			else if (typeof accounts === 'object' && !(accounts.length >= 0)) accounts = [accounts];
+			else if (!(accounts.length >= 0)) accounts = accounts[0];
 
 			return accounts;
 		};
@@ -4761,7 +4787,7 @@ Depends on  NOTHING
 			var that = this;
 
 			_getAllLinkedAccounts(this, function(accounts) {
-				if (typeof onSuccess == 'function') onSuccess(accounts, that);
+				if (typeof onSuccess === 'function') onSuccess(accounts, that);
 			}, onError);
 			return this;
 		};
@@ -4787,7 +4813,7 @@ Depends on  NOTHING
 					}
 				}
 
-				if (typeof onSuccess == 'function') onSuccess(that);
+				if (typeof onSuccess === 'function') onSuccess(that);
 			}, onError);
 			return this;
 		};
@@ -4810,8 +4836,8 @@ Depends on  NOTHING
 			
 			var _callback = function() {
 				global.Appacitive.Session.removeUserAuthHeader();
-				if (typeof onSuccess == 'function') onSuccess();
-			}
+				if (typeof onSuccess === 'function') onSuccess();
+			};
 			if (_authenticatedUser === null) { 
 				_callback();
 				return;
@@ -4825,7 +4851,7 @@ Depends on  NOTHING
 		this.createNewUser = function(user, onSuccess, onError) {
 			user = user || {};
 			user.__schematype = 'user';
-			if (!user.username || !user.password || !user.firstname || user.username.length == 0 || user.password.length == 0 || user.firstname.length == 0) 
+			if (!user.username || !user.password || !user.firstname || user.username.length === 0 || user.password.length === 0 || user.firstname.length === 0) 
 				throw new Error('username, password and firstname are mandatory');
 
 			var userObject = new global.Appacitive.User(user);
@@ -4908,10 +4934,10 @@ Depends on  NOTHING
 				that.authenticateUser(authRequest, function(a) {
 					if (a.user) {
 						a.user.__authType = 'FB';
-						if (typeof onSuccess == 'function') onSuccess({ user : _authenticatedUser, token: a.token });
+						if (typeof onSuccess === 'function') onSuccess({ user : _authenticatedUser, token: a.token });
 					} else {
 						a = a || {};
-						if (typeof onError == 'function') onError(a.status);
+						if (typeof onError === 'function') onError(a.status);
 					}
 				}, onError, 'FB');
 			};
@@ -4919,7 +4945,7 @@ Depends on  NOTHING
 				_callback();
 			} else { 
 				global.Appacitive.Facebook.requestLogin(function(authResponse) {
-					_callback();
+					_callback(authResponse);
 				}, onError);
 			}
 		};
@@ -4928,7 +4954,7 @@ Depends on  NOTHING
 
 		this.validateCurrentUser = function(callback, avoidApiCall) {
 
-			if (callback && typeof callback != 'function' && typeof callback == 'boolean') {
+			if (callback && typeof callback !== 'function' && typeof callback === 'boolean') {
 				avoidApiCall = callback;
 				callback = function() {}; 
 			}
@@ -4936,7 +4962,7 @@ Depends on  NOTHING
 			var token = global.Appacitive.Cookie.readCookie('Appacitive-UserToken');
 
 			if (!token) {
-				if (typeof(callback) == 'function') callback(false);
+				if (typeof(callback) === 'function') callback(false);
 				return false;
 			}
 
@@ -4945,13 +4971,13 @@ Depends on  NOTHING
 					var that = this;
 					this.getUserByToken(token, function(user) {
 						that.setCurrentUser(user, token);
-						if (typeof(callback) == 'function') callback(true);
+						if (typeof(callback) === 'function') callback(true);
 					}, function() {
-						if (typeof(callback) == 'function') callback(false);
+						if (typeof(callback) === 'function') callback(false);
 					});
 				} catch (e) { callback(false);}
 			} else {
-				if (typeof(callback) == 'function') callback(true);
+				if (typeof(callback) === 'function') callback(true);
 				return true;
 			}
 		};
@@ -4960,8 +4986,8 @@ Depends on  NOTHING
 			onSuccess = onSuccess || function(){};
 			onError = onError || function(){};
 
-			if (!username || typeof username != 'string' || username.length == 0) throw new Error("Please specify valid username");
-			if (subject && typeof subject == 'string' && subject.length == 0) throw new Error('Plase specify subject for email');
+			if (!username || typeof username !== 'string' || username.length === 0) throw new Error("Please specify valid username");
+			if (subject && typeof subject === 'string' && subject.length === 0) throw new Error('Plase specify subject for email');
 
 			var passwordResetOptions = { username: username, subject: subject };
 			var request = new global.Appacitive.HttpRequest();
@@ -4970,7 +4996,7 @@ Depends on  NOTHING
 			request.data = passwordResetOptions;
 			request.onSuccess = function(a) {
 				if (a && a.code == '200') {
-				 	if (typeof onSuccess == 'function') onSuccess();
+				 	if (typeof onSuccess === 'function') onSuccess();
 				} else { onError(a); }
 			};
 			request.onError = onError;
@@ -4986,22 +5012,22 @@ Depends on  NOTHING
 			request.method = 'get';
 			request.onSuccess = function(data) {
 				if (data && data.user) { 
-					if (typeof onSuccess == 'function') onSuccess(new global.Appacitive.User(data.user));
-				} else if (typeof onError == 'function') onError(data.status);
+					if (typeof onSuccess === 'function') onSuccess(new global.Appacitive.User(data.user));
+				} else if (typeof onError === 'function') onError(data.status);
 			};
 			request.onError = onError;
 			global.Appacitive.http.send(request);
 		};
 
 		this.getUserByToken = function(token, onSuccess, onError) {
-			if (!token || typeof token != 'string' || token.length == 0) throw new Error("Please specify valid token");
+			if (!token || typeof token !== 'string' || token.length === 0) throw new Error("Please specify valid token");
 			var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getUserByTokenUrl(token);
 			global.Appacitive.Session.setUserAuthHeader(token, 0, true);
 			_getUserByIdType(url, onSuccess, onError);
 		};
 
 		this.getUserByUsername = function(username, onSuccess, onError) {
-			if (!username || typeof username != 'string' || username.length == 0) throw new Error("Please specify valid username");
+			if (!username || typeof username !== 'string' || username.length === 0) throw new Error("Please specify valid username");
 			var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getUserByUsernameUrl(username);
 			_getUserByIdType(url, onSuccess, onError);
 		};
@@ -5017,7 +5043,7 @@ Depends on  NOTHING
 			onError = onError || function(){};
 
 			if (!token) throw new Error("Please specify token");
-			if (!newPassword || newPassword.length == 0) throw new Error("Please specify password");
+			if (!newPassword || newPassword.length === 0) throw new Error("Please specify password");
 
 			var request = new global.Appacitive.HttpRequest();
 			request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.user.getResetPasswordUrl(token);
@@ -5025,7 +5051,7 @@ Depends on  NOTHING
 			request.data = { newpassword: newPassword };
 			request.onSuccess = function(a) {
 				if (a && a.code == '200') {
-				 	if (typeof onSuccess == 'function') onSuccess();
+				 	if (typeof onSuccess === 'function') onSuccess();
 				} else { onError(a); }
 			};
 			request.onError = onError;
@@ -5044,7 +5070,7 @@ Depends on  NOTHING
 			request.data = {};
 			request.onSuccess = function(a) {
 				if (a.status && a.status.code == '200') {
-				 	if (typeof onSuccess == 'function') onSuccess(a.user);
+				 	if (typeof onSuccess === 'function') onSuccess(a.user);
 				} else { onError(a.status); }
 			};
 			request.onError = onError;
@@ -5054,7 +5080,8 @@ Depends on  NOTHING
 
 	global.Appacitive.Users = new UserManager();
 
-})(global);(function(global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
@@ -5070,7 +5097,7 @@ Depends on  NOTHING
 			},
 			from: null,
 			replyto: null
-		}
+		};
 
 		this.getConfig = function() {
 			var _copy = config;
@@ -5110,10 +5137,10 @@ Depends on  NOTHING
 			onSuccess = onSuccess || function(){};
 			onError = onError || function(){};
 
-			if (!options || !options.to || !options.to.length || options.to.length == 0) {
+			if (!options || !options.to || !options.to.length || options.to.length === 0) {
 				throw new Error('Atleast one receipient is mandatory to send an email');
 			}
-			if (!options.subject || options.subject.trim().length == 0) {
+			if (!options.subject || options.subject.trim().length === 0) {
 				throw new Error('Subject is mandatory to send an email');
 			}
 
@@ -5134,7 +5161,7 @@ Depends on  NOTHING
 				body: {
 					templatename: options.templateName || '',
 					data : options.data || {},
-					ishtml: (options.isHtml == false) ? false : true
+					ishtml: (options.isHtml === false) ? false : true
 				}
 			};
 
@@ -5154,10 +5181,10 @@ Depends on  NOTHING
 			onSuccess = onSuccess || function(){};
 			onError = onError || function(){};
 
-			if (!options || !options.to || !options.to.length || options.to.length == 0) {
+			if (!options || !options.to || !options.to.length || options.to.length === 0) {
 				throw new Error('Atleast one receipient is mandatory to send an email');
 			}
-			if (!options.subject || options.subject.trim().length == 0) {
+			if (!options.subject || options.subject.trim().length === 0) {
 				throw new Error('Subject is mandatory to send an email');
 			}
 
@@ -5177,7 +5204,7 @@ Depends on  NOTHING
 				from: options.from,
 				body: {
 					content: options.body || '',
-					ishtml: (options.isHtml == false) ? false : true
+					ishtml: (options.isHtml === false) ? false : true
 				}
 			};
 
@@ -5197,7 +5224,8 @@ Depends on  NOTHING
 
 	global.Appacitive.Email = new _emailManager();
 
-})(global);(function (global) {
+})(global);
+(function (global) {
 
  	"use strict";
 
@@ -5224,9 +5252,9 @@ Depends on  NOTHING
 			FB.login(function(response) {
 				if (response && response.status === 'connected' && response.authResponse) {
 					_accessToken = response.authResponse.accessToken;
-					if (typeof onSuccess == 'function') onSuccess(response.authResponse);
+					if (typeof onSuccess === 'function') onSuccess(response.authResponse);
 				} else {
-					if (typeof onError == 'function') onError();
+					if (typeof onError === 'function') onError();
 				}
 			}, { scope:'email,user_birthday' });
 		};
@@ -5238,15 +5266,15 @@ Depends on  NOTHING
 			FB.api('/me', function(response) {
 				if (response && !response.error) {
 					_accessToken = FB.getAuthResponse().accessToken;
-					if (typeof onSuccess == 'function') onSuccess(response);
+					if (typeof onSuccess === 'function') onSuccess(response);
 				} else {
-					if (typeof onError == 'function') onError();
+					if (typeof onError === 'function') onError();
 				}
 			});
 		};
 
 		this.accessToken = function() {
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				_accessToken = arguments[0];
 				return this;
 			}
@@ -5262,12 +5290,12 @@ Depends on  NOTHING
 			onError = onError || function(){};
 			global.Appacitive.Facebook.accessToken = "";
 			try {
-				FB.logout(function(response) {
+				FB.logout(function() {
 					global.Appacitive.Users.logout();
-					if (typeof onSuccess == 'function') onSuccess();
+					if (typeof onSuccess === 'function') onSuccess();
 				});
 			} catch(e) {
-				if (typeof onError == 'function') onError(e.message);
+				if (typeof onError === 'function') onError(e.message);
 			}
 		};
 	};
@@ -5308,9 +5336,9 @@ Depends on  NOTHING
 				onError = onError || function(){};
 				this.FB.api('/me', function(err, response) {
 					if (response) {
-						if (typeof onSuccess == 'function') onSuccess(response);
+						if (typeof onSuccess === 'function') onSuccess(response);
 					} else {
-						if (typeof onError == 'function') onError("Access token is invalid");
+						if (typeof onError === 'function') onError("Access token is invalid");
 					}
 				});
 			} else {
@@ -5319,7 +5347,7 @@ Depends on  NOTHING
 		};
 
 		this.accessToken = function() {
-			if (arguments.length == 1) {
+			if (arguments.length === 1) {
 				_accessToken = arguments[0];
 				return this;
 			}
@@ -5334,13 +5362,14 @@ Depends on  NOTHING
 			onSuccess = onSuccess || function() {};
 			onError = onError || function(){};
 			global.Appacitive.Facebook.accessToken = "";
-			if (typeof onSuccess == 'function') onSuccess();
-		}
-	}
+			if (typeof onSuccess === 'function') onSuccess();
+		};
+	};
 
 	global.Appacitive.Facebook = global.Appacitive.runtime.isBrowser ? new _browserFacebook() : new _nodeFacebook();
 
-})(global);(function(global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
@@ -5371,7 +5400,7 @@ Depends on  NOTHING
 
 			request.onError = function(d){
 				onError(d || "Server error");
-			}
+			};
 
 			global.Appacitive.http.send(request);
 		};
@@ -5400,7 +5429,7 @@ Depends on  NOTHING
 
 			request.onError = function(d){
 				onError(d || "Server error");
-			}
+			};
 
 			global.Appacitive.http.send(request);
 		};
@@ -5433,7 +5462,7 @@ Depends on  NOTHING
 
 			request.onError = function(d){
 				onError(d || "Server error");
-			}
+			};
 
 			global.Appacitive.http.send(request);
 		};
@@ -5442,7 +5471,8 @@ Depends on  NOTHING
 
 	global.Appacitive.Push = new _pushManager();
 
-})(global);(function(global) {
+})(global);
+(function (global) {
 
   "use strict";
 
@@ -5486,7 +5516,7 @@ Depends on  NOTHING
           if (!that.fileData) throw new Error('Please specify filedata');
           if (contentType || typeof contentType == 'string') that.contentType = contentType;
           else {
-              if (!that.contentType || typeof that.contentType !== 'string' || that.contentType.length == 0) that.contentType = 'text/plain';
+              if (!that.contentType || typeof that.contentType !== 'string' || that.contentType.length === 0) that.contentType = 'text/plain';
               try { that.contentType = file.type; } catch(e) {}
           }
           var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getUploadUrl(that.contentType, that.fileId ? that.fileId : '');
@@ -5512,7 +5542,7 @@ Depends on  NOTHING
           if (!that.fileData) throw new Error('Please specify filedata');
           if (contentType || typeof contentType == 'string') that.contentType = contentType;
           else {
-              if (!that.contentType || typeof contentType !== 'string' || that.contentType.length == 0) that.contentType = 'text/plain';
+              if (!that.contentType || typeof contentType !== 'string' || that.contentType.length === 0) that.contentType = 'text/plain';
               try { that.contentType = file.type; } catch(e) {}
           }
 
@@ -5541,7 +5571,7 @@ Depends on  NOTHING
           onError = onError || function() {};
 
           var request = new global.Appacitive.HttpRequest();
-          request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getDeleteUrl(this.fileId);;
+          request.url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getDeleteUrl(this.fileId);
           request.method = 'DELETE';
 
           request.onSuccess = function(response) {
@@ -5586,7 +5616,7 @@ Depends on  NOTHING
 
           if (contentType || typeof contentType == 'string') this.contentType = contentType;
           else {
-              if (!this.contentType || typeof this.contentType !== 'string' || this.contentType.length == 0) this.contentType = 'text/plain';
+              if (!this.contentType || typeof this.contentType !== 'string' || this.contentType.length === 0) this.contentType = 'text/plain';
           }
 
           var url = global.Appacitive.config.apiBaseUrl + global.Appacitive.storage.urlFactory.file.getUploadUrl(this.contentType, this.fileId ? this.fileId : '');
@@ -5608,20 +5638,22 @@ Depends on  NOTHING
 
   global.Appacitive.File = _file;
 
-}(global));(function(global) {
+}(global));
+(function (global) {
   
+  "use strict";
+
   global.Appacitive.Date = {};
 
   var pad = function (n) {
       if (n < 10) return '0' + n;
-      return n
+      return n;
   };
 
   global.Appacitive.Date.parseISODate = function (str) {
     try {
         var regexp = new RegExp("^([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2})" + "T" + "([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})" + "(.([0-9]+))?" + "Z?$");
 
-        var isOnlyDate = false;
         if (!regexp.exec(str)) return new Date(str);
           
         var parts = str.split('T'),
@@ -5677,7 +5709,7 @@ Depends on  NOTHING
       var date = new Date();
     
       var parts = str.split('T');
-      if (parts.length == 1) parts.push(parts[0]);
+      if (parts.length === 1) parts.push(parts[0]);
       
       var regexp = new RegExp("^([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})" + "(.([0-9]+))?" + "Z?$");
       if (!regexp.exec(parts[1])) {
@@ -5705,104 +5737,167 @@ Depends on  NOTHING
     } catch(e) {return null;}
   };
 
-})(global);(function (global) {
+})(global);
+(function (global) {
 
 	"use strict";
 
-	var A_LocalStorage = function() {
+	if (global.Appacitive.runtime.isBrowser) {
 
-		var _localStorage = (global.Appacitive.runtime.isBrowser) ? window.localStorage : { getItem: function() { return null } };
+		var A_LocalStorage = function() {
 
-		this.set = function(key, value) {
-			value = value || '';
-			if (!key) return false;
+			var _localStorage = (global.Appacitive.runtime.isBrowser) ? window.localStorage : { getItem: function() { return null; } };
 
-		    if (typeof value == "object") {
-		    	try {
-			      value = JSON.stringify(value);
-			    } catch(e){}
-		    }
-		    key = global.Appacitive.getAppPrefix(key);
+			this.set = function(key, value) {
+				value = value || '';
+				if (!key) return false;
 
-			_localStorage[key] = value;
-			return true;
+			    if (typeof value === "object") {
+			    	try {
+				      value = JSON.stringify(value);
+				    } catch(e){}
+			    }
+			    key = global.Appacitive.getAppPrefix(key);
+
+				_localStorage[key] = value;
+				return true;
+			};
+
+			this.get = function(key) {
+				if (!key) return null;
+
+				key = global.Appacitive.getAppPrefix(key);
+
+				var value = _localStorage.getItem(key);
+			   	if (!value) { return null; }
+
+			    // assume it is an object that has been stringified
+			    if (value[0] === "{") {
+			    	try {
+				      value = JSON.parse(value);
+				    } catch(e){}
+			    }
+
+			    return value;
+			};
+			
+			this.remove = function(key) {
+				if (!key) return;
+				key = global.Appacitive.getAppPrefix(key);
+				try { delete _localStorage[key]; } catch(e){}
+			};
+		};
+		global.Appacitive.localStorage = new A_LocalStorage();
+
+	} else {
+		var A_LocalStorage = function() {
+			
+            var _localStorage = [];
+
+            this.set = function(key, value) {
+                value = value || '';
+                if (!key || typeof key !== 'string') return false;
+
+                key = global.Appacitive.getAppPrefix(key);
+
+                _localStorage[key] = value;
+                return true;
+            };
+
+            this.get = function(key) {
+                if (!key || typeof key !== 'string') return null;
+
+                key = global.Appacitive.getAppPrefix(key);
+
+                var value = _localStorage[key];
+	            if (!value) { return null; }
+
+                return value;
+            };
+            
+            this.remove = function(key) {
+                if (!key || typeof key !== 'string') return;
+                key = global.Appacitive.getAppPrefix(key);
+                try { delete _localStorage[key]; } catch(e){}
+            }
+        };
+
+        global.Appacitive.localStorage = new A_LocalStorage();
+	}
+})(global);
+(function (global) {
+
+"use strict";
+
+if (global.Appacitive.runtime.isBrowser) {
+
+	var _cookieManager = function () {
+
+		this.setCookie = function (name, value, minutes, erase) {
+			name = global.Appacitive.getAppPrefix(name);
+			var expires = '';
+			if (minutes) {
+				var date = new Date();
+				date.setTime(date.getTime() + (minutes*60*1000));
+				expires = "; expires=" + date.toGMTString();
+			}
+
+			if (!erase) {
+				//for now lets make this a session cookie if it is not an erase
+				if (!global.Appacitive.Session.persistUserToken) expires = '';
+				else expires = "; expires=" +  new Date("2020-12-31").toGMTString();
+			} else {
+				expires = '; expires=Thu, 01-Jan-1970 00:00:01 GMT';
+			}
+			var domain = 'domain=' + window.location.hostname;
+			if (window.location.hostname == 'localhost') domain = '';
+			
+			document.cookie = name + "=" + value + expires + "; path=/;" + domain;
 		};
 
-		this.get = function(key) {
-			if (!key) return null;
-
-			key = global.Appacitive.getAppPrefix(key);
-
-			var value = _localStorage.getItem(key);
-		   	if (!value) { return null; }
-
-		    // assume it is an object that has been stringified
-		    if (value[0] == "{") {
-		    	try {
-			      value = JSON.parse(value);
-			    } catch(e){}
-		    }
-
-		    return value;
+		this.readCookie = function (name) {
+			name = global.Appacitive.getAppPrefix(name);
+			var nameEQ = name + "=";
+			var ca = document.cookie.split(';');
+			for (var i=0; i < ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0) == ' ') c = c.substring(1,c.length);
+				if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
+			}
+			return null;
 		};
-		
-		this.remove = function(key) {
-			if (!key) return;
-			key = global.Appacitive.getAppPrefix(key);
-			try { delete _localStorage[key]; } catch(e){}
-		}
+
+		this.eraseCookie = function (name) {
+			this.setCookie(name, "" ,-1, true);
+		};
+
 	};
 
-	global.Appacitive.localStorage = new A_LocalStorage();
-
-})(global);(function (global) {
-
-var cookieManager = function () {
-
-	this.setCookie = function (name, value, minutes, erase) {
-		name = global.Appacitive.getAppPrefix(name);
-		var expires = '';
-		if (minutes) {
-			var date = new Date();
-			date.setTime(date.getTime() + (minutes*60*1000));
-			expires = "; expires=" + date.toGMTString();
-		}
-
-		if (!erase) {
-			//for now lets make this a session cookie if it is not an erase
-			if (!global.Appacitive.Session.persistUserToken) expires = '';
-			else expires = "; expires=" +  new Date("2020-12-31").toGMTString();
-		} else {
-			expires = '; expires=Thu, 01-Jan-1970 00:00:01 GMT';
-		}
-		var domain = 'domain=' + window.location.hostname;
-		if (window.location.hostname == 'localhost') domain = '';
-		
-		document.cookie = name + "=" + value + expires + "; path=/;" + domain;
-	};
-
-	this.readCookie = function (name) {
-		name = global.Appacitive.getAppPrefix(name);
-		var nameEQ = name + "=";
-		var ca = document.cookie.split(';');
-		for (var i=0; i < ca.length; i++) {
-			var c = ca[i];
-			while (c.charAt(0)==' ') c = c.substring(1,c.length);
-			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-		}
-		return null;
-	};
-
-	this.eraseCookie = function (name) {
-		this.setCookie(name, "" ,-1, true);
-	};
-
-};
-
-if (global.Appacitive.runtime.isBrowser)
 	global.Appacitive.Cookie = new cookieManager();
 
-})(global);(function(global) {
+} else {
+	var cookieManager = function () {
+
+	        this.setCookie = function (name, value) {
+	                global.Appacitive.localStorage.set( 'cookie/' + name, value);
+	        };
+
+	        this.readCookie = function (name) {
+	                return global.Appacitive.localStorage.get( 'cookie/' + name);
+	        };
+
+	        this.eraseCookie = function (name) {
+	                global.Appacitive.localStorage.remove( 'cookie/' + name);
+	        };
+
+	};
+	global.Appacitive.Cookie = new cookieManager();
+}
+
+})(global);
+(function (global) {
+
+	"use strict";
 
 	var _cloud = function() {
 
@@ -5828,11 +5923,13 @@ if (global.Appacitive.runtime.isBrowser)
 				return (a.name == name);
 			});
 
-			var ctx = arguments[1]
+			var request = arguments[1].request;
+			var response = arguments[1].response;
 
 			if (api.length > 0) {
+				var method = api[0].method;
 				setTimeout(function() {
-					api[0].method.call({} , ctx.request, ctx.response);	
+					method.apply(null , [request, response]);	
 				}, 0);
 			} else {
 				throw { code: '404', message: "Api with name " + arguments[0] + " doesn't exits" };
@@ -5844,4 +5941,5 @@ if (global.Appacitive.runtime.isBrowser)
 	global.Appacitive.Cloud = new _cloud();
 
 })(global);
-if (typeof module != 'undefined' && !global.Appacitive.runtime.isBrowser) module.exports =  global.Appacitive;
+
+if (typeof module !== 'undefined' && !global.Appacitive.runtime.isBrowser) module.exports =  global.Appacitive;

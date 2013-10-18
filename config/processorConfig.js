@@ -5,5 +5,7 @@ module.exports = {
 	sendTimeoutInterval: 1000,
 	timeoutCounts: 2,
 	posixTime: 14,
-	clearThreadInterval: 120000
+	clearThreadInterval: 120000,
+	sdkLatestVersion: "1",
+	sdkPath: '/sdk/sdkv'
 };

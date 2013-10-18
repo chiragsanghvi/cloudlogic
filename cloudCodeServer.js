@@ -225,7 +225,7 @@ module.exports = function(port, engine) {
     
 	server.on('uncaughtException', function (req, res, route, err) {
 	   res.setHeader('TransactionId', req.id);
-	   return next(new InvalidError('400', { transactionid: req.id, code: '500', message: err.message }));
+	   res.send(400, err.message);
 	});
 
 	return server;
