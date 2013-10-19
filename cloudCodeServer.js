@@ -156,8 +156,8 @@ module.exports = function(port, engine) {
 	});
     
 	server.on('uncaughtException', function (req, res, route, err) {
-	   res.setHeader('TransactionId', req.id);
-	   res.send(500, 'Server Error');
+	   //res.setHeader('TransactionId', req.id);
+	   //res.send(500, 'Server Error');
 	});
 
 	return server;

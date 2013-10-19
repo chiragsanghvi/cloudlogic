@@ -16,7 +16,7 @@ var makeRequest = function(v, name, reqNo) {
   var req = {
     "m": "POST",
     "e": "sandbox",
-    "b": {"name": "chirag", "tag":"cloudcode", "time": 1299999999 }
+    "b": {"name": "chirag", "tag":"cloudcode", "time": 12999999 , "email": "csanghvi@appacitive.com" }
   };
 
   var options = {
@@ -70,11 +70,10 @@ var makeRequest = function(v, name, reqNo) {
       
       if (name != 'code' && name != 'get') {
         //console.log(t + "ms, " + name + " => \n\n" + receivedData + "\n");
-        console.log(t + "ms" + name + " => " + res.statusCode + " : " + receivedData + " :" + res.headers['executiontime']);
+        console.log(t + "ms"  + " => " + name + ' : code: ' + res.statusCode + " : " + receivedData + " :" + res.headers['executiontime'] + "\n");
       } else {
         //console.log(t + "ms, " + name + " => \n\n" + receivedData + "\n");
-        console.log(t + "ms" + name + " => " + res.statusCode + " : " + receivedData + " :" + res.headers['executiontime']);
-        console.log(res);
+        console.log(t + "ms"  + " => " + name + ' : code: '  + res.statusCode + " : " + receivedData + " :" + res.headers['executiontime']+ "\n");
         ++successful
       }
     });
@@ -94,8 +93,8 @@ process.on('exit', function() {
 });
 
 var reqNo = 1;
-var names = ["timed","for"]
-//var names = ["err","code","get","error","invalid","invalidbody"];
+//var names = ["timed","for"]
+var names = ["err","code","get","error","invalid","invalidbody","for"];
 for (var i = 1 ; i <= 1 ; i = i + 1) {
   var version = i;
   for (var j = 1 ; j <= 1 ; j = j + 1) {
