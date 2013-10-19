@@ -7,5 +7,7 @@ module.exports = {
 	posixTime: 14,
 	clearThreadInterval: 120000,
 	sdkLatestVersion: "1",
-	sdkPath: '/sdk/sdkv'
+	sdkPath: '/sdk/sdkv',
+	baseHandlerPath: './handlers/',
+	zipFileName: 'cloudlogic.zip'
 };

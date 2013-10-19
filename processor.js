@@ -6,6 +6,8 @@ var config = require('./config/contextConfig.js');
 
 var Processor = function(options) {
 
+	"use strict";
+	
 	options = options || {};
 
 	var that = this;
@@ -338,7 +340,7 @@ Processor.prototype.startThread = function() {
 	options.baseDirectory = __dirname;
 	options.sdkPath = this.options.sdkPath;
 	options.sdkLatestVersion = this.options.sdkLatestVersion;
-
+	options.baseHandlerPath = this.options.baseHandlerPath;
 
 	log('Processor> Starting thread ', 'debug');
 

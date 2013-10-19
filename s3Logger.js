@@ -1,5 +1,8 @@
 var AWS = require('aws-sdk');
 var AWSConfig = require('./config/awsS3Config.js').config;
+var MessageProcessor = require('./messageProcessor.js'),
+messageCodes = require('./ipcMessageCodes.js'),
+log = require('./logger.js').log;
 
 AWS.config.update({ accessKeyId: AWSConfig.accessKeyId, secretAccessKey: AWSConfig.secretAccessKey, region: AWSConfig.region });
 
@@ -14,14 +17,10 @@ var sDB = new AWS.SimpleDB({
 	apiVersion: 'latest',
 	paramValidation: false
 });
-
-var MessageProcessor = require('./messageProcessor.js'),
-messageCodes = require('./ipcMessageCodes.js'),
-log = require('./logger.js').log;
+this.messageProcessor = new MessageProcessor(this);
 
 var self = this;
 
-this.messageProcessor = new MessageProcessor(this);
 
 var getKey = function (message) {
   return message.ctx.acid + '/' + message.ctx.apid + '/' + message.ctx.dpid + '/' + message.ctx.cf.n + '/logs/'  + message.ctx.id + '.json';

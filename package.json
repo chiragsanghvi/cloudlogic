@@ -19,6 +19,6 @@
     "memwatch": "0.2.x",
     "agentkeepalive": "0.1.x",
     "winston-s3": "0.x.x",
-    "mkdirp":">=0.0.0"
+    "mkdirp":"0.3.x"
   }
 }

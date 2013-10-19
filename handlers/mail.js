@@ -2,7 +2,6 @@ console.log("I've loaded");
 
 var mail = function() {
 	this.send = function(body, emailId, response) {
-
 		var emailOptions = {
 			to: [emailId],
 			subject: 'testing',

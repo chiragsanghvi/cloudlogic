@@ -1,30 +1,37 @@
 var cache = require('./fileCache.js');
 var AWS = require('aws-sdk');
-var AWSConfig = require('./config/awsS3Config.js').config;
 var mkdirp = require('mkdirp');
 var fs = require('fs');
+var AWSConfig = require('./config/awsS3Config.js').config;
+var config = require('./config/processorConfig.js');
 
 AWS.config.update({ accessKeyId: AWSConfig.accessKeyId, secretAccessKey: AWSConfig.secretAccessKey, region: AWSConfig.region });
 
 var s3 = new AWS.S3();
 
+//get s3 Key for zip package for deployment
 var getKey = function (ctx) {
-  return ctx.acid + '/' + ctx.apid + '/' + ctx.dpid + '/zip/cloudlogic.zip' ;
+  return ctx.acid + '/' + ctx.apid + '/' + ctx.dpid + '/zip/' + config.zipFileName;
 };
 
+//get filename on filesystem for the file
 var getFilename = function(ctx) {
-  return './handlers/' + ctx.dpid + '-v-' + ctx.cf.v + '/' + ctx.cf.n + '/'  + ctx.cf.n;
+  return config.baseHandlerPath + ctx.dpid + '-v-' + ctx.cf.v + '/' + ctx.cf.n + '/'  + ctx.cf.n;
 };
 
+//extract zip file to specified directory, if doesn't exists then create the directory
 var extractToFolder = function(zip, ctx, onSuccess, onError) {
-  var dir = './handlers/' + ctx.dpid + '-v-' + ctx.cf.v;
+  var dir = config.baseHandlerPath + ctx.dpid + '-v-' + ctx.cf.v;
+
   mkdirp(dir , null, function(err) {
+    
     if (err) {
       onError("Unable to find cloud api");
       return;
     }
     console.log("Made directory");
 
+    //write the zip file to the created directory
     fs.writeFile(dir + '/cloudlogic.zip', zip, {}, function(err) {
 
       if (err) { 
@@ -33,19 +40,25 @@ var extractToFolder = function(zip, ctx, onSuccess, onError) {
       }
       console.log("Saved");
 
+      //unzip the zip file in the created directory
       var spawn = require('child_process').spawn,
-             unzip = spawn('unzip', ['-o', dir + '/cloudlogic.zip', '-d', dir + '/']);
+             unzip = spawn('unzip', ['-o', dir + '/' + config.zipFileName, '-d', dir + '/']);
 
       unzip.on('close', function (code) {
-         fs.readFile(getFilename(ctx) + '.js', 'UTF-8', function(err, data) {
-            if (err) { 
-              onError("Unable to find cloud api");
-              return;
-            } 
-            onSuccess(data);
-         });
-      });
+          
+        console.log("unzipped file");
 
+        //read main handler file(apis.js or taks.js from their folder) from filesystem
+        fs.readFile(getFilename(ctx) + '.js', 'UTF-8', function(err, data) {
+          if (err) { 
+            onError("Unable to find cloud api");
+            return;
+          }
+          //return read file
+          onSuccess(data);
+
+        });
+      });
     });
   });
 };
@@ -57,35 +70,25 @@ var fetchFromS3 = function (ctx, onSuccess, onError) {
     Key: getKey(ctx)
   };
 
-  console.log(params);
-  var data = '';
-  var fetched = false;
-  try {
-      /*s3.getObject(params).on('httpData', function(chunk) { 
-         data += chunk;
-      }).on('httpDone', function() { 
-        if (!fetched) {
-          console.log("downloaded");
-          extractToFolder(data, ctx, onSuccess, onError);
-        }
-      }).on('error', function(response) {
-         fetched = true;
-         onError("Unable to find cloud api");
-      }).send();*/
+  var s3Domain = require('domain').create();
+  
+  s3Domain.on('error', function(e) {
+    onError("Unable to find cloud api");
+    serverDomain.dispose();
+  });
 
-      s3.getObject(params, function(err, data){
-          if (err)  onError("Unable to find cloud api");
-          else {
-            extractToFolder(data.Body, ctx, onSuccess, onError);
-          }
-      })
-
-    } catch(e) {
-      onError("Unable to find cloud api");
-    }
+  s3Domain.run(function() {
+    s3.getObject(params, function(err, data){
+      if (err)  onError("Unable to find cloud api");
+      else {
+        extractToFolder(data.Body, ctx, onSuccess, onError);
+      }
+    });
+  });
 };
 
 //get handler for supplied filename, either from cache, else from file system, or from S3
+
 exports.getHandler = function (ctx, onSuccess, onError) {
    var filename = getFilename(ctx);
    //first read from cache

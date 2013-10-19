@@ -1,23 +1,11 @@
 var restify = require('restify');
 var util = require('util');
 var messageCodes = require('./ipcMessageCodes.js');
-
-/* custom error message for get handler */
-function InvalidError(code, status) {
-  restify.RestError.call(this, {
-    restCode: code,
-    statusCode: code,
-    constructorOpt: InvalidError,
-    body: {
-        status : status,
-        body: null
-    }
-  });
-
-  this.name = 'InvalidError';
-};
-
-util.inherits(InvalidError, restify.RestError);
+var config = require('./config/contextConfig.js');
+var context = require('./getContext.js');
+var getHandler = require('./getHandler.js').getHandler;
+var requestParser = require('./requestParser.js')();
+var customError = require('./customError.js');
 
 var getResponseCode = function(code) {
 	switch(code) {
@@ -30,28 +18,7 @@ var getResponseCode = function(code) {
 	return code;
 };
 
-
-
-var CODES = {
-        BadDigest: 400,
-        BadMethod: 405,
-        Internal: 500, // Don't have InternalErrorError
-        InvalidArgument: 409,
-        InvalidContent: 400,
-        InvalidCredentials: 401,
-        InvalidHeader: 400,
-        InvalidVersion: 400,
-        MissingParameter: 409,
-        NotAuthorized: 403,
-        PreconditionFailed: 412,
-        RequestExpired: 400,
-        RequestThrottled: 429,
-        ResourceNotFound: 404,
-        WrongAccept: 406
-};
-
 module.exports = function(port, engine) {
-
 
 	//create an s3Logger child process to log output of handler to s3
 	var s3Logger = require('child_process').fork('./s3Logger.js',[],{});
@@ -62,43 +29,8 @@ module.exports = function(port, engine) {
 	    s3Logger = require('child_process').fork('./s3Logger.js',[],{});
 	});
 
-	var server = restify.createServer({
-		formatters: {
-	        'application/json': function ( req, res, body ) {
-	            // Copied from restify/lib/formatters/json.js
+	var server = restify.createServer();
 
-	            if ( body instanceof Error ) {
-	                // snoop for RestError or HttpError, but don't rely on
-	                // instanceof
-	                res.statusCode = body.statusCode || 500;
-
-	                if ( body.body ) {
-	                	if (body.body.status) {
-	                		body = body.body;
-	                	} else {
-	                		if (body.body.code.toLowerCase() == 'InternalError') body.body.message = 'Server Error';
-
-		                    body = {
-	                        	code: body.body.code,
-	                        	msg: body.body.message
-		                    };
-		                }
-	                } 
-	            } else if ( Buffer.isBuffer( body ) ) {
-	                body = body.toString( 'base64' );
-	            }
-
-	            var data = JSON.stringify( body );
-	            res.setHeader( 'Content-Length', Buffer.byteLength( data ) );
-
-	            return data;
-	        }
-	    }
-	});
-	var config = require('./config/contextConfig.js');
-	var context = require('./getContext.js');
-	var getHandler = require('./getHandler.js').getHandler;
-	
 	server.pre(function(req, res, next) {
 		if (server.gracefulShutdown) {
 			res.setHeader("Connection", "close");
@@ -116,7 +48,7 @@ module.exports = function(port, engine) {
 	server.use(restify.bodyParser({ mapParams: false, rejectUnknown: false }));
 
 	/* To validate the request */
-	server.use(require('./requestParser.js')());
+	server.use(requestParser);
 
 	/* server.use(restify.throttle({
 	  rate: 10,
@@ -205,7 +137,7 @@ module.exports = function(port, engine) {
 			}, function(message) {
 				res.setHeader('TransactionId', ctx.id);
 				// call next with an error saying cannot find handler
-				return next(new InvalidError('404', {  transactionid: ctx.id, code: '404', message: message }));
+				return next(new customError('404', { code: '404', message: message }));
 			});
 			
 		}, next);
@@ -225,7 +157,7 @@ module.exports = function(port, engine) {
     
 	server.on('uncaughtException', function (req, res, route, err) {
 	   res.setHeader('TransactionId', req.id);
-	   res.send(400, err.message);
+	   res.send(500, 'Server Error');
 	});
 
 	return server;

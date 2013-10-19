@@ -2,6 +2,7 @@ var config = require('./config/contextConfig.js');
 var Agent = require('agentkeepalive'); 
 var url = require('url'); 
 var http = require('http');
+var customError = require('./customError.js');
 
 var keepaliveAgent = new Agent({
   maxSockets: 30,
@@ -67,25 +68,6 @@ var send = function(request) {
 };
 
 
-var restify = require('restify');
-var util = require('util');
-
-function InvalidCredentialsError(code, status) {
-  restify.RestError.call(this, {
-    restCode: code,
-    statusCode: code,
-    constructorOpt: InvalidCredentialsError,
-    body: {
-        status : status,
-        body: null
-    }
-  });
-
-  this.name = 'InvalidCredentialsError';
-};
-
-util.inherits(InvalidCredentialsError, restify.RestError);
-
 exports.getContext = function(req, res, onSuccess, next) {
 
     var cb = function(response) {
@@ -102,8 +84,8 @@ exports.getContext = function(req, res, onSuccess, next) {
             delete response.status;
             onSuccess(response, this);
         } else {
-            response = response || { status: { code: '404', message: 'Server not found' } };
-            next(new InvalidCredentialsError(response.status.code, response.status));
+            response = response || { status: { code: '404', message: 'Server not found' }};
+            next(new customError("404", response.status.message));
         }
     };
 
@@ -139,7 +121,7 @@ exports.getContext = function(req, res, onSuccess, next) {
             cb(response);
         },
         onError: function(err) {
-            next(new InvalidCredentialsError(err.message, err.code));
+            next(new customError("404", "Server Not found"));
         }
     };
     if (req.body['ut']) ctxReq.headers['appacitive-user-auth'] = req.body['ut'];
