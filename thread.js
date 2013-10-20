@@ -33,8 +33,6 @@ var Thread = function(options) {
 Thread.prototype.execute = function(message) {
 	var that = this;
 
-	console.log(this.options.sdkLatestVersion);
-
 	var runner = new Runner({
 		baseUrl: this.options.apiBaseUrl,
 		baseDirectory: this.options.baseDirectory,

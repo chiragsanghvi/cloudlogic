@@ -120,6 +120,7 @@ var Processor = function(options) {
 Processor.prototype.options = defaultOptions;
 
 Processor.prototype.process = function(message, callback) {
+
 	//Check for change in file versions and reset timeout functions
 	if (this.fileVersion[message.dpid] != message.cf.v) {
 		this.fileVersion[message.dpid] = message.cf.v;

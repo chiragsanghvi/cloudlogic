@@ -4,11 +4,13 @@ var url = require('url');
 var http = require('http');
 var customError = require('./customError.js');
 
-var keepaliveAgent = new Agent({
+/*var keepaliveAgent = new Agent({
   maxSockets: 30,
   maxKeepAliveRequests: 0, // max requests per keepalive socket, default is 0, no limit.
   maxKeepAliveTime: 10000 // keepalive for 10 seconds
-});
+});*/
+
+http.globalAgent.maxSockets = 100;
 
 var send = function(request) {
     var reqUrl = url.parse(request.url);
@@ -19,8 +21,8 @@ var send = function(request) {
        method: 'GET',
        headers : {
          'accept': '*/*'
-       },
-       agent: keepaliveAgent    
+       }
+       //agent: keepaliveAgent    
    };
 
     for(var x in request.headers)

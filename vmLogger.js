@@ -25,8 +25,11 @@ var Logs = function() {
 			msg = arguments[0];
 		}
 
-		if (!msg) return;
-
+		if (msg == undefined) msg = 'undefined';
+		else if (msg == null) msg = 'null';
+		else if (typeof msg == 'function') msg = '{}';
+		else if (typeof msg == 'object') msg = '' + msg;
+		
 		switch (lvl) {
 			case logLevels.LOG:
 				logStorage.push({ time: new Date().toISOString(), msg:  msg.toString() });
@@ -34,6 +37,10 @@ var Logs = function() {
 				break;
 			default: console.log(msg);
 		}
+	};
+
+	this.log.toString = function() {
+		return "function () { [native code] }";
 	};
 
 	this.getLogs = function() {

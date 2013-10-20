@@ -6,12 +6,12 @@ var CustomError = function (code, message, body) {
   restify.RestError.call(this, {
     restCode: code,
     statusCode: code,
-    constructorOpt: InvalidError,
+    constructorOpt: CustomError,
     message: message,
     body: body
   });
 
-  this.name = 'InvalidError';
+  this.name = 'CustomError';
 };
 
 util.inherits(CustomError, restify.RestError);

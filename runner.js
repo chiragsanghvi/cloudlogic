@@ -100,29 +100,42 @@ Runner.prototype.getSdk = function () {
 
 Runner.prototype.getContext = function() {
 
+	"use strict";
+
     var that = this;
 
-	var ctx = vm.createContext({
-		console: { log: this.logger.log, dir: console.dir },
-		Appacitive : this.getSdk(),
-		setTimeout: setTimeout,
-		require: function(module) {
+    var loadModule = function(module) {
 
-			if (that.includedModules[module]) {
-				return _eval(that.includedModules[module] , module, that.ctx, false);
-			}
-
-			if (require('fs').existsSync('./handlers/' + module)) {
-
-				var data = '"use strict";\n\n' + require('fs').readFileSync(that.options.baseHandlerPath + that.message.dpid + '-v-' + that.message.cf.v + '/' + that.message.cf.n + '/' + module, 'UTF-8');
-				
-				that.includedModules[module] = _eval(data, module, that.ctx, false);
-
-				return that.includedModules[module];
-			}
-			return {};
+    	if (that.includedModules[module]) {
+			return _eval(that.includedModules[module] , module, that.ctx, false);
 		}
+
+		var modulePath = that.options.baseHandlerPath + that.message.dpid + '-v-' + that.message.cf.v + '/' + that.message.cf.n + '/' + module;
+
+		if (require('fs').existsSync(modulePath)) {
+
+			var data = '"use strict";\n\n' + require('fs').readFileSync(modulePath, 'UTF-8');
+			
+			that.includedModules[module] = _eval(data, module, that.ctx, false);
+
+			return that.includedModules[module];
+		}
+		return {};
+    };
+
+	var ctx = vm.createContext({
+		console: { log: this.logger.log },
+		Appacitive : this.getSdk(),
+		setTimeout: setTimeout
 	});
+
+	ctx.require = function(module) {
+		return loadModule(module);
+	};
+
+	ctx.require.toString = function() {
+		return "function () { [native code] }";
+	};
 
 	ctx.Appacitive.config.apiBaseUrl = this.options.baseUrl;
 

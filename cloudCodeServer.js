@@ -82,6 +82,7 @@ module.exports = function(port, engine) {
 
 			//get handler
 			getHandler(ctx, function() {
+
 				var handlerTime = new Date().getTime();
 
 				ctx.b = req.body['b'];
@@ -156,6 +157,7 @@ module.exports = function(port, engine) {
 	});
     
 	server.on('uncaughtException', function (req, res, route, err) {
+		console.log(err);
 	   //res.setHeader('TransactionId', req.id);
 	   //res.send(500, 'Server Error');
 	});
