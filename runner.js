@@ -1,5 +1,5 @@
 var vm = require('vm');
-var Logger = require('./vmLogger.js')
+var Logger = require('./vmLogger.js');
 var posix = require('posix');
 var _eval = require('eval');
 
@@ -68,6 +68,8 @@ var Response = function(success, error) {
         return;
     };
 
+    this.success.toString = function() { return "function () { [native code] }"; }
+
     this.error = function(msg) { 
       	msg = msg || "Error";
 
@@ -80,6 +82,8 @@ var Response = function(success, error) {
       	error(err);
       	return;
     };
+
+    this.error.toString = function() { return "function () { [native code] }"; }
 };
 
 Runner.prototype.getSdk = function () {

@@ -42,6 +42,8 @@ module.exports = function(port, engine) {
 		next();
 	});
 
+	server.pre(require('./authorization.js')());
+
 	server.use(restify.acceptParser(server.acceptable));
 	server.use(restify.queryParser({ mapParams: false }));
 	server.use(restify.gzipResponse());
@@ -85,7 +87,7 @@ module.exports = function(port, engine) {
 
 				var handlerTime = new Date().getTime();
 
-				ctx.b = req.body['b'];
+				ctx.b = req.body;
 				ctx.h = req.headers;
 				ctx.q = req.query;
 

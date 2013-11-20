@@ -76,11 +76,9 @@ exports.getContext = function(req, res, onSuccess, next) {
         if (response && response.status && response.status.code >= '200' && response.status.code < '300') {
             response.id = response.status.referenceid;
 
-            if (req.body['ak']) response['ak'] = req.body['ak'];
-            else response['as'] = req.body['as'];
-
-            response['e'] = req.body['e'];
-            response['ut'] = req.body['ut'];
+            response['ak'] = req.authorization.basic['ak'];
+            response['e'] = req.authorization.basic['e'];
+            response['ut'] = req.authorization.basic['ut'];
             response.cf.fn = req.params.name;
 
             delete response.status;
@@ -116,8 +114,8 @@ exports.getContext = function(req, res, onSuccess, next) {
         headers: {
             'content-type': 'application/json',
             'accept': 'application/json',
-            'appacitive-apikey' : req.body['ak'] ? req.body['ak'] : req.body['as'],
-            'appacitive-environment' : req.body['e']
+            'appacitive-apikey' : req.authorization.basic['ak'],
+            'appacitive-environment' : req.authorization.basic['e']
         },
         onSuccess: function(response) {
             cb(response);
@@ -126,7 +124,7 @@ exports.getContext = function(req, res, onSuccess, next) {
             next(new customError("404", "Server Not found"));
         }
     };
-    if (req.body['ut']) ctxReq.headers['appacitive-user-auth'] = req.body['ut'];
+    if (req.authorization.basic['ut']) ctxReq.headers['appacitive-user-auth'] = req.authorization.basic['ut'];
 
     send(ctxReq);
 };
