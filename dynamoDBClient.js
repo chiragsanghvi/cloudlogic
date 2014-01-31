@@ -1,24 +1,20 @@
 var AWS = require('aws-sdk');
 var AWSConfig = require('./config/awsS3Config.js').config;
+var MessageProcessor = require('./messageProcessor.js'),
+messageCodes = require('./ipcMessageCodes.js'),
+log = require('./logger.js').log;
 
 AWS.config.update({ accessKeyId: AWSConfig.accessKeyId, secretAccessKey: AWSConfig.secretAccessKey, region: AWSConfig.region });
 
-var sDB = new AWS.SimpleDB({
-	accessKeyId: AWSConfig.accessKeyId,
-	secretAccessKey: AWSConfig.secretAccessKey, 
-	region: AWSConfig.region,
-	maxRetries: 1,
-	computeChecksums: false,
-	sslEnabled: false,
-	apiVersion: 'latest',
-	paramValidation: false
-});
+var dynamoDB = new AWS.DynamoDB({ apiVersion: 'latest' });
 
-exports.getLog = function(name, cb) {
-	sDB.getAttributes({
-		DomainName: AWSConfig.baseBucket,
-		ItemName: name
-	}, function(err, data){
+exports.getLog = function(id, cb) {
+	dynamoDB.query({
+		"TableName": AWSConfig.baseBucket,
+		"Limit" : 20,
+		"KeyConditions" : "id" 
+		// Need to check this
+	}, function(err, data) {
 		if (err) {
 			console.log(err);
 			cb(null);

@@ -40,25 +40,6 @@ watchServer.get(config.path + 'shutdown', function (req, res, next) {
   	res.send("Closing server");
 });
 
-
-watchServer.get(config.path + 'domains', function (req, res, next) {
-	sDBClient.getDomains(function(data) {
-		res.send(data);
-	});
-});
-
-watchServer.get(config.path + 'domains/create', function (req, res, next) {
-	sDBClient.createDomain(function(data) {
-		res.send(data);
-	});
-});
-
-watchServer.get(config.path + 'domains/delete/:name', function (req, res, next) {
-	sDBClient.deleteDomain(req.params.name ,function(data) {
-		res.send(data);
-	});
-});
-
 watchServer.get(config.path + 'log/:logId', function (req, res, next) {
 	sDBClient.getLog(req.params.logId, function(data) {
 		res.send(data);

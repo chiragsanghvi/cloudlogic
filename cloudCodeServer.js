@@ -20,13 +20,17 @@ var getResponseCode = function(code) {
 
 module.exports = function(port, engine) {
 
+	var loggerType = 'dynamoDB';
+
 	//create an s3Logger child process to log output of handler to s3
-	var s3Logger = require('child_process').fork('./s3Logger.js',[],{});
+	var logger = require('child_process').fork('./' + loggerType + 'Logger.js',[],{});
+
+
 
 	//put an handler
-	s3Logger.on('exit',function () {
-		log('S3 Logger ' + s3Logger.pid + ' died', 'error');
-	    s3Logger = require('child_process').fork('./s3Logger.js',[],{});
+	logger.on('exit',function () {
+		console.log(loggerType + 'Logger ' + logger.pid + ' died', 'error');
+	    logger = require('child_process').fork('./' + loggerType + 'Logger.js',[],{});
 	});
 
 	var server = restify.createServer();
@@ -118,7 +122,7 @@ module.exports = function(port, engine) {
 					delete ctx.file ;
 					
 					try {
-	       				s3Logger.send({ 
+	       				logger.send({ 
 							type: messageCodes.NEW_MESSAGE_FOR_LOG,
 							info: ((resp.code >= 200 && resp.code < 300) || resp.code == 304) ? 'S' : 'E',
 							log: resp.log, 
