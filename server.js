@@ -4,7 +4,8 @@ var CloudCodeServer = require('./cloudCodeServer');
 var graceful = require('./graceful.js');
 var engine = new Engine();
 var config = require('./config/contextConfig.js');
-var sDBClient = require('./simpleDBClient.js');
+//var sDBClient = require('./simpleDBClient.js');
+var dDBClient = require('./dynamoDBClient.js');
 
 //create an instance of server making it listen on port 8002
 var server = new CloudCodeServer(8082, engine);
@@ -41,13 +42,13 @@ watchServer.get(config.path + 'shutdown', function (req, res, next) {
 });
 
 watchServer.get(config.path + 'log/:logId', function (req, res, next) {
-	sDBClient.getLog(req.params.logId, function(data) {
+	dDBClient.getLog(req.params.logId, function(data) {
 		res.send(data);
 	});
 });
 
 watchServer.get(config.path + 'logs/:dpId', function (req, res, next) {
-	sDBClient.listLogs(req.params.dpId, function(data) {
+	dDBClient.listLogs(req.params.dpId, function(data) {
 		res.send(data);
 	});
 });

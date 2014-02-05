@@ -54,7 +54,6 @@ var logToDynamoDB = function(message) {
            type : { "S": message.ctx.cf.n},
            method : { "S": message.ctx.cf.fn},
            status : { "S": message.info},
-           indexIds : { "S": getKey(message) },
            acid : { "S": message.ctx.acid},
            apid : { "S": message.ctx.apid},
            dpid : { "S": message.ctx.dpid},
@@ -62,7 +61,7 @@ var logToDynamoDB = function(message) {
            seconds : { "N": message.timeTaken.toString()},
            log : { "S": getBody(message)},
            shortDescription : { "S": shortDescription},
-           updateddate : { "S": new Date().getTime().toString() }
+           dateadded : { "N": new Date().getTime().toString() }
         };
 
 		dynamoDB.putItem({
