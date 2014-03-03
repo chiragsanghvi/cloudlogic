@@ -36,7 +36,9 @@
 Icon?
 ehthumbs.db
 Thumbs.db
-config/awsS3Config.js
+config/
 handlers/
+node_modules
+apis-v-*
 /Users/chiragsanghvi/democloudlogic/cloudlogic 
 
