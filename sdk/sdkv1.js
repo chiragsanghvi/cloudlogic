@@ -5756,7 +5756,7 @@ if (global.Appacitive.runtime.isBrowser) {
 			if (arguments.length < 2 || typeof arguments[0] !== 'string' || typeof arguments[1] !== 'object')
 				throw new "Error: Invalid list of arguments passed to cloud api" ;
 
-			var name = arguments[0];
+			var name = arguments[0].toLowerCase();
 
 			var request = arguments[1].request;
 			var response = arguments[1].response;

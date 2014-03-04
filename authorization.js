@@ -14,9 +14,9 @@ function parseBasic(string) {
 
     index = decoded.indexOf(':');
     if (index === -1) {
-            pieces = [decoded];
+        pieces = [decoded];
     } else {
-            pieces = [decoded.slice(0, index), decoded.slice(index + 1)];
+        pieces = [decoded.slice(0, index), decoded.slice(index + 1)];
     }
 
     if (!pieces || typeof (pieces[0]) !== 'string' || pieces.length != 2)
@@ -95,11 +95,13 @@ function authorizationParser() {
                         return (next(e));
                 }
 
+                console.log(req.authorization);
+
                 delete req.headers.authorization;
 
                 req.authorization.scheme = pieces[0];
                 req.authorization.credentials = pieces[1];
-
+                
                 try {
                     switch (pieces[0].toLowerCase()) {
                         case 'basic':
@@ -112,6 +114,7 @@ function authorizationParser() {
                 } catch (e2) {
                     return (next(e2));
                 }
+                console.log(req.authorization.basic);
 
                 return (next());
         }
