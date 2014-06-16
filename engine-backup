@@ -1,0 +1,191 @@
+var Processor = require('./processor.js');
+
+var Engine = function(options) {
+	this.options = options || {};
+	var self = this;
+	setInterval(function() {
+		self.thrash();
+	}, 600000);
+};
+
+// 1. If cacheIndex has the deploymentid (hit); 
+// 1-1. find the data from processorList, increase the count.
+// 2. If processorIndex doesn't have the deploymentid (miss); read the file.
+// 2-1. If length of processorIndex is less than processorSize, insert it with count 0 - to prevent using the same index again and again.
+// 2-2. If length of processorIndex is equal to processorSize, find the smallest count in processorList, and replace it.
+
+var processorList = {};
+var processorIndex = [];
+var cleanupProcessors = [];
+var MAX_INT = 4294967295;
+var processorSize = 50;
+
+var thrash = function() {
+	var indexes = [];
+	cleanupProcessors.forEach(function(c, i) {
+		c.isDirty = true;
+		indexes.push(i);
+	});
+
+	indexes.forEach(function(i) {
+		cleanupProcessors[i].destroy();
+		cleanupProcessors.splice(i, 1);
+	});
+};
+
+var addProcessor = function(id, processor) {
+	
+	var findLRU = function() {
+		var l = processorIndex.length;
+		if (l < processorSize) // 2-1. 
+			return l;
+		else { // 2-2.
+			var lIndex = -1;
+			var lCount = MAX_INT;
+
+			var findMin = function() {
+				var thisCount = processorList[processorIndex[i]].c;
+				if (thisCount < lCount) {
+					lIndex = i;
+					lCount = thisCount;
+				}
+			}
+
+			// In case of small processorSize & all the items of processorList having the same count value.
+			var mid = Math.floor((Math.random() * 10 * l) % l);
+			
+			for (var i = mid; i < l; i++) findMin();
+
+			for (var i = 0; i < mid; i++) findMin();
+
+			cleanupProcessors.push(processorList[processorIndex[lIndex]].processor);
+
+			delete processorList[processorIndex[lIndex]];
+			delete processorIndex[lIndex];
+
+			setTimeout(function() {
+				thrash();
+			})
+
+			return lIndex;
+		}
+	};
+
+	var i = findLRU();
+	processorList[id] = { processor: processor, c: 0};
+	processorIndex[i] = id;
+};
+
+var getProcessor = function(id) {
+	// 1-1.
+	var processors = processorList[id];
+	if (processors) {
+		processors.c += (processors.c < MAX_INT) ? 1 : 0;
+		return processors.processor;
+	} else {
+		return null;
+	}
+};
+
+var removeProcessor = function(id) {
+	try {
+		var lIndex = processorIndex.indexOf(id);
+		if ( lIndex != -1) {
+			cleanupProcessors.push(processorList[processorIndex[lIndex]].processor);
+
+			delete processorList[processorIndex[lIndex]];
+			delete processorIndex[lIndex];
+		}
+	} catch(e){}	
+};
+
+Engine.prototype.process = function(message, callback) {
+	callback = callback || function() {};
+
+	var proc = getProcessor(message.dpid);
+
+	if (proc) {
+		proc.process(message, callback);
+	} else {
+
+		var proc = cleanupProcessors.filter(function (p) {
+			return (p.id == message.dpid && !p.isDirty);
+		})[0];
+
+		if (!proc) {
+			proc = new Processor({
+				id: message.dpid
+			});
+		} else {
+			var removeDelegate = function (p) {
+				return p.id != message.dpid;
+			};
+			cleanupProcessors = cleanupProcessors.filter(removeDelegate);
+		}
+
+		addProcessor(message.dpid, proc);
+		this.process(message, callback);
+	}
+};
+
+Engine.prototype.thrash = function() {
+	thrash();
+};
+
+Engine.prototype.getStats = function() {
+
+	var stats = { processing: 0, waitingForDispatch: 0 , numThreads: 0, numConnections: 0 };
+	stats.list = [];
+	for (var p in processorList) {
+		var processor = processorList[p];
+		var stat  = {
+			deploymentId: p,
+			stats: processor.getStats()
+		};
+		stats.processing += stat.stats.processing;
+		stats.waitingForDispatch += stat.stats.waitingForDispatch;
+		stats.numThreads += stat.stats.numThreads;
+		stats.list.push(stat);
+	}
+
+	return stats;
+};
+
+Engine.prototype.getLogs = function() {
+	var logs = [];
+	for (var p in processorList) {
+		logs.push({
+			deploymentId: p,
+			logs: processorList[p].processor.getLogs()
+		});
+	}
+	return logs;
+};
+
+Engine.prototype.getMessages = function() {
+	var messages = [];
+	for (var p in processorList) {
+		var processor = processorList[p];
+		messages.push({
+			deploymentId: p,
+			stats: processor.getMessages(),
+			buffered: processor.messageBuffer,
+			processing: processor.processing,
+			lastThreadId: processor.threads.map(function(thread) {
+				return thread._threadId;
+			})
+		});
+	}
+	return messages;
+};
+
+Engine.prototype.flush = function() {
+	var depl = [];
+	for (var p in processorList) {
+		processorList[p].processor.flush();
+		depl.push(p);
+	}
+	return depl;
+};
+
+module.exports = Engine;
