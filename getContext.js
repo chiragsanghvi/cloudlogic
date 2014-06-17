@@ -72,9 +72,28 @@ var send = function(request) {
 
 exports.getContext = function(req, res, onSuccess, next) {
 
+     var translateUser = function(u) {
+        return {
+            "__id": u.id,
+            "__type": "user",
+            "__utcdatecreated": u.utcdatecreated,
+            "__utclastupdateddate": u.utclastupdateddate,
+            "username": u.username,
+            "email": u.email,
+            "firstname": u.firstname,
+            "lastname": u.lastname,
+            "isenabled": u.isenabled,
+            "phone": u.phone,
+            "__attributes": u.attributes
+        }
+    };
+
     var cb = function(response) {
         if (response && response.status && response.status.code >= '200' && response.status.code < '300') {
             response.id = response.status.referenceid;
+
+            if (response.u) response.u = translateUser(response.u);
+            response.cf.fn = response.cf.n = req.type;
 
             response['ak'] = req.authorization.basic['ak'];
             response['e'] = req.authorization.basic['e'];
@@ -108,8 +127,9 @@ exports.getContext = function(req, res, onSuccess, next) {
     return;
     */
 
+
     var ctxReq = {
-        url: config.baseUrl + 'cloudlogic/' + req.type + '/' + (req.type == 'apis' ? 'apis' : 'tasks') + '/context',
+        url: config.baseUrl + 'cloudlogic/zip/cloudlogic/context',
         method: 'GET',
         headers: {
             'content-type': 'application/json',

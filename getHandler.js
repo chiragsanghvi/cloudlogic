@@ -26,7 +26,7 @@ var extractToFolder = function(zip, ctx, onSuccess, onError) {
   mkdirp(dir , null, function(err) {
     
     if (err) {
-      onError("Unable to find cloud api");
+      onError("Unable to find cloud api files");
       return;
     }
     console.log("Made directory");
@@ -35,7 +35,7 @@ var extractToFolder = function(zip, ctx, onSuccess, onError) {
     fs.writeFile(dir + '/cloudlogic.zip', zip, {}, function(err) {
 
       if (err) { 
-        onError("Unable to find cloud api");
+        onError("Unable to find cloud api  files");
         return;
       }
       console.log("Saved");
@@ -48,10 +48,12 @@ var extractToFolder = function(zip, ctx, onSuccess, onError) {
           
         console.log("unzipped file");
 
+        console.log(getFilename(ctx));
+
         //read main handler file(apis.js or taks.js from their folder) from filesystem
         fs.readFile(getFilename(ctx) + '.js', 'UTF-8', function(err, data) {
           if (err) { 
-            onError("Unable to find cloud api");
+            onError("Unable to find cloud api files");
             return;
           }
           //return read file
@@ -73,13 +75,13 @@ var fetchFromS3 = function (ctx, onSuccess, onError) {
   var s3Domain = require('domain').create();
   
   s3Domain.on('error', function(e) {
-    onError("Unable to find cloud api");
+    onError("Unable to find cloud api files");
     serverDomain.dispose();
   });
 
   s3Domain.run(function() {
     s3.getObject(params, function(err, data){
-      if (err)  onError("Unable to find cloud api");
+      if (err)  onError("Unable to find cloud api files");
       else {
         extractToFolder(data.Body, ctx, onSuccess, onError);
       }

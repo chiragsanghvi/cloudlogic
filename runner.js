@@ -2,6 +2,7 @@ var vm = require('vm');
 var Logger = require('./vmLogger.js');
 var posix = require('posix');
 var _eval = require('eval');
+//var allowedModules = require('');
 
 var Runner = function(options) {
 
@@ -14,9 +15,12 @@ var Runner = function(options) {
 	this.ctx = null;
 	this.cb = options.cb || function() {};
 	this.sdkVersion = this.message.sdkVersion || this.options.sdkLatestVersion;
-
+	this.completed = false;
 	var self = this;
+
 	this.onHandlerCompleted = function(response) {
+		if (self.completed) return;
+		self.completed = true;
 		self.cb(self.message.id, response);
 	};
 	
