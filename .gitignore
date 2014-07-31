@@ -38,6 +38,7 @@ ehthumbs.db
 Thumbs.db
 awsS3Config.js
 handlers/*
+handlers/.DS_Store
 config/
 handlers/
 node_modules

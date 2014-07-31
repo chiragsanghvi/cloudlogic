@@ -69,6 +69,7 @@ var logToDynamoDB = function(message) {
 		     "Item": item
 		  }, function(err, data) {
 		    if (err) {
+		    	console.log("Dynamo db error");
 			  log(err, 'error');
 			}
 		 });

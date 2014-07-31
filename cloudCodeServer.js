@@ -1,4 +1,5 @@
 var restify = require('restify');
+var Engine = require('./engine.js');
 var util = require('util');
 var messageCodes = require('./ipcMessageCodes.js');
 var config = require('./config/contextConfig.js');
@@ -18,14 +19,14 @@ var getResponseCode = function(code) {
 	return code;
 };
 
-module.exports = function(port, engine) {
+module.exports = function(port) {
 
-	var loggerType = 'dynamoDB';
+	var loggerType = config.loggerType;
+
+	var engine = this.engine = new Engine();
 
 	//create an s3Logger child process to log output of handler to s3
-	var logger = require('child_process').fork('./' + loggerType + 'Logger.js',[],{});
-
-
+	var logger = require('child_process').fork('./' + loggerType + 'Logger.js',[] , {});
 
 	//put an handler
 	logger.on('exit',function () {
@@ -33,26 +34,49 @@ module.exports = function(port, engine) {
 	    logger = require('child_process').fork('./' + loggerType + 'Logger.js',[],{});
 	});
 
+
+	//create server
 	var server = restify.createServer();
 
+	//attach CORS headers
 	server.pre(function(req, res, next) {
-		if (server.gracefulShutdown) {
-			res.setHeader("Connection", "close");
-	  		res.send(502, "Server is in the process of restarting");
-	  		next();
-	  		return;
-		}
-		if (req.headers["content-type"] == 'text/plain') req.headers["content-type"] = 'application/json';
+		res.setHeader('Access-Control-Allow-Origin', '*');
+		res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+		res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
 		next();
 	});
 
+	//authenticate using basic auth if provided
 	server.pre(require('./authorization.js')());
 
-	server.use(restify.acceptParser(server.acceptable));
-	server.use(restify.queryParser({ mapParams: false }));
-	server.use(restify.gzipResponse());
-	server.use(restify.bodyParser({ mapParams: false, rejectUnknown: false }));
+	//add pre handler for handlig graceful shutdown
+	server.pre(function(req, res, next) {
+		if (server.gracefulShutdown) {
+			res.setHeader("Connection", "close");
+	  		res.send(503, "Service unavailable");
+	  		next();
+	  		return;
+		}
+		req.headers["cors"] = false;
+		if (req.contentType() == 'text/plain' || req.query.ua == 'ie') {
+			req._contentType = 'application/json';
+			req.headers["cors"] = true;
+		}
+		next();
+	});
 
+	//for accpeting all content
+	server.use(restify.acceptParser(server.acceptable));
+
+	//for parsing query string
+	server.use(restify.queryParser({ mapParams: false }));
+
+	//for sending gzip response
+	server.use(restify.gzipResponse());
+
+	//for parsing the body
+	server.use(restify.bodyParser({ mapParams: false, rejectUnknown: false }));
+	
 	/* To validate the request */
 	server.use(requestParser);
 
@@ -61,7 +85,8 @@ module.exports = function(port, engine) {
 	  burst: 10,
 	  username: true
 	}));*/
-
+	
+	// route for loader-io
 	server.get("/" + config.loaderIO + ".txt", function(req, res, next) {
 
 	   res.setHeader('content-Length', config.loaderIO);
@@ -71,13 +96,15 @@ module.exports = function(port, engine) {
 	   res.send(config.loaderIO);
 	});
 
+	// route for cloud function
 	server.post(config.path + 'apis/:name', function (req, res, next) {
 		
+		// For debugging purpose
 		var startTime = new Date().getTime();
 
 		req.type = 'apis';
 		
-		// get context
+		// get context from apis
 		context.getContext(req, res, function(ctx) {
 
 			req.id = ctx.id;
@@ -104,6 +131,8 @@ module.exports = function(port, engine) {
 						resp.headers["executionTime"] = new Date().getTime() - handlerTime;
 					}
 
+					res.setHeader("content-type", "application/json");
+
 					try {
 						if (resp.headers) {
 							if (typeof resp.headers == 'object') {
@@ -115,6 +144,7 @@ module.exports = function(port, engine) {
 					} catch(e) {}
 
 					res.setHeader('TransactionId', ctx.id);
+
 					var statusCode = getResponseCode(resp.code);
 
 					res.send(statusCode, resp.data);
@@ -142,9 +172,8 @@ module.exports = function(port, engine) {
 				});
 				
 			}, function(message) {
-				res.setHeader('TransactionId', ctx.id);
 				// call next with an error saying cannot find handler
-				return next(new customError('404', { code: '404', message: message }));
+				return next(new customError('404', message ));
 			});
 			
 		}, next);
@@ -159,15 +188,17 @@ module.exports = function(port, engine) {
 	});
 
 	server.listen(port, function () {
-	    console.log('Cloud code server listening at %s', server.url);
+	    console.log('Cloud code server listening  at %s', server.url);
 	});
     
 	server.on('uncaughtException', function (req, res, route, err) {
 		console.log(err);
-	   //res.setHeader('TransactionId', req.id);
-	   //res.send(500, 'Server Error');
+		var transactionId = res.headers()["TransactionId"];
+		if (!transactionId) {
+		    res.setHeader('TransactionId', req.id);
+		    res.send(500, 'Internal Server Error');
+		}
 	});
 
 	return server;
-
 };

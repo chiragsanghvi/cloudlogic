@@ -95,8 +95,6 @@ function authorizationParser() {
                         return (next(e));
                 }
 
-                console.log(req.authorization);
-
                 delete req.headers.authorization;
 
                 req.authorization.scheme = pieces[0];
@@ -114,7 +112,6 @@ function authorizationParser() {
                 } catch (e2) {
                     return (next(e2));
                 }
-                console.log(req.authorization.basic);
 
                 return (next());
         }

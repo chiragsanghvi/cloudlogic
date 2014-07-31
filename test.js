@@ -7,8 +7,12 @@ var startTime = new Date().getTime();
 
 var successful = 0;
 
-var aks = ["7/EGQ0lZjfI3UhT/rgaNoZQIbEWB85DPmmeE1LMM0U8=", "zF5qR4Jic6q8A7p+RyiqPAtZwmGoZ5sTHunGn2tqps8=", "VveJOI9mWAFMquRbahagTvV4PnNP984EziPFCbcqNxs="];
-var pId = ["38176956369469923", "38177050825196170", "38177001963651717"];
+//var aks = ["9H5zVSyhmNiDp+oJBdYyKuEpOmSAZ68So8cH6aKyatY=", "Gcu0k3j3a2gEhPdqhDz3GxWUZJ5wxxrZSn0k+PwcoFY=", "XCRa+l5/xPs0vwbUE5tSKZ4AbbxiDok4PZ2ff3R8B1c="];
+//var pId = ["62722727711211916", "62722887739638159", "62722936469062098"];
+
+var aks = ["ryp6TW6y4ijGkteNKEVNfC9lntiOVPhQJuyZ8pSO1Os="];
+var pId = ["62730365622682108"];
+
 
 http.globalAgent.maxSockets = 40;
 
@@ -16,19 +20,20 @@ var makeRequest = function(v, name, reqNo) {
   var req = {
     "m": "POST",
     "e": "sandbox",
-    "b": {"name": "chirag", "tag":"cloudcode", "time": 12999999 , "email": "csanghvi@appacitive.com" }
+    "ut": "UjhkSjdzZWJZNElUQ2FZb2pJanIwVXBXS012elVsaE8xVTJTYUhuSEJsa25RN1psOWdCZGJYcEFKSkR3TXp3T3F1UlhRSWpjVDlKdTB3V3NBOFNVa3ZCYmd3Z1JXWkNYcWRXS2RQUnZzcWRiK3JiRHczYVorNVc1RUFQTjJPYkc5dFFHQ0NPVVFMV3pXT0Q3UkZEY2dONWNGdGM2R2gxUw==",
+    "b": { "firstname": "chirag", "when": new Date(), "username": "chirag" + Math.random() , "tag":"cloudcode", "time": 12999999, "password":"test123!@#" , "email": "csanghvi@appacitive.com" }
   };
 
   var options = {
     //hostname: 'cloudlogic.cloudapp.net',
       hostname: 'localhost',
       port:8082,
-    path: '/apis/' + name,
-    method: 'POST',
-    headers : {
-      'Content-Type' : 'application/json',
-      'accept': '*/*'
-    }
+      path: '/apis/' + name,
+      method: 'POST',
+      headers : {
+        'Content-Type' : 'text/plain',
+        'accept': '*/*'
+      }
   };
 
 
@@ -38,6 +43,8 @@ var makeRequest = function(v, name, reqNo) {
 
   req.ak = aks.shift();
   aks.push(req.ak);
+
+  console.log(req);
 
   req.transactionid = new Date().getTime()  + "" + reqNo;
 
@@ -68,12 +75,12 @@ var makeRequest = function(v, name, reqNo) {
       if (noOfrequests == 50)
         console.log("Completed 50 requests in " + t + "ms");
       
-      if (name != 'code' && name != 'get') {
+       console.log(t + "ms"  + " => " + name + ' : code: '  + res.statusCode + " : " + receivedData + " :" + res.headers['executiontime']+ "\n");
+       
+      if (name != 'addEvent' && name != 'getEvent' && name!= 'mail' && name != 'createUser' && name != 'timed' && name != 'for') {
         //console.log(t + "ms, " + name + " => \n\n" + receivedData + "\n");
-        console.log(t + "ms"  + " => " + name + ' : code: ' + res.statusCode + " : " + receivedData + " :" + res.headers['executiontime'] + "\n");
       } else {
         //console.log(t + "ms, " + name + " => \n\n" + receivedData + "\n");
-        console.log(t + "ms"  + " => " + name + ' : code: '  + res.statusCode + " : " + receivedData + " :" + res.headers['executiontime']+ "\n");
         ++successful
       }
     });
@@ -94,7 +101,7 @@ process.on('exit', function() {
 
 var reqNo = 1;
 //var names = ["timed","for"]
-var names = ["err","code","get","error","invalid","invalidbody","for"];
+var names = ["timed","addEvent","getEvent","error","while","invalidbody","for", "mail", "createUser"];
 for (var i = 1 ; i <= 1 ; i = i + 1) {
   var version = i;
   for (var j = 1 ; j <= 1 ; j = j + 1) {

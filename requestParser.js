@@ -7,7 +7,7 @@ module.exports = function(options) {
 
 		if (req.method.toLowerCase() == 'get') return next();
         
-		if (req.authorization.basic) {
+		if (req.authorization.basic != undefined) {
 			if (!req.authorization.basic.ak) {
 				return next(new customError("400", "No ApiKey specified"));
 			}
@@ -20,19 +20,19 @@ module.exports = function(options) {
 
 			req.authorization = { basic : {} };
 
-			if (req.contentType() == 'text/plain' || req.query.ua == 'ie') {
-					
+			if (req.headers["cors"] == true) {
+				
 				if (!req.body) {
 					return next(new customError("400", "Invalid request"));
 				}
 
-				if (!req.body["ak"] || typeof req.body["ak"] !== 'string' || (!req.body["ak"].length)) {
+				if (!req.body["ak"] || typeof req.body["ak"] !== 'string' || req.body["ak"].length == 0) {
 					return next(new customError("400", "No ApiKey specified"));
 				}
 
 				req.authorization.basic.ak = req.body["ak"];
 
-				if (!req.body["e"] || typeof req.body["e"] !== 'string' || (!req.body["e"].length) || ((req.body["e"].toLowerCase().indexOf('sandbox') === -1) && (req.body["e"].toLowerCase().indexOf('live') === -1))) {
+				if (!req.body["e"] || typeof req.body["e"] !== 'string' || req.body["e"].length == 0 || ((req.body["e"].toLowerCase().indexOf('sandbox') === -1) && (req.body["e"].toLowerCase().indexOf('live') === -1))) {
 					return next(new customError("400", "No Environment specified"));
 				}
 
@@ -43,6 +43,8 @@ module.exports = function(options) {
 				}
 
 				req.body = req.body["b"];
+
+				req.headers["content-type"] = 'application/json';
 
 			} else { 
 				
@@ -56,7 +58,7 @@ module.exports = function(options) {
 
 				var e  = req.headers['appacitive-environment']
 
-				if (!e  || typeof e != 'string' || ((!e.length) || (e.toLowerCase().indexOf('sandbox') === -1) && (e.toLowerCase().indexOf('live') === -1))) {
+				if (!e  || typeof e != 'string' || (e.length == 0) || ((e.toLowerCase().indexOf('sandbox') === -1) && (e.toLowerCase().indexOf('live') === -1))) {
 					return next(new customError("400", "No Environment specified"));
 				}
 

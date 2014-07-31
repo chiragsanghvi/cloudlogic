@@ -122,7 +122,7 @@ Runner.prototype.getContext = function() {
 
 		if (require('fs').existsSync(modulePath)) {
 
-			var data = '"use strict";\n\n' + require('fs').readFileSync(modulePath, 'UTF-8');
+			var data = '"use strict";' + require('fs').readFileSync(modulePath, 'UTF-8');
 			
 			that.includedModules[module] = _eval(data, module, that.ctx, false);
 

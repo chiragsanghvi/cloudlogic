@@ -10,16 +10,17 @@
     "node >= 0.8.16"
   ],
   "dependencies": {
-    "xmlhttprequest": "1.x",
-    "facebook-node-sdk": "0.2",
-    "posix": "1.0.x",
+    "xmlhttprequest": "x.x",
+    "facebook-node-sdk": "x.x",
+    "posix": "x.x.x",
     "aws-sdk": "1.7.x",
     "restify": "2.x",
     "winston": "0.7.x",
-    "memwatch": "0.2.x",
-    "agentkeepalive": "0.1.x",
-    "winston-s3": "0.x.x",
-    "mkdirp":"0.3.x",
-    "eval":"x.x"
+    "memwatch": "x.x.x",
+    "agentkeepalive": "x.x.x",
+    "winston-s3": "x.x.x",
+    "mkdirp":"x.x.x",
+    "eval":"x.x",
+    "dtrace-provider": "x.x"
   }
 }

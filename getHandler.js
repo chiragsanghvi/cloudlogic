@@ -11,7 +11,7 @@ var s3 = new AWS.S3();
 
 //get s3 Key for zip package for deployment
 var getKey = function (ctx) {
-  return ctx.acid + '/' + ctx.apid + '/' + ctx.dpid + '/zip/' + config.zipFileName;
+  return ctx.acid + '/' + ctx.apid + '/' + ctx.dpid + '/' + config.zipFileName;
 };
 
 //get filename on filesystem for the file

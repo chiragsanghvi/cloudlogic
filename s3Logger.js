@@ -23,7 +23,8 @@ var self = this;
 
 
 var getKey = function (message) {
-  return message.ctx.acid + '/' + message.ctx.apid + '/' + message.ctx.dpid + '/' + message.ctx.cf.n + '/logs/'  + message.ctx.id + '.json';
+  var path =  message.ctx.acid + '/' + message.ctx.apid + '/' + message.ctx.dpid + '/' + message.ctx.cf.n + '/logs/'  + message.ctx.id + '.json';
+  return path;
 };
 
 var getBody = function(message) {

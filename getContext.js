@@ -89,7 +89,14 @@ exports.getContext = function(req, res, onSuccess, next) {
     };
 
     var cb = function(response) {
+
+        if (response && response.status) res.setHeader('TransactionId', response.status.referenceid);
+
         if (response && response.status && response.status.code >= '200' && response.status.code < '300') {
+            if (response.cf == null) {
+                next(new customError("404", "Unable to find cloud code files"));
+                return;
+            }
             response.id = response.status.referenceid;
 
             if (response.u) response.u = translateUser(response.u);
@@ -129,7 +136,7 @@ exports.getContext = function(req, res, onSuccess, next) {
 
 
     var ctxReq = {
-        url: config.baseUrl + 'cloudlogic/zip/cloudlogic/context',
+        url: config.baseUrl + 'cloudlogic/apis/context',
         method: 'GET',
         headers: {
             'content-type': 'application/json',
