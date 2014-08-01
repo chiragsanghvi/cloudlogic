@@ -43,3 +43,5 @@ config/
 handlers/
 node_modules
 apis-v-*
+connect.sh
+ubuntu12.pem
