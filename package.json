@@ -10,7 +10,7 @@
     "node >= 0.8.16"
   ],
   "dependencies": {
-    "xmlhttprequest": "x.x",
+    "xmlhttprequest-with-globalagent": "x.x.x",
     "facebook-node-sdk": "x.x",
     "posix": "x.x.x",
     "aws-sdk": "1.7.x",

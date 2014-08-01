@@ -10,7 +10,7 @@ module.exports = function(port, options) {
 
 	options = options || { port: 8082 };
 
-	var engine = options.engine;
+	var engine = options.cloudCodeServer.engine;
 	var cloudCodeServer = options.cloudCodeServer;
 
 	var watchServer = restify.createServer();
