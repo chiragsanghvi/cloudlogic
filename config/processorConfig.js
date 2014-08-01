@@ -1,5 +1,5 @@
 module.exports = {
-	numThreads: 3,
+	numThreads: 30,
 	maxThreads: 50,
 	maxThreadExecutionCount: 10,
 	sendTimeoutInterval: 1000,
