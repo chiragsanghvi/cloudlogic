@@ -7,7 +7,7 @@ module.exports = function(options) {
 
 		if (req.method.toLowerCase() == 'get') return next();
         
-		if (req.authorization.basic != undefined) {
+		if (req.authorization.basic !== undefined) {
 			if (!req.authorization.basic.ak) {
 				return next(new customError("400", "No ApiKey specified"));
 			}
@@ -49,6 +49,8 @@ module.exports = function(options) {
 			} else { 
 				
 				var ak = req.headers['appacitive-apikey'];
+
+				console.log("apikey" + ak);
 
 				if (!ak  || typeof ak != 'string' || (!ak.length)) {
 					return next(new customError("400", "No ApiKey specified"));

@@ -40,10 +40,28 @@ module.exports = function(port) {
 
 	//attach CORS headers
 	server.pre(function(req, res, next) {
-		res.setHeader('Access-Control-Allow-Origin', '*');
-		res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-		res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-		next();
+		
+		var CORS = false;
+	    if (req.headers.origin) {
+	        res.header('Access-Control-Allow-Origin', '*');
+	        CORS = true;
+	    }
+	    if(req.headers['access-control-request-method']) {
+	        res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+	        CORS = true;
+	    }
+	    if(req.headers['access-control-request-headers']) {
+	        res.header('Access-Control-Allow-Headers', req.headers['access-control-request-headers']);
+	        CORS = true;
+	    }
+	    if (CORS) res.header('Access-Control-Max-Age', 60 * 60 * 24 * 365);
+	    
+	    // intercept OPTIONS method
+	    if (CORS && req.method == 'OPTIONS') {
+	     	res.setHeader('accept', 'application/json');
+	     	res.send(200);
+	    } else  next();
+	    
 	});
 
 	//authenticate using basic auth if provided

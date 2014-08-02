@@ -127,7 +127,7 @@ process.on('exit', function() {
 
 var reqNo = 1;
 //var names = ["timed","for"]
-var names = ["timed","addEvent","getEvent","error","while","invalidbody","for", "mail", "createUser"];
+var names = ["timed","addEvent","getEvent","error","while","invalidbody","for", "mail", "createUser","eval"];
 for (var i = 1 ; i <= 1 ; i = i + 1) {
   var version = i;
   for (var j = 1 ; j <= 10 ; j = j + 1) {
