@@ -304,17 +304,22 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 			var statusMessage = 'Server Error';
 			var	statusCode = '500';
 			
+			if (code == 8) statusMessage = 'RangeError: Maximum call stack size exceeded';
+			
 			//If the thread was aborted due to POSIX resource limitation then let the response wait for 12 seconds and then return;
 			//If the thread was aborted due to timeout
-			if (signal == 'SIGXCPU' || signal == 'SIGQUIT') {
-				if (signal == 'SIGXCPU') {
+			if (signal == 'SIGXCPU' || signal == 'SIGQUIT' || code == 8) {
+				if (signal == 'SIGXCPU' || code == 8) {
 					timeOut = that.options.sendTimeoutInterval;
 					if (!that.timeOutFunctions[message.dpid]) that.timeOutFunctions[message.dpid] = {};
 					if (!that.timeOutFunctions[message.dpid][message.cf.fn]) that.timeOutFunctions[message.dpid][message.cf.fn] = { count: 0 };
 					that.timeOutFunctions[message.dpid][message.cf.fn]['count']++;
 				}
-				statusMessage = 'Execution timed out';
-				statusCode = '508';
+
+				if (signal == 'SIGXCPU') {
+					statusMessage = 'Execution timed out';
+					statusCode = '508';
+				}
 			}
 			setTimeout(function() {
 				console.log("=========sending time out response for " + message.id + "=========");

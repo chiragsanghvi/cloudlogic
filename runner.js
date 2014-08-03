@@ -5,9 +5,9 @@ var _eval = require('eval');
 var Timeout = require('./timeout.js');
 //var allowedModules = require('');
 
-var TimeoutException = function () { this.message = "Execution timed out" };
-var MethodNotSupportedException = function(method) { this.message = method.toUpperCase() + '_NOT_SUPPORTED'; };
-var FunctionConstructorException = function(execCode) { this.message = "function constructor with code: " + execCode; };
+var TimeoutException = function () { this.message = "Execution timed out"; this.code = "508"; };
+var MethodNotSupportedException = function(method) { this.message = method.toUpperCase() + '_NOT_SUPPORTED'; this.code = "500"; };
+var FunctionConstructorException = function(execCode) { this.message = "function constructor with code: " + execCode; this.code = "500"; };
 	
 var Runner = function(options) {
 
@@ -113,7 +113,7 @@ Runner.prototype.getSdk = function () {
 
 Runner.prototype.setJail = function(env, code) {
 	env['eval'] = stopExecuting('eval');
-	env['setTimeout'] = stopExecuting('setTimeout');
+	//env['setTimeout'] = stopExecuting('setTimeout');
 	env['setInterval'] = stopExecuting('setInterval');
 	env['Function'] = getBlockedFunctionConstructor();
 
@@ -199,7 +199,8 @@ Runner.prototype.getContext = function() {
     var env = {
     	console: { log: this.logger.log },
 		Appacitive: this.getSdk(),
-		require: getRequireScope()
+		require: getRequireScope(),
+		setTimeout: setTimeout
     };
 
     this.message.file = this.setJail(env, this.message.file);
@@ -218,15 +219,17 @@ Runner.prototype.getContext = function() {
 };
 
 Runner.prototype.getErrorResponse = function(e) {
-	var response = { statusCode: '500' , headers: {}};
+	var response = { statusCode: '500' , headers: {}, body : e.message};
 	if (e instanceof TimeoutException) {
 		response.statusCode = '508'
 		response.body =  e.message;
-	} else if (e instanceof MethodNotSupportedException || e instanceof Function_Constructor_detected) {
+	} else if ((e instanceof MethodNotSupportedException) || (e instanceof FunctionConstructorException)) {
 		response.body =  e.message;
 	} else {
-	    reponse.body = that.getErrorMessage(e)
+		var body = this.getErrorMessage(e)
+		response.body = body;
 	}
+
 	return response;
 };
 
@@ -238,7 +241,8 @@ Runner.prototype.run = function() {
 	this.serverDomain = require('domain').create();	
 
 	this.serverDomain.on('error', function(e) {
-		that.sendErrorResponse(that.getErrorResponse(e));
+		var response = that.getErrorResponse(e);
+		that.sendErrorResponse(response);
 	    that.serverDomain.dispose();
 	});
 
