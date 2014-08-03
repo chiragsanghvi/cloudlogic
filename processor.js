@@ -259,11 +259,16 @@ Processor.prototype.terminateThread = function(options) {
 		this.idleThreads = this.idleThreads.filter(removeDelegate);
 		if (cp.connected == true ) {
 			cp.disconnect();
+			var message = this.messageThreads[threadId];
 			if (options.isTimeout) {
+				message.isTimeout = true;
 				log('\n\nProcessor> Detected timeout and cpu resource time overflow in thread #' + threadId + '.\n\n', 'warn');
+			} else if(options.kill && options.isTimeout) {
+				message.isTimeout = true;
+				log('\n\nProcessor> Detected timeout and cpu resource time overflow in thread #' + threadId + '.\n\n', 'warn');
+				cp.kill("SIGXCPU");
 			} else if(options.kill) {
 				log('\n\nProcessor> Detected lockup or memory overflow in thread #' + threadId + '.\n\n', 'warn');
-				cp.kill("SIGQUIT");
 			} else {	
 				log('\n\nProcessor> Cleaning idle thread #' + threadId, 'warn');
 				cp.kill("SIGTRAP");
@@ -281,7 +286,8 @@ Processor.prototype.setupPinging = function(thread, threadId, timeoutInterval) {
 
 	// set up pinging
 	this.pings[threadId] = setTimeout(function() {
-		that.terminateThread({ threadId: threadId, kill: true });
+		console.log("Thread timed out");
+		that.terminateThread({ threadId: threadId, kill: true, isTimeout: true });
 	}, timeoutInterval);
 };
 
@@ -308,21 +314,21 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 			
 			//If the thread was aborted due to POSIX resource limitation then let the response wait for 12 seconds and then return;
 			//If the thread was aborted due to timeout
-			if (signal == 'SIGXCPU' || signal == 'SIGQUIT' || code == 8) {
-				if (signal == 'SIGXCPU' || code == 8) {
-					timeOut = that.options.sendTimeoutInterval;
+			if (signal == 'SIGXCPU' || signal == 'SIGQUIT' || code == 8 || message.isTimeout) {
+				if (signal == 'SIGXCPU' || code == 8 || message.isTimeout) {
+					//timeOut = that.options.sendTimeoutInterval;
 					if (!that.timeOutFunctions[message.dpid]) that.timeOutFunctions[message.dpid] = {};
 					if (!that.timeOutFunctions[message.dpid][message.cf.fn]) that.timeOutFunctions[message.dpid][message.cf.fn] = { count: 0 };
 					that.timeOutFunctions[message.dpid][message.cf.fn]['count']++;
 				}
 
-				if (signal == 'SIGXCPU') {
+				if (signal == 'SIGXCPU' || message.isTimeout) {
 					statusMessage = 'Execution timed out';
 					statusCode = '508';
 				}
 			}
 			setTimeout(function() {
-				console.log("=========sending time out response for " + message.id + "=========");
+				console.log("=========sending error response for " + message.id + "=========");
 				that.executeCallbacks(message.id, { 
 					headers: {},
 					data: statusMessage,
