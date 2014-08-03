@@ -40,9 +40,10 @@ Thread.prototype.execute = function(message) {
 		sdkLatestVersion: this.options.sdkLatestVersion || "1",
 		baseHandlerPath: this.options.baseHandlerPath,
 		posixTime: this.options.posixTime,
+		timeoutInterval: message.timeoutInterval,
 		message: message,
 		cb: function(messageId, response) {
-			that.onHandlerCompleted(messageId, response);
+			that.onHandlerCompleted(messageId, response, message);
 			runner.dispose();
 		}
 	});
@@ -54,7 +55,7 @@ Thread.prototype.execute = function(message) {
 	//debugLog('Thread #' + this.id + '> Executing client code...');
 };
 
-Thread.prototype.onHandlerCompleted = function(messageId, response) {
+Thread.prototype.onHandlerCompleted = function(messageId, response, message) {
 
 	//console.log('Thread #' + this.id + '> Done executing');
 	delete timerMap[messageId];
@@ -63,7 +64,9 @@ Thread.prototype.onHandlerCompleted = function(messageId, response) {
 		threadId: this.id,
 		messageId: messageId,
 		response: response,
-		terminate: this.terminate
+		terminate: this.terminate,
+		cf: message.cf,
+		dpid: message.dpid
 	});
 	this.currentlyExecuting = false;
 };

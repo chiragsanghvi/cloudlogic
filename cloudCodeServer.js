@@ -64,6 +64,25 @@ module.exports = function(port) {
 	    
 	});
 
+	server.pre(function(req, res, next) {
+		// Create a domain for exception handling
+		var domain = require('domain').create();
+
+		domain.on('error', function(err) {
+			try {
+				if (!res.headersSent) {
+			  		res.writeHead(500, { 'Content-Type': 'application/json'});
+					res.end(JSON.stringify({ code: '500',  message: "Server Error" }));
+				}
+			} catch(e) {}
+
+			sys.puts("Error "  + err.message + '\n' + err.stack);
+			domain.dispose();
+		});
+
+		next();
+	});
+
 	//authenticate using basic auth if provided
 	server.pre(require('./authorization.js')());
 
@@ -210,7 +229,7 @@ module.exports = function(port) {
 	});
     
 	server.on('uncaughtException', function (req, res, route, err) {
-		console.log(err);
+		console.log("Error" + err);
 		var transactionId = res.headers()["TransactionId"];
 		if (!transactionId) {
 		    res.setHeader('TransactionId', req.id);

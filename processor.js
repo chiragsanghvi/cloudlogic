@@ -72,6 +72,16 @@ var Processor = function(options) {
 				this.idleThreads.push(cp[0]);
 			}
 		}
+
+		if (typeof message.response == 'object') {
+			if (message.response.code == '508') {
+				console.log("ThreadId: " + message.threadId);
+				if (!that.timeOutFunctions[message.dpid]) that.timeOutFunctions[message.dpid] = {};
+				if (!that.timeOutFunctions[message.dpid][message.cf.fn]) that.timeOutFunctions[message.dpid][message.cf.fn] = { count: 0 };
+				that.timeOutFunctions[message.dpid][message.cf.fn]['count']++;
+			}
+		}
+
 		this.executeCallbacks(message.messageId, message.response);
 		this.flush();
 	});
@@ -286,6 +296,8 @@ Processor.prototype.setupThreadRespawn = function(thread, threadId) {
 		
 		if (message) {
 
+			console.log("ThreadId: " + threadId);
+
 			log('Processor> Child process terminated due to receipt of code ' + code + ' and signal ' + signal + '', 'warn');
 
 			var timeOut = 0;
@@ -342,7 +354,7 @@ Processor.prototype.startThread = function() {
 	options.sdkPath = this.options.sdkPath;
 	options.sdkLatestVersion = this.options.sdkLatestVersion;
 	options.baseHandlerPath = this.options.baseHandlerPath;
-
+	
 	log('Processor> Starting thread ', 'debug');
 
 	var childProcess = require('child_process').fork('./thread.js', [], {

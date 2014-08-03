@@ -2,8 +2,13 @@ var vm = require('vm');
 var Logger = require('./vmLogger.js');
 var posix = require('posix');
 var _eval = require('eval');
+var Timeout = require('./timeout.js');
 //var allowedModules = require('');
 
+var TimeoutException = function () { this.message = "Execution timed out" };
+var MethodNotSupportedException = function(method) { this.message = method.toUpperCase() + '_NOT_SUPPORTED'; };
+var FunctionConstructorException = function(execCode) { this.message = "function constructor with code: " + execCode; };
+	
 var Runner = function(options) {
 
 	"use strict";
@@ -106,40 +111,100 @@ Runner.prototype.getSdk = function () {
 	return Appacitive;
 };
 
+Runner.prototype.setJail = function(env, code) {
+	env['eval'] = stopExecuting('eval');
+	env['setTimeout'] = stopExecuting('setTimeout');
+	env['setInterval'] = stopExecuting('setInterval');
+	env['Function'] = getBlockedFunctionConstructor();
+
+	//set dafault values
+	var options = { timeout: 4000 };
+
+	wrapTheLoops(/while\(.+\).+\{/);
+	wrapTheLoops(/for\(.+\).+\{/);
+	
+	function wrapTheLoops(regex) {
+
+		var timeoutCount = 0;
+		var whiles = code.match(regex);
+
+		if (whiles) {
+
+			whiles.forEach(function(block) {
+
+				timeoutCount++;
+
+				var replacement = block + ' if(_timeout' + timeoutCount + '.exceeded()) {break;} '
+				code = code.replace(block, replacement);
+
+				var t = new Timeout(options.timeout);
+				t.onTimeout(function() {
+					throw new TimeoutException();
+				});
+				env['_timeout' + timeoutCount] = t;
+			});
+		}
+	}
+
+	/**
+		This will prevent 
+	*/
+	function stopExecuting(method) {
+
+		return function() {
+			throw new MethodNotSupportedException(method);
+		}
+	}
+
+	/**
+		This will blocks the usage of Function Construction
+	*/
+	function getBlockedFunctionConstructor() {
+
+		return function (execCode) {
+			throw new Function_Constructor_detected(execCode);
+		}
+	}
+
+	return code;
+};
+
 Runner.prototype.getContext = function() {
 
 	"use strict";
 
     var that = this;
 
-    var loadModule = function(module) {
+    var getRequireScope = function() {
+    	return function(module) {
 
-    	if (that.includedModules[module]) {
-			return _eval(that.includedModules[module] , module, that.ctx, false);
-		}
+	    	if (that.includedModules[module]) {
+				return _eval(that.includedModules[module] , module, that.ctx, false);
+			}
 
-		var modulePath = that.options.baseHandlerPath + that.message.dpid + '-v-' + that.message.cf.v + '/' + that.message.cf.n + '/' + module;
+			var modulePath = that.options.baseHandlerPath + that.message.dpid + '-v-' + that.message.cf.v + '/' + that.message.cf.n + '/' + module;
 
-		if (require('fs').existsSync(modulePath)) {
+			if (require('fs').existsSync(modulePath)) {
 
-			var data = '"use strict";' + require('fs').readFileSync(modulePath, 'UTF-8');
-			
-			that.includedModules[module] = _eval(data, module, that.ctx, false);
+				var data = '"use strict";' + require('fs').readFileSync(modulePath, 'UTF-8');
+				
+				that.includedModules[module] = _eval(data, module, that.ctx, false);
 
-			return that.includedModules[module];
-		}
-		return {};
+				return that.includedModules[module];
+			}
+			return {};
+	    };
     };
 
-	var ctx = vm.createContext({
-		console: { log: this.logger.log },
-		Appacitive : this.getSdk(),
-		setTimeout: setTimeout
-	});
+    var env = {
+    	console: { log: this.logger.log },
+		Appacitive: this.getSdk(),
+		require: getRequireScope()
+    };
 
-	ctx.require = function(module) {
-		return loadModule(module);
-	};
+    this.message.file = this.setJail(env, this.message.file);
+
+	var ctx = vm.createContext(env);
 
 	ctx.require.toString = function() {
 		return "function () { [native code] }";
@@ -152,6 +217,20 @@ Runner.prototype.getContext = function() {
 	return ctx;
 };
 
+Runner.prototype.getErrorResponse = function(e) {
+	var response = { statusCode: '500' , headers: {}};
+	if (e instanceof TimeoutException) {
+		response.statusCode = '508'
+		response.body =  e.message;
+	} else if (e instanceof MethodNotSupportedException || e instanceof Function_Constructor_detected) {
+		response.body =  e.message;
+	} else {
+	    reponse.body = that.getErrorMessage(e)
+	}
+	return response;
+};
+
+
 Runner.prototype.run = function() {
 
 	var that = this;
@@ -159,16 +238,16 @@ Runner.prototype.run = function() {
 	this.serverDomain = require('domain').create();	
 
 	this.serverDomain.on('error', function(e) {
-	    that.sendErrorResponse({statusCode: '500', body: that.getErrorMessage(e), headers: {}});
+		that.sendErrorResponse(that.getErrorResponse(e));
 	    that.serverDomain.dispose();
 	});
 
-	this.message.file = '"use strict";\n\n' + this.message.file;
+	this.message.file = '"use strict";' + this.message.file;
 
 	this.serverDomain.run(function() {
 		that.ctx = that.getContext();
 
-		posix.setrlimit('cpu', { soft: that.options.posixTime });
+		//posix.setrlimit('cpu', { soft: that.options.posixTime });
 
 		try { 
 			
@@ -179,7 +258,7 @@ Runner.prototype.run = function() {
 			that.ctx.Appacitive.Cloud.execute( that.message.cf.fn , { request: req, response: res });
 
 		} catch(e) { 
-			that.sendErrorResponse({ statusCode: '500', body: that.getErrorMessage(e), headers: {}}); 
+			that.sendErrorResponse(that.getErrorResponse(e));
 		}
 	});
 };
@@ -208,7 +287,8 @@ Runner.prototype.getErrorMessage = function(e) {
 };
 
 Runner.prototype.dispose = function() {
-	posix.setrlimit('cpu', { soft: null });
+	//posix.setrlimit('cpu', { soft: null });
+
 	if (this.ctx) {
 		for (var prop in this.ctx) {
 			this.ctx[prop] = null;
