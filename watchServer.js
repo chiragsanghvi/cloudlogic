@@ -11,6 +11,7 @@ module.exports = function(port, options) {
 	options = options || { port: 8082 };
 
 	var engine = options.cloudCodeServer.engine;
+
 	var cloudCodeServer = options.cloudCodeServer;
 
 	var watchServer = restify.createServer();
@@ -35,7 +36,7 @@ module.exports = function(port, options) {
 	});
 
 	watchServer.get(config.path + 'shutdown', function (req, res, next) {
-		server.gracefulShutdown = true;
+		cloudCodeServer.gracefulShutdown = true;
 		console.log("\n\n\n=======Received close signal, shutting down gracefully.=======\n\n\n");
 	  	graceful.stop(cloudCodeServer, options.port);
 	  	res.send("Closing server");

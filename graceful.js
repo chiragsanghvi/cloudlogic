@@ -24,7 +24,6 @@ exports.stop = function(_server, port, timeout) {
         }
 
         try {
-          console.dir(server);
           console.log("Starting server");
           server.listen(port);
           server.gracefulShutdown = false;

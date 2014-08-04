@@ -23,7 +23,9 @@ module.exports = function(port) {
 
 	var loggerType = config.loggerType;
 
-	var engine = this.engine = new Engine();
+	this.engine = new Engine();
+
+	var engine = this.engine;
 
 	//create an s3Logger child process to log output of handler to s3
 	var logger = require('child_process').fork('./' + loggerType + 'Logger.js',[] , {});
@@ -236,6 +238,8 @@ module.exports = function(port) {
 		    res.send(500, 'Internal Server Error');
 		}
 	});
+
+	server.engine = engine;
 
 	return server;
 };
